@@ -1,208 +1,475 @@
 {
-  "lastUpdated": "2026-04-13T20:00:00Z",
+  "lastUpdated": "2026-04-14T19:20:54.888784+00:00",
   "benchmarks": {
-    "OSEBX": { "ticker": "OSEBX.OL", "name": "Oslo Børs Benchmark Index", "ytd": 8.34, "current": 1712.45 },
-    "OBX": { "ticker": "OBX.OL", "name": "OBX Total Return Index", "ytd": 9.12, "current": 1287.63 },
-    "OSEFX": { "ticker": "OSEFX.OL", "name": "Oslo Børs Mutual Fund Index", "ytd": 7.88, "current": 1345.21 }
+    "OSEBX": {
+      "ticker": "OSEBX.OL",
+      "name": "Oslo Børs Benchmark Index",
+      "ytd": 19.8,
+      "current": 2032.97
+    },
+    "OBX": {
+      "ticker": "OBX.OL",
+      "name": "OBX Total Return Index",
+      "ytd": 23.32,
+      "current": 1986.18
+    },
+    "OSEFX": {
+      "ticker": "OSEFX.OL",
+      "name": "Oslo Børs Mutual Fund Index",
+      "ytd": null,
+      "current": 1993.25
+    }
   },
   "sectors": [
     {
       "sectorName": "Energy",
       "ticker": "OSE10GI",
       "osebxWeight": 32.5,
-      "returnsYTD": 11.42,
-      "returns6M": 6.78,
-      "returns1Y": 18.93,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
       "peRatio": 8.2,
       "pbRatio": 1.9,
       "dividendYield": 5.8,
       "analystConsensus": "Buy",
       "topHoldings": [
-        { "ticker": "EQNR", "name": "Equinor", "weight": 58.2 },
-        { "ticker": "AKRBP", "name": "Aker BP", "weight": 14.1 },
-        { "ticker": "VAR", "name": "Vår Energi", "weight": 9.8 },
-        { "ticker": "AKSO", "name": "Aker Solutions", "weight": 5.3 },
-        { "ticker": "TGS", "name": "TGS", "weight": 4.1 }
+        {
+          "ticker": "EQNR",
+          "name": "Equinor",
+          "weight": 58.2
+        },
+        {
+          "ticker": "AKRBP",
+          "name": "Aker BP",
+          "weight": 14.1
+        },
+        {
+          "ticker": "VAR",
+          "name": "Vår Energi",
+          "weight": 9.8
+        },
+        {
+          "ticker": "AKSO",
+          "name": "Aker Solutions",
+          "weight": 5.3
+        },
+        {
+          "ticker": "TGS",
+          "name": "TGS",
+          "weight": 4.1
+        }
       ],
-      "marketCapBreakdown": { "large": 78, "mid": 17, "small": 5 },
-      "week52": { "low": 1420.30, "high": 1895.60, "current": 1782.10 },
-      "meanReversion": { "fiveYearAverage": 1610.50, "distancePercentage": 10.65 }
+      "marketCapBreakdown": {
+        "large": 78,
+        "mid": 17,
+        "small": 5
+      },
+      "week52": {
+        "low": 666.86,
+        "high": 666.86,
+        "current": 666.86
+      },
+      "meanReversion": null
     },
     {
       "sectorName": "Financials",
       "ticker": "OSE40GI",
       "osebxWeight": 18.7,
-      "returnsYTD": 6.21,
-      "returns6M": 4.15,
-      "returns1Y": 14.50,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
       "peRatio": 10.5,
       "pbRatio": 1.2,
       "dividendYield": 6.1,
       "analystConsensus": "Buy",
       "topHoldings": [
-        { "ticker": "DNB", "name": "DNB Bank", "weight": 52.3 },
-        { "ticker": "STB", "name": "Storebrand", "weight": 16.8 },
-        { "ticker": "GJFS", "name": "Gjensidige Forsikring", "weight": 11.2 },
-        { "ticker": "SBANK", "name": "SpareBank 1 SR-Bank", "weight": 7.4 },
-        { "ticker": "PARB", "name": "Pareto Bank", "weight": 3.1 }
+        {
+          "ticker": "DNB",
+          "name": "DNB Bank",
+          "weight": 52.3
+        },
+        {
+          "ticker": "STB",
+          "name": "Storebrand",
+          "weight": 16.8
+        },
+        {
+          "ticker": "GJFS",
+          "name": "Gjensidige Forsikring",
+          "weight": 11.2
+        },
+        {
+          "ticker": "SBANK",
+          "name": "SpareBank 1 SR-Bank",
+          "weight": 7.4
+        },
+        {
+          "ticker": "PARB",
+          "name": "Pareto Bank",
+          "weight": 3.1
+        }
       ],
-      "marketCapBreakdown": { "large": 70, "mid": 22, "small": 8 },
-      "week52": { "low": 980.40, "high": 1210.80, "current": 1145.30 },
-      "meanReversion": { "fiveYearAverage": 1020.00, "distancePercentage": 12.28 }
+      "marketCapBreakdown": {
+        "large": 70,
+        "mid": 22,
+        "small": 8
+      },
+      "week52": {
+        "low": 2094.7,
+        "high": 2094.7,
+        "current": 2094.7
+      },
+      "meanReversion": null
     },
     {
       "sectorName": "Consumer Staples",
       "ticker": "OSE30GI",
       "osebxWeight": 12.3,
-      "returnsYTD": -2.85,
-      "returns6M": -5.12,
-      "returns1Y": 3.40,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
       "peRatio": 14.8,
       "pbRatio": 2.8,
       "dividendYield": 3.2,
       "analystConsensus": "Hold",
       "topHoldings": [
-        { "ticker": "MOWI", "name": "Mowi", "weight": 35.6 },
-        { "ticker": "SALM", "name": "SalMar", "weight": 18.4 },
-        { "ticker": "LSG", "name": "Lerøy Seafood", "weight": 12.9 },
-        { "ticker": "BAKKA", "name": "Bakkafrost", "weight": 10.2 },
-        { "ticker": "ORK", "name": "Orkla", "weight": 9.8 }
+        {
+          "ticker": "MOWI",
+          "name": "Mowi",
+          "weight": 35.6
+        },
+        {
+          "ticker": "SALM",
+          "name": "SalMar",
+          "weight": 18.4
+        },
+        {
+          "ticker": "LSG",
+          "name": "Lerøy Seafood",
+          "weight": 12.9
+        },
+        {
+          "ticker": "BAKKA",
+          "name": "Bakkafrost",
+          "weight": 10.2
+        },
+        {
+          "ticker": "ORK",
+          "name": "Orkla",
+          "weight": 9.8
+        }
       ],
-      "marketCapBreakdown": { "large": 55, "mid": 35, "small": 10 },
-      "week52": { "low": 860.20, "high": 1050.70, "current": 892.40 },
-      "meanReversion": { "fiveYearAverage": 945.00, "distancePercentage": -5.57 }
+      "marketCapBreakdown": {
+        "large": 55,
+        "mid": 35,
+        "small": 10
+      },
+      "week52": {
+        "low": 2912.93,
+        "high": 2912.93,
+        "current": 2912.93
+      },
+      "meanReversion": null
     },
     {
       "sectorName": "Industrials",
       "ticker": "OSE20GI",
       "osebxWeight": 13.1,
-      "returnsYTD": 4.67,
-      "returns6M": 2.33,
-      "returns1Y": 9.10,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
       "peRatio": 18.3,
       "pbRatio": 2.4,
       "dividendYield": 2.1,
       "analystConsensus": "Hold",
       "topHoldings": [
-        { "ticker": "KAHOT", "name": "Kahoot!", "weight": 14.2 },
-        { "ticker": "TOMRA", "name": "Tomra Systems", "weight": 12.8 },
-        { "ticker": "KOG", "name": "Kongsberg Gruppen", "weight": 22.4 },
-        { "ticker": "WILS", "name": "Wilh. Wilhelmsen", "weight": 9.1 },
-        { "ticker": "FLNG", "name": "Flex LNG", "weight": 7.5 }
+        {
+          "ticker": "KOG",
+          "name": "Kongsberg Gruppen",
+          "weight": 22.4
+        },
+        {
+          "ticker": "KAHOT",
+          "name": "Kahoot!",
+          "weight": 14.2
+        },
+        {
+          "ticker": "TOMRA",
+          "name": "Tomra Systems",
+          "weight": 12.8
+        },
+        {
+          "ticker": "WILS",
+          "name": "Wilh. Wilhelmsen",
+          "weight": 9.1
+        },
+        {
+          "ticker": "FLNG",
+          "name": "Flex LNG",
+          "weight": 7.5
+        }
       ],
-      "marketCapBreakdown": { "large": 45, "mid": 40, "small": 15 },
-      "week52": { "low": 720.50, "high": 890.30, "current": 812.60 },
-      "meanReversion": { "fiveYearAverage": 760.00, "distancePercentage": 6.92 }
+      "marketCapBreakdown": {
+        "large": 45,
+        "mid": 40,
+        "small": 15
+      },
+      "week52": {
+        "low": 541.52,
+        "high": 541.52,
+        "current": 541.52
+      },
+      "meanReversion": null
     },
     {
       "sectorName": "Materials",
       "ticker": "OSE15GI",
       "osebxWeight": 6.8,
-      "returnsYTD": -4.30,
-      "returns6M": -7.65,
-      "returns1Y": -1.20,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
       "peRatio": 22.1,
       "pbRatio": 1.6,
       "dividendYield": 1.4,
       "analystConsensus": "Sell",
       "topHoldings": [
-        { "ticker": "NHY", "name": "Norsk Hydro", "weight": 62.4 },
-        { "ticker": "YAR", "name": "Yara International", "weight": 24.1 },
-        { "ticker": "BOR", "name": "Borregaard", "weight": 8.3 },
-        { "ticker": "ELMRA", "name": "Elkem", "weight": 3.8 },
-        { "ticker": "RECSI", "name": "REC Silicon", "weight": 1.4 }
+        {
+          "ticker": "NHY",
+          "name": "Norsk Hydro",
+          "weight": 62.4
+        },
+        {
+          "ticker": "YAR",
+          "name": "Yara International",
+          "weight": 24.1
+        },
+        {
+          "ticker": "BOR",
+          "name": "Borregaard",
+          "weight": 8.3
+        },
+        {
+          "ticker": "ELMRA",
+          "name": "Elkem",
+          "weight": 3.8
+        },
+        {
+          "ticker": "RECSI",
+          "name": "REC Silicon",
+          "weight": 1.4
+        }
       ],
-      "marketCapBreakdown": { "large": 88, "mid": 10, "small": 2 },
-      "week52": { "low": 510.60, "high": 680.90, "current": 538.20 },
-      "meanReversion": { "fiveYearAverage": 620.00, "distancePercentage": -13.19 }
+      "marketCapBreakdown": {
+        "large": 88,
+        "mid": 10,
+        "small": 2
+      },
+      "week52": {
+        "low": 651.84,
+        "high": 651.84,
+        "current": 651.84
+      },
+      "meanReversion": null
     },
     {
       "sectorName": "IT",
       "ticker": "OSE45GI",
       "osebxWeight": 5.4,
-      "returnsYTD": 14.80,
-      "returns6M": 10.24,
-      "returns1Y": 22.60,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
       "peRatio": 34.2,
       "pbRatio": 5.1,
       "dividendYield": 0.8,
       "analystConsensus": "Buy",
       "topHoldings": [
-        { "ticker": "CRAYN", "name": "Crayon Group", "weight": 28.6 },
-        { "ticker": "OPER", "name": "Opera", "weight": 18.5 },
-        { "ticker": "NOD", "name": "Nordic Semiconductor", "weight": 22.4 },
-        { "ticker": "LINK", "name": "Link Mobility", "weight": 11.3 },
-        { "ticker": "VOLUE", "name": "Volue", "weight": 8.2 }
+        {
+          "ticker": "NOD",
+          "name": "Nordic Semiconductor",
+          "weight": 22.4
+        },
+        {
+          "ticker": "CRAYN",
+          "name": "Crayon Group",
+          "weight": 28.6
+        },
+        {
+          "ticker": "OPER",
+          "name": "Opera",
+          "weight": 18.5
+        },
+        {
+          "ticker": "LINK",
+          "name": "Link Mobility",
+          "weight": 11.3
+        },
+        {
+          "ticker": "VOLUE",
+          "name": "Volue",
+          "weight": 8.2
+        }
       ],
-      "marketCapBreakdown": { "large": 30, "mid": 45, "small": 25 },
-      "week52": { "low": 340.20, "high": 520.80, "current": 498.50 },
-      "meanReversion": { "fiveYearAverage": 410.00, "distancePercentage": 21.59 }
+      "marketCapBreakdown": {
+        "large": 30,
+        "mid": 45,
+        "small": 25
+      },
+      "week52": {
+        "low": 390.25,
+        "high": 390.25,
+        "current": 390.25
+      },
+      "meanReversion": null
     },
     {
       "sectorName": "Telecom",
       "ticker": "OSE50GI",
       "osebxWeight": 5.9,
-      "returnsYTD": 2.14,
-      "returns6M": 1.05,
-      "returns1Y": 5.80,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
       "peRatio": 16.4,
       "pbRatio": 3.2,
       "dividendYield": 4.5,
       "analystConsensus": "Hold",
       "topHoldings": [
-        { "ticker": "TEL", "name": "Telenor", "weight": 82.3 },
-        { "ticker": "TEKNA", "name": "Tekna Holding", "weight": 6.1 },
-        { "ticker": "NTEL", "name": "NextGenTel", "weight": 4.8 },
-        { "ticker": "CXENSE", "name": "Cxense", "weight": 3.9 },
-        { "ticker": "ITERA", "name": "Itera", "weight": 2.9 }
+        {
+          "ticker": "TEL",
+          "name": "Telenor",
+          "weight": 82.3
+        },
+        {
+          "ticker": "TEKNA",
+          "name": "Tekna Holding",
+          "weight": 6.1
+        },
+        {
+          "ticker": "NTEL",
+          "name": "NextGenTel",
+          "weight": 4.8
+        },
+        {
+          "ticker": "CXENSE",
+          "name": "Cxense",
+          "weight": 3.9
+        },
+        {
+          "ticker": "ITERA",
+          "name": "Itera",
+          "weight": 2.9
+        }
       ],
-      "marketCapBreakdown": { "large": 85, "mid": 10, "small": 5 },
-      "week52": { "low": 610.30, "high": 730.40, "current": 665.80 },
-      "meanReversion": { "fiveYearAverage": 650.00, "distancePercentage": 2.43 }
+      "marketCapBreakdown": {
+        "large": 85,
+        "mid": 10,
+        "small": 5
+      },
+      "week52": {
+        "low": 1871.2,
+        "high": 1871.2,
+        "current": 1871.2
+      },
+      "meanReversion": null
     },
     {
       "sectorName": "Utilities",
       "ticker": "OSE55GI",
       "osebxWeight": 3.2,
-      "returnsYTD": 1.45,
-      "returns6M": -0.88,
-      "returns1Y": 7.30,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
       "peRatio": 20.6,
       "pbRatio": 2.0,
       "dividendYield": 3.8,
       "analystConsensus": "Hold",
       "topHoldings": [
-        { "ticker": "HAFNI", "name": "Hafslund", "weight": 42.1 },
-        { "ticker": "SCATC", "name": "Scatec", "weight": 28.4 },
-        { "ticker": "AGAS", "name": "Aker Horizons", "weight": 12.3 },
-        { "ticker": "CLOUDBERRY", "name": "Cloudberry Clean Energy", "weight": 9.8 },
-        { "ticker": "SMSN", "name": "SmallCap Green", "weight": 7.4 }
+        {
+          "ticker": "HAFNI",
+          "name": "Hafslund",
+          "weight": 42.1
+        },
+        {
+          "ticker": "SCATC",
+          "name": "Scatec",
+          "weight": 28.4
+        },
+        {
+          "ticker": "AGAS",
+          "name": "Aker Horizons",
+          "weight": 12.3
+        },
+        {
+          "ticker": "CLOUDBERRY",
+          "name": "Cloudberry Clean Energy",
+          "weight": 9.8
+        },
+        {
+          "ticker": "SMSN",
+          "name": "SmallCap Green",
+          "weight": 7.4
+        }
       ],
-      "marketCapBreakdown": { "large": 40, "mid": 42, "small": 18 },
-      "week52": { "low": 280.10, "high": 370.50, "current": 305.20 },
-      "meanReversion": { "fiveYearAverage": 320.00, "distancePercentage": -4.63 }
+      "marketCapBreakdown": {
+        "large": 40,
+        "mid": 42,
+        "small": 18
+      },
+      "week52": {
+        "low": 3015.46,
+        "high": 3015.46,
+        "current": 3015.46
+      },
+      "meanReversion": null
     },
     {
       "sectorName": "Real Estate",
       "ticker": "OSE60GI",
       "osebxWeight": 2.1,
-      "returnsYTD": -6.72,
-      "returns6M": -9.40,
-      "returns1Y": -3.10,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
       "peRatio": 12.9,
       "pbRatio": 0.8,
       "dividendYield": 5.2,
       "analystConsensus": "Hold",
       "topHoldings": [
-        { "ticker": "ENTRA", "name": "Entra", "weight": 38.6 },
-        { "ticker": "OBOS", "name": "OBOS BBL", "weight": 22.4 },
-        { "ticker": "SELVA", "name": "Selvaag Bolig", "weight": 15.8 },
-        { "ticker": "SBO", "name": "Self Storage Group", "weight": 12.3 },
-        { "ticker": "NWRE", "name": "Norwegian Property", "weight": 10.9 }
+        {
+          "ticker": "ENTRA",
+          "name": "Entra",
+          "weight": 38.6
+        },
+        {
+          "ticker": "OBOS",
+          "name": "OBOS BBL",
+          "weight": 22.4
+        },
+        {
+          "ticker": "SELVA",
+          "name": "Selvaag Bolig",
+          "weight": 15.8
+        },
+        {
+          "ticker": "SBO",
+          "name": "Self Storage Group",
+          "weight": 12.3
+        },
+        {
+          "ticker": "NWRE",
+          "name": "Norwegian Property",
+          "weight": 10.9
+        }
       ],
-      "marketCapBreakdown": { "large": 40, "mid": 38, "small": 22 },
-      "week52": { "low": 190.40, "high": 260.80, "current": 198.70 },
-      "meanReversion": { "fiveYearAverage": 235.00, "distancePercentage": -15.45 }
+      "marketCapBreakdown": {
+        "large": 40,
+        "mid": 38,
+        "small": 22
+      },
+      "week52": {
+        "low": 164.72,
+        "high": 164.72,
+        "current": 164.72
+      },
+      "meanReversion": null
     }
   ]
 }
