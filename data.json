@@ -1,0 +1,210 @@
+{
+  "lastUpdated": "2026-04-13T20:00:00Z",
+  "benchmarks": [
+    { "name": "OSEBX", "ticker": "OSEBX.OL", "price": 1487.32, "ytd": 8.42 },
+    { "name": "OBX", "ticker": "OBX.OL", "price": 1312.56, "ytd": 7.91 },
+    { "name": "OSEFX", "ticker": "OSEFX.OL", "price": 1245.18, "ytd": 9.15 }
+  ],
+  "sectors": [
+    {
+      "sectorName": "Energy",
+      "ticker": "OSE10GI",
+      "osebxWeight": 27.8,
+      "returnsYTD": 5.32,
+      "returns6M": 8.71,
+      "returns1Y": 12.45,
+      "peRatio": 9.8,
+      "dividendYield": 6.2,
+      "analystConsensus": "Buy",
+      "topHoldings": [
+        { "ticker": "EQNR", "name": "Equinor", "weight": 52.1 },
+        { "ticker": "AKRBP", "name": "Aker BP", "weight": 18.3 },
+        { "ticker": "VAR", "name": "Vår Energi", "weight": 11.7 },
+        { "ticker": "SUBC", "name": "Subsea 7", "weight": 8.2 },
+        { "ticker": "TGS", "name": "TGS", "weight": 4.5 }
+      ],
+      "marketCapBreakdown": { "large": 82, "mid": 14, "small": 4 },
+      "week52": { "low": 1820.5, "high": 2340.8, "current": 2185.3 }
+    },
+    {
+      "sectorName": "Financials",
+      "ticker": "OSE40GI",
+      "osebxWeight": 16.5,
+      "returnsYTD": 12.87,
+      "returns6M": 15.23,
+      "returns1Y": 22.41,
+      "peRatio": 11.2,
+      "dividendYield": 5.8,
+      "analystConsensus": "Buy",
+      "topHoldings": [
+        { "ticker": "DNB", "name": "DNB Bank", "weight": 48.6 },
+        { "ticker": "MORG", "name": "SpareBank 1 SMN", "weight": 12.4 },
+        { "ticker": "SRBNK", "name": "SpareBank 1 SR-Bank", "weight": 10.8 },
+        { "ticker": "SBANK", "name": "Sbanken", "weight": 7.2 },
+        { "ticker": "GJF", "name": "Gjensidige", "weight": 15.5 }
+      ],
+      "marketCapBreakdown": { "large": 65, "mid": 28, "small": 7 },
+      "week52": { "low": 980.2, "high": 1320.5, "current": 1285.7 }
+    },
+    {
+      "sectorName": "Consumer Staples",
+      "ticker": "OSE30GI",
+      "osebxWeight": 12.3,
+      "returnsYTD": -3.18,
+      "returns6M": 2.45,
+      "returns1Y": 7.82,
+      "peRatio": 18.5,
+      "dividendYield": 3.1,
+      "analystConsensus": "Hold",
+      "topHoldings": [
+        { "ticker": "MOWI", "name": "Mowi", "weight": 32.8 },
+        { "ticker": "SALM", "name": "SalMar", "weight": 22.1 },
+        { "ticker": "LSG", "name": "Lerøy Seafood", "weight": 14.6 },
+        { "ticker": "BAKKA", "name": "Bakkafrost", "weight": 11.3 },
+        { "ticker": "ORK", "name": "Orkla", "weight": 12.5 }
+      ],
+      "marketCapBreakdown": { "large": 55, "mid": 35, "small": 10 },
+      "week52": { "low": 1540.3, "high": 1890.6, "current": 1612.4 }
+    },
+    {
+      "sectorName": "Industrials",
+      "ticker": "OSE20GI",
+      "osebxWeight": 14.2,
+      "returnsYTD": 10.55,
+      "returns6M": 12.88,
+      "returns1Y": 18.32,
+      "peRatio": 22.4,
+      "dividendYield": 1.9,
+      "analystConsensus": "Buy",
+      "topHoldings": [
+        { "ticker": "KVAER", "name": "Kongsberg Gruppen", "weight": 28.5 },
+        { "ticker": "TEL", "name": "Telenor", "weight": 22.3 },
+        { "ticker": "TOM", "name": "Tomra Systems", "weight": 14.1 },
+        { "ticker": "WWI", "name": "Wallenius Wilhelmsen", "weight": 12.8 },
+        { "ticker": "HAFNI", "name": "Hafnia", "weight": 8.9 }
+      ],
+      "marketCapBreakdown": { "large": 50, "mid": 38, "small": 12 },
+      "week52": { "low": 2100.1, "high": 2850.4, "current": 2710.5 }
+    },
+    {
+      "sectorName": "Materials",
+      "ticker": "OSE15GI",
+      "osebxWeight": 8.7,
+      "returnsYTD": 2.14,
+      "returns6M": -1.33,
+      "returns1Y": 5.67,
+      "peRatio": 15.7,
+      "dividendYield": 2.8,
+      "analystConsensus": "Hold",
+      "topHoldings": [
+        { "ticker": "NHY", "name": "Norsk Hydro", "weight": 55.2 },
+        { "ticker": "YAR", "name": "Yara International", "weight": 28.4 },
+        { "ticker": "BORR", "name": "Borregaard", "weight": 8.1 },
+        { "ticker": "ELK", "name": "Elkem", "weight": 5.5 },
+        { "ticker": "AUSS", "name": "Austevoll Seafood", "weight": 2.8 }
+      ],
+      "marketCapBreakdown": { "large": 72, "mid": 22, "small": 6 },
+      "week52": { "low": 680.4, "high": 890.2, "current": 735.8 }
+    },
+    {
+      "sectorName": "IT",
+      "ticker": "OSE45GI",
+      "osebxWeight": 6.8,
+      "returnsYTD": 15.92,
+      "returns6M": 20.14,
+      "returns1Y": 28.73,
+      "peRatio": 34.6,
+      "dividendYield": 0.8,
+      "analystConsensus": "Buy",
+      "topHoldings": [
+        { "ticker": "CRAYN", "name": "Crayon Group", "weight": 24.5 },
+        { "ticker": "NOD", "name": "Nordic Semiconductor", "weight": 22.8 },
+        { "ticker": "OPERA", "name": "Opera", "weight": 15.3 },
+        { "ticker": "KID", "name": "Kahoot!", "weight": 12.1 },
+        { "ticker": "ATEA", "name": "Atea", "weight": 10.6 }
+      ],
+      "marketCapBreakdown": { "large": 30, "mid": 45, "small": 25 },
+      "week52": { "low": 420.1, "high": 690.8, "current": 652.3 }
+    },
+    {
+      "sectorName": "Real Estate",
+      "ticker": "OSE35GI",
+      "osebxWeight": 4.2,
+      "returnsYTD": -5.41,
+      "returns6M": -2.18,
+      "returns1Y": 1.23,
+      "peRatio": 28.3,
+      "dividendYield": 4.5,
+      "analystConsensus": "Hold",
+      "topHoldings": [
+        { "ticker": "ENTRA", "name": "Entra", "weight": 38.2 },
+        { "ticker": "OLT", "name": "Olav Thon", "weight": 25.6 },
+        { "ticker": "SCHB", "name": "Self Storage Group", "weight": 14.3 },
+        { "ticker": "SBO", "name": "Selvaag Bolig", "weight": 12.1 },
+        { "ticker": "FREST", "name": "Fredensborg", "weight": 9.8 }
+      ],
+      "marketCapBreakdown": { "large": 40, "mid": 42, "small": 18 },
+      "week52": { "low": 310.2, "high": 420.5, "current": 335.7 }
+    },
+    {
+      "sectorName": "Healthcare",
+      "ticker": "OSE25GI",
+      "osebxWeight": 3.5,
+      "returnsYTD": 7.63,
+      "returns6M": 11.42,
+      "returns1Y": 15.18,
+      "peRatio": 42.1,
+      "dividendYield": 0.4,
+      "analystConsensus": "Hold",
+      "topHoldings": [
+        { "ticker": "PHO", "name": "Photocure", "weight": 22.5 },
+        { "ticker": "MEDI", "name": "Medistim", "weight": 20.8 },
+        { "ticker": "NAVA", "name": "Navamedic", "weight": 18.3 },
+        { "ticker": "ARC", "name": "Arcus", "weight": 15.6 },
+        { "ticker": "GIG", "name": "Gaming Innovation", "weight": 12.2 }
+      ],
+      "marketCapBreakdown": { "large": 15, "mid": 45, "small": 40 },
+      "week52": { "low": 540.3, "high": 780.1, "current": 698.5 }
+    },
+    {
+      "sectorName": "Utilities",
+      "ticker": "OSE55GI",
+      "osebxWeight": 3.1,
+      "returnsYTD": 1.87,
+      "returns6M": 4.52,
+      "returns1Y": 9.21,
+      "peRatio": 19.8,
+      "dividendYield": 5.1,
+      "analystConsensus": "Hold",
+      "topHoldings": [
+        { "ticker": "SCATC", "name": "Scatec", "weight": 35.2 },
+        { "ticker": "AKER", "name": "Aker Horizons", "weight": 22.4 },
+        { "ticker": "AGAS", "name": "Aker Clean Hydrogen", "weight": 15.8 },
+        { "ticker": "VOLUE", "name": "Volue", "weight": 14.3 },
+        { "ticker": "FLYR", "name": "Nel", "weight": 12.3 }
+      ],
+      "marketCapBreakdown": { "large": 35, "mid": 40, "small": 25 },
+      "week52": { "low": 280.5, "high": 390.2, "current": 312.8 }
+    },
+    {
+      "sectorName": "Comm. Services",
+      "ticker": "OSE50GI",
+      "osebxWeight": 2.9,
+      "returnsYTD": 6.28,
+      "returns6M": 9.14,
+      "returns1Y": 13.56,
+      "peRatio": 16.3,
+      "dividendYield": 3.4,
+      "analystConsensus": "Hold",
+      "topHoldings": [
+        { "ticker": "SCHIBSTED", "name": "Schibsted", "weight": 42.1 },
+        { "ticker": "AMEDIA", "name": "Adevinta", "weight": 25.8 },
+        { "ticker": "REC", "name": "REC Silicon", "weight": 12.4 },
+        { "ticker": "OTELLO", "name": "Otello", "weight": 10.5 },
+        { "ticker": "LINK", "name": "Link Mobility", "weight": 9.2 }
+      ],
+      "marketCapBreakdown": { "large": 45, "mid": 35, "small": 20 },
+      "week52": { "low": 450.6, "high": 620.3, "current": 568.2 }
+    }
+  ]
+}

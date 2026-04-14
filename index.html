@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OSEBX Sector Heatmap — Oslo Børs</title>
+<meta name="description" content="Interactive heatmap of Oslo Børs (OSEBX) sector performance. YTD returns, sector weights, and market data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   RESET & VARIABLES
+   ═══════════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c10;
+  --card:#12151c;
+  --card-hover:#181c26;
+  --border:rgba(255,255,255,.06);
+  --text:#e2e5ed;
+  --text-dim:rgba(226,229,237,.45);
+  --text-muted:rgba(226,229,237,.25);
+  --green-bright:#22c55e;
+  --green-mid:#16a34a;
+  --red-bright:#ef4444;
+  --red-mid:#dc2626;
+  --accent:#6366f1;
+  --accent-glow:rgba(99,102,241,.15);
+  --mono:'JetBrains Mono',monospace;
+  --sans:'DM Sans',sans-serif;
+  --serif:'Playfair Display',serif;
+  --radius:12px;
+  --transition:0.3s cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:15px;line-height:1.6;
+  min-height:100vh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════════════════════════════════ */
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+.header{padding:40px 0 20px;text-align:center}
+.header h1{
+  font-family:var(--serif);font-weight:900;font-size:clamp(1.8rem,4vw,2.8rem);
+  letter-spacing:-.02em;margin-bottom:6px;
+  background:linear-gradient(135deg,#e2e5ed 0%,rgba(226,229,237,.6) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.header .subtitle{
+  font-family:var(--sans);font-size:.9rem;color:var(--text-dim);font-weight:300;
+}
+.timestamp{
+  font-family:var(--mono);font-size:.72rem;color:var(--text-muted);
+  margin-top:8px;letter-spacing:.03em;
+}
+
+/* ═══ BENCHMARK PILLS ═══ */
+.benchmark-row{
+  display:flex;justify-content:center;gap:12px;flex-wrap:wrap;
+  margin:24px 0 14px;
+}
+.bench-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--border);
+  padding:8px 16px;border-radius:40px;
+  font-family:var(--mono);font-size:.8rem;font-weight:500;
+  transition:border-color var(--transition);
+}
+.bench-pill:hover{border-color:rgba(255,255,255,.12)}
+.bench-pill .name{color:var(--text-dim);font-weight:400}
+.bench-pill .value{font-weight:600}
+.bench-pill .pct{font-weight:600;margin-left:2px}
+.positive{color:var(--green-bright)}
+.negative{color:var(--red-bright)}
+
+/* ═══ DISCLAIMER ═══ */
+.disclaimer{
+  text-align:center;max-width:720px;margin:0 auto 24px;
+  font-size:.72rem;color:var(--text-muted);line-height:1.5;
+  padding:10px 16px;border:1px solid rgba(255,255,255,.04);
+  border-radius:8px;background:rgba(255,255,255,.015);
+}
+
+/* ═══ CONTROLS ═══ */
+.controls{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:14px;margin-bottom:24px;
+}
+.sort-group{display:flex;gap:6px;flex-wrap:wrap}
+.sort-btn{
+  font-family:var(--sans);font-size:.75rem;font-weight:500;
+  padding:6px 14px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--border);background:transparent;color:var(--text-dim);
+  transition:all var(--transition);
+}
+.sort-btn:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.sort-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ═══ LEGEND ═══ */
+.legend{display:flex;align-items:center;gap:8px;font-size:.7rem;color:var(--text-muted)}
+.legend-bar{
+  width:140px;height:8px;border-radius:4px;
+  background:linear-gradient(90deg,#dc2626,#92400e,#1a1a2e,#065f46,#16a34a);
+}
+.legend-labels{display:flex;gap:4px;font-family:var(--mono);font-size:.65rem}
+
+/* ═══ HEATMAP GRID ═══ */
+.heatmap{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:14px;margin-bottom:48px;
+}
+
+/* ═══ CARD ═══ */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;cursor:pointer;
+  transition:all var(--transition),max-height .5s cubic-bezier(.4,0,.2,1);
+  position:relative;opacity:0;transform:translateY(24px);
+}
+.card.visible{opacity:1;transform:translateY(0)}
+.card:hover{
+  border-color:rgba(255,255,255,.1);
+  box-shadow:0 8px 32px rgba(0,0,0,.3);
+  transform:translateY(-2px);
+}
+.card.visible:hover{transform:translateY(-2px)}
+
+/* Color strip at top of card */
+.card-strip{height:3px;width:100%}
+
+.card-body{padding:16px 18px}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.card-title{
+  font-family:var(--serif);font-weight:700;font-size:1.05rem;
+  line-height:1.2;color:var(--text);
+}
+.card-ticker{
+  font-family:var(--mono);font-size:.7rem;color:var(--text-muted);
+  margin-top:2px;
+}
+.card-weight{
+  font-family:var(--mono);font-size:.7rem;color:var(--text-dim);
+  background:rgba(255,255,255,.04);padding:3px 8px;border-radius:12px;
+  white-space:nowrap;
+}
+
+/* Returns row */
+.returns-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  margin-bottom:12px;
+}
+.return-cell{text-align:center}
+.return-label{font-size:.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.return-value{font-family:var(--mono);font-size:.85rem;font-weight:600}
+
+/* Metrics row */
+.metrics-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:10px;border-top:1px solid var(--border);
+}
+.metric{text-align:center;flex:1}
+.metric-label{font-size:.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
+.metric-value{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--text-dim)}
+
+/* Consensus badge */
+.consensus{
+  display:inline-block;padding:2px 10px;border-radius:10px;
+  font-family:var(--mono);font-size:.65rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.consensus.buy{background:rgba(34,197,94,.12);color:#22c55e}
+.consensus.hold{background:rgba(234,179,8,.1);color:#eab308}
+.consensus.sell{background:rgba(239,68,68,.1);color:#ef4444}
+
+/* ═══ EXPANDED PANEL ═══ */
+.card-expand{
+  max-height:0;overflow:hidden;
+  transition:max-height .5s cubic-bezier(.4,0,.2,1),padding .3s;
+}
+.card.expanded .card-expand{max-height:500px}
+.expand-inner{padding:0 18px 18px}
+
+.expand-divider{
+  height:1px;background:var(--border);margin:0 0 14px;
+}
+
+/* Top holdings */
+.holdings-title{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.holding{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:5px 0;border-bottom:1px solid rgba(255,255,255,.025);
+  font-size:.78rem;
+}
+.holding:last-child{border-bottom:none}
+.holding-name{color:var(--text-dim)}
+.holding-ticker{font-family:var(--mono);color:var(--text-muted);font-size:.7rem;margin-left:6px}
+.holding-weight{font-family:var(--mono);font-weight:500;color:var(--text-dim)}
+
+/* Market cap bar */
+.mcap-section{margin-top:14px}
+.mcap-title{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.mcap-bar{display:flex;height:10px;border-radius:5px;overflow:hidden;gap:2px}
+.mcap-seg{transition:width .5s}
+.mcap-seg.large{background:#6366f1}
+.mcap-seg.mid{background:#8b5cf6}
+.mcap-seg.small{background:#a78bfa}
+.mcap-labels{display:flex;justify-content:space-between;font-size:.6rem;color:var(--text-muted);margin-top:4px;font-family:var(--mono)}
+
+/* 52-week range */
+.range-section{margin-top:14px}
+.range-title{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.range-track{
+  position:relative;height:6px;background:rgba(255,255,255,.06);
+  border-radius:3px;margin:0 0 4px;
+}
+.range-fill{
+  position:absolute;top:0;height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--red-mid),var(--green-mid));
+  opacity:.4;
+}
+.range-marker{
+  position:absolute;top:-5px;width:10px;height:16px;
+  border-radius:3px;background:var(--accent);border:2px solid #fff;
+  transform:translateX(-50%);
+  box-shadow:0 0 8px rgba(99,102,241,.5);
+}
+.range-labels{display:flex;justify-content:space-between;font-size:.65rem;font-family:var(--mono);color:var(--text-muted)}
+
+/* Expand chevron */
+.chevron{
+  display:flex;justify-content:center;padding:4px 0 2px;
+  color:var(--text-muted);font-size:.7rem;
+  transition:transform var(--transition);
+}
+.card.expanded .chevron{transform:rotate(180deg)}
+
+/* ═══ EXPLAINER SECTION ═══ */
+.explainer-toggle{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px;cursor:pointer;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);color:var(--text-dim);
+  font-family:var(--serif);font-size:.95rem;font-weight:500;
+  transition:all var(--transition);margin-bottom:14px;
+}
+.explainer-toggle:hover{border-color:rgba(255,255,255,.12);color:var(--text)}
+.explainer-toggle svg{transition:transform var(--transition)}
+.explainer-toggle.open svg{transform:rotate(180deg)}
+
+.explainer-panel{
+  max-height:0;overflow:hidden;
+  transition:max-height .5s cubic-bezier(.4,0,.2,1);
+}
+.explainer-panel.open{max-height:800px}
+.explainer-content{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 24px;margin-bottom:48px;
+}
+.explainer-content h3{
+  font-family:var(--serif);font-size:1.2rem;font-weight:700;margin-bottom:14px;
+}
+.explainer-content p{
+  font-size:.85rem;color:var(--text-dim);line-height:1.7;margin-bottom:12px;
+}
+.explainer-content p:last-child{margin-bottom:0}
+.explainer-content .highlight{color:var(--green-bright);font-weight:500}
+.explainer-disclaimer{
+  margin-top:18px;padding:12px 16px;
+  border:1px solid rgba(255,255,255,.04);border-radius:8px;
+  background:rgba(255,255,255,.015);
+  font-size:.72rem;color:var(--text-muted);line-height:1.5;
+}
+
+/* ═══ FOOTER ═══ */
+.footer{
+  text-align:center;padding:24px 0 40px;
+  font-size:.7rem;color:var(--text-muted);
+}
+.footer a{color:var(--accent);transition:color var(--transition)}
+.footer a:hover{color:#818cf8}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:640px){
+  .heatmap{grid-template-columns:1fr}
+  .controls{flex-direction:column;align-items:stretch}
+  .sort-group{justify-content:center}
+  .legend{justify-content:center}
+  .benchmark-row{gap:8px}
+  .bench-pill{padding:6px 12px;font-size:.72rem}
+}
+
+/* ═══ LOADING STATE ═══ */
+.loading{
+  text-align:center;padding:80px 20px;
+  font-family:var(--mono);font-size:.85rem;color:var(--text-muted);
+}
+.loading-spinner{
+  width:28px;height:28px;border:2px solid var(--border);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .8s linear infinite;margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══ NOISE OVERLAY ═══ */
+body::after{
+  content:'';position:fixed;inset:0;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.5;
+}
+body>*{position:relative;z-index:1}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header class="header">
+    <h1>Oslo Børs Sector Heatmap</h1>
+    <p class="subtitle">OSEBX sector performance at a glance</p>
+    <p class="timestamp" id="timestamp">Loading…</p>
+  </header>
+
+  <!-- Benchmark Pills -->
+  <div class="benchmark-row" id="benchmarks"></div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    Market data is delayed and updated weekly. This dashboard is for informational and educational purposes only — not to be used for financial analysis or investment decisions.
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="sort-group">
+      <button class="sort-btn active" data-sort="ytd">YTD Return</button>
+      <button class="sort-btn" data-sort="weight">Weight</button>
+      <button class="sort-btn" data-sort="pe">P/E</button>
+      <button class="sort-btn" data-sort="div">Div. Yield</button>
+    </div>
+    <div class="legend">
+      <span>Loss</span>
+      <div class="legend-bar"></div>
+      <span>Gain</span>
+    </div>
+  </div>
+
+  <!-- Heatmap Grid -->
+  <div class="heatmap" id="heatmap">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      Fetching sector data…
+    </div>
+  </div>
+
+  <!-- Explainer -->
+  <button class="explainer-toggle" id="explainerToggle" aria-expanded="false" aria-controls="explainerPanel">
+    What is Oslo Børs?
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+  <div class="explainer-panel" id="explainerPanel" role="region" aria-labelledby="explainerToggle">
+    <div class="explainer-content">
+      <h3>A Unique Nordic Exchange</h3>
+      <p>
+        Oslo Børs (Oslo Stock Exchange) stands out among European exchanges for its unusually concentrated sector composition. The <span class="highlight">Energy sector alone accounts for ~28%</span> of the benchmark OSEBX index, dominated by Equinor — one of Europe's largest oil & gas companies and a cornerstone of Norway's economy.
+      </p>
+      <p>
+        Equally distinctive is the <span class="highlight">Consumer Staples sector</span>, heavily weighted toward seafood — companies like Mowi, SalMar, and Lerøy make Norway the world's largest producer of Atlantic salmon. This gives the index a unique commodity-driven character not found in broader European benchmarks like the STOXX 600.
+      </p>
+      <p>
+        Norway's Government Pension Fund Global (commonly called "the Oil Fund") is the world's largest sovereign wealth fund, funded by petroleum revenues. While it invests globally rather than domestically, its existence reflects the deep ties between Norwegian markets and natural resources.
+      </p>
+      <p>
+        The OSEBX is a free-float market-cap-weighted index reviewed semi-annually. It differs from the OBX (the 25 most-traded stocks, used for derivatives) and OSEFX (a fund-weight-capped version limiting single-stock exposure to 10%).
+      </p>
+      <div class="explainer-disclaimer">
+        Market data is delayed and updated weekly. This dashboard is for informational and educational purposes only — not to be used for financial analysis or investment decisions.
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    Data sourced via <a href="https://github.com/ranaroussi/yfinance" target="_blank" rel="noopener">yfinance</a> · Updated weekly via GitHub Actions
+  </footer>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   OSEBX Sector Heatmap — Frontend Logic
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+'use strict';
+
+// ── State ──────────────────────────────────────────────────────────
+let DATA = null;
+let currentSort = 'ytd';
+
+// ── Helpers ────────────────────────────────────────────────────────
+function fmtPct(v){ return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
+function fmtNum(v){ return v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function returnColor(pct){
+  if(pct > 15) return 'rgba(34,197,94,.9)';
+  if(pct > 10) return 'rgba(34,197,94,.7)';
+  if(pct > 5)  return 'rgba(34,197,94,.5)';
+  if(pct > 0)  return 'rgba(34,197,94,.3)';
+  if(pct > -5) return 'rgba(239,68,68,.3)';
+  if(pct > -10)return 'rgba(239,68,68,.5)';
+  if(pct > -15)return 'rgba(239,68,68,.7)';
+  return 'rgba(239,68,68,.9)';
+}
+
+function stripColor(pct){
+  if(pct > 10) return 'linear-gradient(90deg,#16a34a,#22c55e)';
+  if(pct > 0)  return 'linear-gradient(90deg,#065f46,#16a34a)';
+  if(pct > -10)return 'linear-gradient(90deg,#dc2626,#92400e)';
+  return 'linear-gradient(90deg,#991b1b,#dc2626)';
+}
+
+function pctClass(v){ return v >= 0 ? 'positive' : 'negative'; }
+
+function formatDate(iso){
+  const d = new Date(iso);
+  const opts = { day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit', timeZone:'UTC', timeZoneName:'short' };
+  return d.toLocaleDateString('en-GB', opts);
+}
+
+// ── Render Benchmarks ──────────────────────────────────────────────
+function renderBenchmarks(benchmarks){
+  const el = document.getElementById('benchmarks');
+  el.innerHTML = benchmarks.map(b => `
+    <div class="bench-pill">
+      <span class="name">${b.name}</span>
+      <span class="value">${fmtNum(b.price)}</span>
+      <span class="pct ${pctClass(b.ytd)}">${fmtPct(b.ytd)}</span>
+    </div>
+  `).join('');
+}
+
+// ── Sort Sectors ───────────────────────────────────────────────────
+function sortSectors(sectors, key){
+  const copy = [...sectors];
+  switch(key){
+    case 'ytd':    return copy.sort((a,b) => b.returnsYTD - a.returnsYTD);
+    case 'weight': return copy.sort((a,b) => b.osebxWeight - a.osebxWeight);
+    case 'pe':     return copy.sort((a,b) => a.peRatio - b.peRatio);
+    case 'div':    return copy.sort((a,b) => b.dividendYield - a.dividendYield);
+    default:       return copy;
+  }
+}
+
+// ── Build Card HTML ────────────────────────────────────────────────
+function cardHTML(s){
+  const w52 = s.week52;
+  const range = w52.high - w52.low;
+  const markerPct = range > 0 ? ((w52.current - w52.low) / range) * 100 : 50;
+  const conClass = s.analystConsensus.toLowerCase();
+
+  let holdingsHTML = '';
+  if(s.topHoldings && s.topHoldings.length){
+    holdingsHTML = s.topHoldings.map(h => `
+      <div class="holding">
+        <span><span class="holding-name">${h.name}</span><span class="holding-ticker">${h.ticker}</span></span>
+        <span class="holding-weight">${h.weight.toFixed(1)}%</span>
+      </div>
+    `).join('');
+  }
+
+  const mc = s.marketCapBreakdown || {large:33,mid:34,small:33};
+
+  return `
+    <div class="card" role="button" tabindex="0" aria-expanded="false" data-sector="${s.sectorName}">
+      <div class="card-strip" style="background:${stripColor(s.returnsYTD)}"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <div>
+            <div class="card-title">${s.sectorName}</div>
+            <div class="card-ticker">${s.ticker}</div>
+          </div>
+          <div class="card-weight">${s.osebxWeight.toFixed(1)}%</div>
+        </div>
+        <div class="returns-row">
+          <div class="return-cell">
+            <div class="return-label">YTD</div>
+            <div class="return-value ${pctClass(s.returnsYTD)}">${fmtPct(s.returnsYTD)}</div>
+          </div>
+          <div class="return-cell">
+            <div class="return-label">6M</div>
+            <div class="return-value ${pctClass(s.returns6M)}">${fmtPct(s.returns6M)}</div>
+          </div>
+          <div class="return-cell">
+            <div class="return-label">1Y</div>
+            <div class="return-value ${pctClass(s.returns1Y)}">${fmtPct(s.returns1Y)}</div>
+          </div>
+        </div>
+        <div class="metrics-row">
+          <div class="metric">
+            <div class="metric-label">P/E</div>
+            <div class="metric-value">${s.peRatio.toFixed(1)}</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Div. Yield</div>
+            <div class="metric-value">${s.dividendYield.toFixed(1)}%</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Consensus</div>
+            <div><span class="consensus ${conClass}">${s.analystConsensus}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="chevron">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="card-expand">
+        <div class="expand-inner">
+          <div class="expand-divider"></div>
+          <div class="holdings-title">Top 5 Holdings</div>
+          ${holdingsHTML}
+          <div class="mcap-section">
+            <div class="mcap-title">Market Cap Breakdown</div>
+            <div class="mcap-bar">
+              <div class="mcap-seg large" style="width:${mc.large}%"></div>
+              <div class="mcap-seg mid" style="width:${mc.mid}%"></div>
+              <div class="mcap-seg small" style="width:${mc.small}%"></div>
+            </div>
+            <div class="mcap-labels">
+              <span>Large ${mc.large}%</span>
+              <span>Mid ${mc.mid}%</span>
+              <span>Small ${mc.small}%</span>
+            </div>
+          </div>
+          <div class="range-section">
+            <div class="range-title">52-Week Range</div>
+            <div class="range-track">
+              <div class="range-fill" style="left:0;width:100%"></div>
+              <div class="range-marker" style="left:${markerPct}%"></div>
+            </div>
+            <div class="range-labels">
+              <span>${fmtNum(w52.low)}</span>
+              <span style="color:var(--accent);font-weight:600">${fmtNum(w52.current)}</span>
+              <span>${fmtNum(w52.high)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── Render Grid ────────────────────────────────────────────────────
+function renderGrid(){
+  if(!DATA) return;
+  const grid = document.getElementById('heatmap');
+  const sorted = sortSectors(DATA.sectors, currentSort);
+  grid.innerHTML = sorted.map(s => cardHTML(s)).join('');
+  attachCardListeners();
+  observeCards();
+}
+
+// ── Card Expansion ─────────────────────────────────────────────────
+function attachCardListeners(){
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', function(){
+      const isExpanded = this.classList.contains('expanded');
+      // Close all others
+      document.querySelectorAll('.card.expanded').forEach(c => {
+        c.classList.remove('expanded');
+        c.setAttribute('aria-expanded','false');
+      });
+      if(!isExpanded){
+        this.classList.add('expanded');
+        this.setAttribute('aria-expanded','true');
+      }
+    });
+    card.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        this.click();
+      }
+    });
+  });
+}
+
+// ── Intersection Observer (fade-in) ───────────────────────────────
+function observeCards(){
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if(entry.isIntersecting){
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.card').forEach(c => observer.observe(c));
+}
+
+// ── Sort Buttons ───────────────────────────────────────────────────
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentSort = this.dataset.sort;
+    renderGrid();
+  });
+});
+
+// ── Explainer Toggle ───────────────────────────────────────────────
+const explainerToggle = document.getElementById('explainerToggle');
+const explainerPanel = document.getElementById('explainerPanel');
+explainerToggle.addEventListener('click', function(){
+  const open = this.classList.toggle('open');
+  explainerPanel.classList.toggle('open', open);
+  this.setAttribute('aria-expanded', open);
+});
+
+// ── Fetch & Init ───────────────────────────────────────────────────
+fetch('./data.json?v=' + Date.now())
+  .then(r => { if(!r.ok) throw new Error('Failed to load data.json'); return r.json(); })
+  .then(data => {
+    DATA = data;
+    document.getElementById('timestamp').textContent = 'Last updated: ' + formatDate(data.lastUpdated);
+    renderBenchmarks(data.benchmarks);
+    renderGrid();
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById('heatmap').innerHTML =
+      '<div class="loading" style="color:var(--red-bright)">Could not load data. Make sure data.json exists.</div>';
+  });
+
+})();
+</script>
+</body>
+</html>
