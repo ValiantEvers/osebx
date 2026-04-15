@@ -34,5 +34,8 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add data.json
-          # Commit, pull the latest changes so we don't overwrite your work, then push
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update market data" && git pull --rebase origin main && git push)
+          # Only commit if there are changes
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update market data"
+          # Pull the latest changes from the repo before pushing
+          git pull --rebase origin main
+          git push
