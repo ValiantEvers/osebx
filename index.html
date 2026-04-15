@@ -423,6 +423,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .card-expanded-content {
   padding: 0 14px 14px;
   border-top: 1px solid var(--border);
+  background: var(--bg-elevated);
 }
 
 /* Returns row inside expanded */
@@ -822,6 +823,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   max-width: 720px;
   margin: 0 auto;
   padding: 0 24px 48px;
+  text-align: center;
 }
 .about-toggle {
   display: inline-flex;
@@ -850,6 +852,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   font-size: 0.78rem;
   color: var(--text-muted);
   line-height: 1.65;
+  text-align: left;
 }
 .about-content p { margin-bottom: 8px; }
 .about-content strong { color: var(--text-secondary); }
@@ -1132,6 +1135,27 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     }
   }
 
+  // Format the active sort metric for card display
+  function fmtSortDisplay(c) {
+    const key = currentSort.key;
+    const v = getSortValue(c, key);
+    switch (key) {
+      case 'returnsYTD': return { text: fmtPct(v), cls: clrPct(v) };
+      case 'marketCap': return { text: fmtMcap(v), cls: '' };
+      case 'peRatio': return { text: v != null ? fmtNum(v) + '×' : '—', cls: '' };
+      case 'pbRatio': return { text: v != null ? fmtNum(v) + '×' : '—', cls: '' };
+      case 'dividendYield': return { text: fmtPct(v), cls: v != null ? 'clr-green' : '' };
+      case 'meanRevDist': return { text: fmtPct(v), cls: clrPct(v) };
+      case 'alpha1Y': return { text: fmtPct(v), cls: clrPct(v) };
+      case 'sharpeRatio': return { text: fmtNum(v, 2), cls: clrSharpe(v) };
+      case 'maxDrawdown': return { text: fmtPct(v), cls: 'clr-red' };
+      case 'momentumScore': return { text: v != null ? fmtNum(v, 0) : '—', cls: '' };
+      case 'evToEbitda': return { text: v != null ? fmtRatio(v) : '—', cls: '' };
+      case 'earningsYield': return { text: fmtPct(v), cls: clrPct(v) };
+      default: return { text: fmtPct(c.returnsYTD), cls: clrPct(c.returnsYTD) };
+    }
+  }
+
   // ---- DOM refs ----
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
@@ -1214,7 +1238,9 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   // ---- Benchmarks ----
   function renderBenchmarks() {
     const row = $('#benchmarkRow');
-    row.innerHTML = (DATA.benchmarks || []).map(b =>
+    row.innerHTML = (DATA.benchmarks || [])
+      .filter(b => b.returnsYTD != null)
+      .map(b =>
       `<div class="bench-pill">
         <span class="bench-name">${b.name}</span>
         <span class="${clrPct(b.returnsYTD)}">${fmtPct(b.returnsYTD)}</span>
@@ -1251,10 +1277,19 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     container.addEventListener('click', (e) => {
       const tab = e.target.closest('.sector-tab');
       if (!tab) return;
-      $$('.sector-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      currentSector = tab.dataset.sector;
-      previousSector = currentSector;
+      const clicked = tab.dataset.sector;
+      // If clicking the already-active sector (not All), deselect to All
+      if (clicked === currentSector && clicked !== 'All') {
+        $$('.sector-tab').forEach(t => t.classList.remove('active'));
+        container.querySelector('[data-sector="All"]').classList.add('active');
+        currentSector = 'All';
+        previousSector = 'All';
+      } else {
+        $$('.sector-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentSector = clicked;
+        previousSector = currentSector;
+      }
       applyFiltersAndRender();
     });
   }
@@ -1390,12 +1425,13 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
     const recClass = (c.recommendation || '').replace(/\s+/g, '_').toLowerCase();
     const recLabel = (c.recommendation || '').replace(/_/g, ' ');
+    const sortDisp = fmtSortDisplay(c);
 
     el.innerHTML = `
       <div class="card-header" tabindex="0" role="button" aria-label="Expand ${c.companyName || c.ticker}">
         <div class="card-top-row">
           <span class="card-name">${c.companyName || c.ticker}</span>
-          <span class="card-ytd-main ${clrPct(c.returnsYTD)}">${fmtPct(c.returnsYTD)}</span>
+          <span class="card-ytd-main ${sortDisp.cls}">${sortDisp.text}</span>
         </div>
         <div class="card-meta">
           <span class="ticker-tag">${c.ticker.replace('.OL', '')}</span>
