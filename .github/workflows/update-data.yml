@@ -34,8 +34,16 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add data.json
-          # Only commit if there are changes
-          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-update market data"
-          # Pull the latest changes from the repo before pushing
-          git pull --rebase origin main
-          git push
+          
+          # Check if there are actually changes to save
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-update market data"
+            
+            # Pull any changes you made manually to prevent conflicts
+            git pull --rebase origin main
+            
+            # Push the updated JSON
+            git push
+          else
+            echo "No changes detected in data.json. Skipping commit."
+          fi
