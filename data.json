@@ -1,160 +1,205 @@
 {
-  "lastUpdated": "2026-04-15T08:00:00Z",
+  "lastUpdated": "2026-04-13T20:00:00Z",
   "referenceRates": {
     "riskFreeRate": 0.035,
     "bondYield10Y": 0.035
   },
-  "benchmarks": {
-    "OSEBX": 0.042,
-    "OBX": 0.038,
-    "OSEFX": 0.045
-  },
-  "sectorSummary": {
-    "Energy": {
-      "weight": 14.5,
-      "averageYTD": 0.08,
-      "averagePE": 8.5
+  "benchmarks": [
+    {
+      "ticker": "OSEBX.OL",
+      "name": "OSEBX",
+      "returnsYTD": 7.82,
+      "returns6M": 11.45,
+      "returns1Y": 14.21,
+      "latestClose": 1423.67
     },
-    "Financial Services": {
-      "weight": 10.2,
-      "averageYTD": 0.06,
-      "averagePE": 10.1
+    {
+      "ticker": "OBX.OL",
+      "name": "OBX",
+      "returnsYTD": 8.14,
+      "returns6M": 12.03,
+      "returns1Y": 15.06,
+      "latestClose": 1287.33
     },
-    "Consumer Defensive": {
-      "weight": 4.8,
-      "averageYTD": -0.02,
-      "averagePE": 18.2
+    {
+      "ticker": "OSEFX.OL",
+      "name": "OSEFX",
+      "returnsYTD": 7.56,
+      "returns6M": 10.89,
+      "returns1Y": 13.47,
+      "latestClose": 1198.42
     }
-  },
+  ],
   "companies": [
     {
       "ticker": "EQNR.OL",
       "companyName": "Equinor ASA",
       "sector": "Energy",
       "industry": "Oil & Gas Integrated",
-      "osebxWeight": 14.5,
-      "marketCap": 850000000000.0,
-      "peRatio": 8.5,
-      "forwardPE": 9.2,
-      "pbRatio": 1.4,
-      "dividendYield": 10.5,
-      "earningsYield": 11.7,
-      "evToEbitda": 2.1,
-      "dividendPayoutRatio": 85.0,
-      "liquidityScore": 650000000.0,
-      "analystTarget": 320.0,
-      "recommendation": "buy",
+      "osebxWeight": 9.5,
+      "marketCap": 612000000000,
+      "peRatio": 7.8,
+      "forwardPE": 8.4,
+      "pbRatio": 1.92,
+      "dividendYield": 3.85,
       "week52": {
-        "low": 260.5,
-        "high": 350.2,
-        "current": 290.0
+        "low": 248.1,
+        "high": 342.6,
+        "current": 306.45
       },
-      "meanReversion": {
-        "fiveYearAverage": 275.0,
-        "distancePercentage": 5.4
-      },
+      "analystTarget": 328.0,
+      "recommendation": "buy",
+      "returnsYTD": 12.34,
+      "returns6M": 15.67,
+      "returns1Y": 18.92,
       "alpha": {
-        "threeMonth": 0.02,
-        "sixMonth": 0.04,
-        "oneYear": -0.01
+        "threeMonth": 2.14,
+        "sixMonth": 4.22,
+        "oneYear": 4.71
       },
-      "dividendConsistency": null,
-      "seasonality": [0.01, -0.02, 0.03, 0.01, 0.05, -0.01, 0.02, 0.01, -0.03, -0.01, 0.04, 0.02],
-      "returnsYTD": 0.08,
-      "returns6M": 0.12,
-      "returns1Y": 0.05,
-      "sharpeRatio": 0.85,
-      "momentumScore": 75.0,
-      "maxDrawdown": -0.15,
-      "betaToBrent": 1.15,
-      "volatilityPercentile": 60,
-      "correlationToOSEBX": 0.88
+      "sharpeRatio": 1.12,
+      "momentumScore": 72.3,
+      "maxDrawdown": -14.2,
+      "volatilityPercentile": 42,
+      "correlationToOSEBX": 0.78,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 38.5,
+      "liquidityScore": 892000000,
+      "earningsYield": 12.82,
+      "evToEbitda": 3.6,
+      "meanReversion": {
+        "fiveYearAverage": 278.32,
+        "distancePercentage": 10.1
+      },
+      "betaToBrent": 0.82,
+      "seasonality": [1.2, 0.8, -0.3, 1.5, 2.1, -0.6, 0.4, -1.1, 1.8, 0.7, -0.2, 1.9]
     },
     {
       "ticker": "DNB.OL",
       "companyName": "DNB Bank ASA",
-      "sector": "Financial Services",
-      "industry": "Banks - Regional",
-      "osebxWeight": 10.2,
-      "marketCap": 320000000000.0,
-      "peRatio": 10.1,
-      "forwardPE": 9.5,
-      "pbRatio": 1.1,
-      "dividendYield": 6.8,
-      "earningsYield": 9.9,
-      "evToEbitda": null,
-      "dividendPayoutRatio": 60.5,
-      "liquidityScore": 450000000.0,
-      "analystTarget": 220.0,
-      "recommendation": "hold",
+      "sector": "Financials",
+      "industry": "Banks—Diversified",
+      "osebxWeight": 8.5,
+      "marketCap": 378000000000,
+      "peRatio": 10.2,
+      "forwardPE": 9.8,
+      "pbRatio": 1.54,
+      "dividendYield": 5.12,
       "week52": {
-        "low": 180.0,
-        "high": 225.0,
-        "current": 210.0
+        "low": 192.4,
+        "high": 248.3,
+        "current": 238.9
       },
-      "meanReversion": {
-        "fiveYearAverage": 190.0,
-        "distancePercentage": 10.5
-      },
+      "analystTarget": 252.0,
+      "recommendation": "buy",
+      "returnsYTD": 9.87,
+      "returns6M": 13.24,
+      "returns1Y": 21.56,
       "alpha": {
-        "threeMonth": -0.01,
-        "sixMonth": 0.02,
-        "oneYear": 0.05
+        "threeMonth": 0.85,
+        "sixMonth": 1.79,
+        "oneYear": 7.35
       },
-      "dividendConsistency": null,
-      "seasonality": [0.02, 0.01, 0.04, -0.01, 0.02, -0.02, 0.01, 0.01, 0.03, -0.02, 0.01, 0.02],
-      "returnsYTD": 0.06,
-      "returns6M": 0.08,
-      "returns1Y": 0.14,
-      "sharpeRatio": 1.1,
-      "momentumScore": 65.0,
-      "maxDrawdown": -0.08,
-      "betaToBrent": 0.45,
-      "volatilityPercentile": 30,
-      "correlationToOSEBX": 0.92
+      "sharpeRatio": 1.34,
+      "momentumScore": 68.1,
+      "maxDrawdown": -9.8,
+      "volatilityPercentile": 28,
+      "correlationToOSEBX": 0.85,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 52.1,
+      "liquidityScore": 645000000,
+      "earningsYield": 9.8,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 198.45,
+        "distancePercentage": 20.38
+      },
+      "betaToBrent": 0.34,
+      "seasonality": [0.9, 1.4, 0.2, 1.1, -0.4, 0.6, -0.8, 0.3, 1.6, 1.2, 0.5, 2.3]
     },
     {
       "ticker": "MOWI.OL",
       "companyName": "Mowi ASA",
-      "sector": "Consumer Defensive",
+      "sector": "Consumer Staples",
       "industry": "Farm Products",
-      "osebxWeight": 4.8,
-      "marketCap": 95000000000.0,
-      "peRatio": 18.2,
-      "forwardPE": 14.5,
-      "pbRatio": 2.8,
-      "dividendYield": 4.2,
-      "earningsYield": 5.5,
-      "evToEbitda": 11.2,
-      "dividendPayoutRatio": 75.0,
-      "liquidityScore": 250000000.0,
-      "analystTarget": 210.0,
-      "recommendation": "buy",
+      "osebxWeight": 3.0,
+      "marketCap": 114000000000,
+      "peRatio": 14.6,
+      "forwardPE": 12.8,
+      "pbRatio": 2.31,
+      "dividendYield": 4.24,
       "week52": {
-        "low": 165.0,
-        "high": 205.0,
-        "current": 185.0
+        "low": 168.5,
+        "high": 226.4,
+        "current": 210.8
       },
-      "meanReversion": {
-        "fiveYearAverage": 200.0,
-        "distancePercentage": -7.5
-      },
+      "analystTarget": 220.0,
+      "recommendation": "hold",
+      "returnsYTD": 5.43,
+      "returns6M": 8.12,
+      "returns1Y": 11.34,
       "alpha": {
-        "threeMonth": -0.05,
-        "sixMonth": -0.08,
-        "oneYear": -0.12
+        "threeMonth": -1.56,
+        "sixMonth": -3.33,
+        "oneYear": -2.87
       },
-      "dividendConsistency": null,
-      "seasonality": [-0.01, 0.02, 0.01, 0.03, -0.02, -0.01, 0.04, 0.05, 0.02, -0.04, -0.02, 0.01],
-      "returnsYTD": -0.02,
-      "returns6M": -0.05,
-      "returns1Y": -0.08,
-      "sharpeRatio": -0.4,
-      "momentumScore": 25.0,
-      "maxDrawdown": -0.22,
-      "betaToBrent": 0.12,
-      "volatilityPercentile": 85,
-      "correlationToOSEBX": 0.65
+      "sharpeRatio": 0.62,
+      "momentumScore": 41.7,
+      "maxDrawdown": -18.5,
+      "volatilityPercentile": 55,
+      "correlationToOSEBX": 0.52,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "stable"
+      },
+      "dividendPayoutRatio": 61.8,
+      "liquidityScore": 312000000,
+      "earningsYield": 6.85,
+      "evToEbitda": 9.4,
+      "meanReversion": {
+        "fiveYearAverage": 195.6,
+        "distancePercentage": 7.77
+      },
+      "betaToBrent": 0.15,
+      "seasonality": [-0.5, 0.3, 1.8, 2.4, -1.2, 0.9, -0.7, 1.3, 2.6, -0.4, 0.1, 1.1]
+    }
+  ],
+  "sectorSummary": [
+    {
+      "sector": "Energy",
+      "companyCount": 1,
+      "totalWeight": 9.5,
+      "avgReturnYTD": 12.34,
+      "avgPE": 7.8,
+      "avgEvToEbitda": 3.6,
+      "avgDividendYield": 3.85,
+      "avgSharpe": 1.12
+    },
+    {
+      "sector": "Financials",
+      "companyCount": 1,
+      "totalWeight": 8.5,
+      "avgReturnYTD": 9.87,
+      "avgPE": 10.2,
+      "avgEvToEbitda": null,
+      "avgDividendYield": 5.12,
+      "avgSharpe": 1.34
+    },
+    {
+      "sector": "Consumer Staples",
+      "companyCount": 1,
+      "totalWeight": 3.0,
+      "avgReturnYTD": 5.43,
+      "avgPE": 14.6,
+      "avgEvToEbitda": 9.4,
+      "avgDividendYield": 4.24,
+      "avgSharpe": 0.62
     }
   ]
 }
