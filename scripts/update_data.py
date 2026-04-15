@@ -42,7 +42,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# Norwegian reference rates — update these periodically when rates change.
+# Norwegian reference rates -- update these periodically when rates change.
 RISK_FREE_RATE = 0.035        # 3-month Norwegian government bill yield (approx.)
 BOND_YIELD_10Y = 0.035        # 10-year Norwegian government bond yield (approx.)
 
@@ -59,6 +59,27 @@ BATCH_SIZE = 12               # Tickers per yahooquery batch for fundamentals
 FETCH_DELAY = 0.4             # Seconds between batch fetches
 
 # ---------------------------------------------------------------------------
+# Sector Name Normalisation
+# ---------------------------------------------------------------------------
+# Yahoo Finance returns different GICS sector names than our canonical list.
+# This map ensures consistent naming in the output JSON.
+
+SECTOR_NORM = {
+    "Financial Services": "Financials",
+    "Consumer Defensive": "Consumer Staples",
+    "Consumer Cyclical":  "Consumer Discretionary",
+    "Basic Materials":    "Materials",
+    "Healthcare":         "Health Care",
+    "Technology":         "Information Technology",
+}
+
+def norm_sector(s: str) -> str:
+    """Normalise a sector name to canonical GICS."""
+    if not s:
+        return "Unknown"
+    return SECTOR_NORM.get(s, s)
+
+# ---------------------------------------------------------------------------
 # OSEBX Constituent List (source of truth)
 # ---------------------------------------------------------------------------
 # Each entry: (Yahoo ticker, short display name, GICS sector, approx OSEBX weight %)
@@ -68,20 +89,20 @@ CONSTITUENTS = [
     # Energy
     ("EQNR.OL",  "Equinor",               "Energy",                  9.50),
     ("AKRBP.OL", "Aker BP",               "Energy",                  3.20),
-    ("VAR.OL",   "Vår Energi",            "Energy",                  1.60),
+    ("VAR.OL",   "Var Energi",            "Energy",                  1.60),
     ("SUBC.OL",  "Subsea 7",              "Energy",                  1.50),
     ("AKSO.OL",  "Aker Solutions",         "Energy",                  0.70),
     ("BWE.OL",   "BW Energy",             "Energy",                  0.10),
-    ("BWLPG.OL", "BW LPG",               "Energy",                  0.35),
+    ("BWLPG.OL", "BW LPG",               "Industrials",             0.35),
     ("TGS.OL",   "TGS",                   "Energy",                  0.50),
     ("BORR.OL",  "Borr Drilling",         "Energy",                  0.25),
-    ("HAUTO.OL", "Hafnia",                "Energy",                  0.60),
+    ("HAUTO.OL", "Hoegh Autoliners",      "Industrials",             0.60),
 
     # Financials
     ("DNB.OL",   "DNB Bank",              "Financials",              8.50),
     ("MORG.OL",  "SpareBank 1 SMN",       "Financials",              0.55),
     ("SRBNK.OL", "SpareBank 1 SR-Bank",   "Financials",              0.70),
-    ("NOFI.OL",  "SpareBank 1 Østlandet", "Financials",              0.30),
+    ("NOFI.OL",  "SpareBank 1 Ostlandet", "Financials",              0.30),
     ("HELG.OL",  "SpareBank 1 Helgeland", "Financials",              0.10),
     ("NONG.OL",  "SpareBank 1 Nord-Norge","Financials",              0.25),
     ("SBANK.OL", "Sbanken (DNB subsidiary)", "Financials",           0.05),
@@ -95,12 +116,13 @@ CONSTITUENTS = [
     # Consumer Staples
     ("MOWI.OL",  "Mowi",                  "Consumer Staples",        3.00),
     ("SALM.OL",  "SalMar",                "Consumer Staples",        1.60),
-    ("LSG.OL",   "Lerøy Seafood",         "Consumer Staples",        0.70),
+    ("LSG.OL",   "Leroy Seafood",         "Consumer Staples",        0.70),
     ("AUSS.OL",  "Austevoll Seafood",     "Consumer Staples",        0.35),
     ("BAKKA.OL", "Bakkafrost",            "Consumer Staples",        0.60),
     ("ORK.OL",   "Orkla",                 "Consumer Staples",        2.10),
     ("GSF.OL",   "Grieg Seafood",         "Consumer Staples",        0.20),
     ("SCHB.OL",  "Schibsted A",           "Consumer Discretionary",  1.40),
+    ("EPR.OL",   "Europris",              "Consumer Staples",        0.30),
 
     # Industrials
     ("KOG.OL",   "Kongsberg Gruppen",     "Industrials",             4.50),
@@ -109,24 +131,25 @@ CONSTITUENTS = [
     ("FLNG.OL",  "Flex LNG",             "Industrials",              0.25),
     ("COOL.OL",  "CoolCo",               "Industrials",              0.15),
     ("TOM.OL",   "Tomra Systems",         "Industrials",             1.40),
-    ("AUTO.OL",  "Autostore Holdings",    "Industrials",             0.80),
     ("MPCC.OL",  "MPC Container Ships",   "Industrials",             0.20),
     ("BELCO.OL", "Bonheur",              "Industrials",              0.20),
-    ("KIT.OL",   "Kitron",               "Industrials",              0.25),
-    ("EPR.OL",   "Europris",             "Consumer Discretionary",   0.30),
-
-    # Materials
-    ("NHY.OL",   "Norsk Hydro",          "Materials",               3.00),
-    ("YAR.OL",   "Yara International",   "Materials",               2.50),
-    ("ELMRA.OL", "Elkem",                "Materials",               0.50),
+    ("NEL.OL",   "Industrials",           "Industrials",             0.40),
 
     # Information Technology
+    ("AUTO.OL",  "Autostore Holdings",    "Information Technology",   0.80),
+    ("KIT.OL",   "Kitron",               "Information Technology",   0.25),
     ("CRAYN.OL", "Crayon Group",         "Information Technology",   0.60),
     ("NOD.OL",   "Nordic Semiconductor", "Information Technology",   1.20),
     ("OPER.OL",  "Opera Ltd",            "Information Technology",   0.25),
     ("VOLUE.OL", "Volue",                "Information Technology",   0.15),
     ("PEXIP.OL", "Pexip Holding",        "Information Technology",   0.15),
     ("B2H.OL",   "B2Holding",            "Information Technology",   0.10),
+    ("RECSI.OL", "REC Silicon",          "Information Technology",   0.15),
+    ("KAHOT.OL", "Kahoot!",              "Information Technology",   0.25),
+
+    # Materials
+    ("NHY.OL",   "Norsk Hydro",          "Materials",               3.00),
+    ("YAR.OL",   "Yara International",   "Materials",               2.50),
 
     # Communication Services / Telecom
     ("TEL.OL",   "Telenor",              "Communication Services",   4.50),
@@ -134,8 +157,8 @@ CONSTITUENTS = [
 
     # Utilities
     ("SCHA.OL",  "Scatec",               "Utilities",               0.40),
-    ("HEX.OL",   "Hexagon Composites",   "Utilities",               0.20),
-    ("NEL.OL",   "Nel",                  "Utilities",               0.40),
+    ("ELMRA.OL", "Elmera Group",         "Utilities",               0.50),
+    ("HEX.OL",   "Hexagon Composites",   "Consumer Discretionary",  0.20),
 
     # Real Estate
     ("ENTRA.OL", "Entra",                "Real Estate",             0.60),
@@ -153,8 +176,6 @@ CONSTITUENTS = [
     ("GOGL.OL",  "Golden Ocean Group",   "Energy",                  0.50),
     ("KOA.OL",   "Kongsberg Automotive", "Consumer Discretionary",  0.10),
     ("PGS.OL",   "PGS",                  "Energy",                  0.20),
-    ("RECSI.OL", "REC Silicon",          "Information Technology",   0.15),
-    ("KAHOT.OL", "Kahoot!",              "Information Technology",   0.25),
 ]
 
 
@@ -402,7 +423,6 @@ def compute_volatility_percentile(hist: pd.DataFrame) -> Optional[int]:
     try:
         closes = hist["close"]
         daily_ret = closes.pct_change().dropna()
-        # Rolling 30-day vol (annualised)
         rolling_vol = daily_ret.rolling(30).std() * np.sqrt(252)
         rolling_vol = rolling_vol.dropna()
         if len(rolling_vol) < 30:
@@ -423,7 +443,6 @@ def compute_correlation_to_osebx(stock_hist: pd.DataFrame, osebx_hist: pd.DataFr
     try:
         sr = stock_hist["close"].pct_change().dropna()
         br = osebx_hist["close"].pct_change().dropna()
-        # Inner join on dates
         combined = pd.concat([sr, br], axis=1, join="inner")
         combined.columns = ["stock", "bench"]
         combined = combined.iloc[-TRADING_DAYS_1Y:]
@@ -460,7 +479,7 @@ def compute_beta_to_brent(stock_hist: pd.DataFrame, brent_hist: pd.DataFrame) ->
 
 def compute_momentum_scores(companies: list[dict], hists: dict) -> dict[str, float]:
     """
-    Compute raw momentum for each ticker, then normalise to 0–100.
+    Compute raw momentum for each ticker, then normalise to 0-100.
     Momentum = 0.3*(12M_return_ex_1M) + 0.3*(6M_return) + 0.25*(3M_return) + 0.15*(1M_return)
     """
     raw = {}
@@ -479,9 +498,7 @@ def compute_momentum_scores(companies: list[dict], hists: dict) -> dict[str, flo
             if any(v is None or pd.isna(v) for v in [ret_1m, ret_3m, ret_6m, ret_12m]):
                 continue
 
-            # 12M return ex-1M (remove most recent month to reduce reversal noise)
             ret_12m_ex_1m = ret_12m - ret_1m
-
             score = 0.3 * ret_12m_ex_1m + 0.3 * ret_6m + 0.25 * ret_3m + 0.15 * ret_1m
             if not np.isnan(score) and not np.isinf(score):
                 raw[ticker] = float(score)
@@ -501,14 +518,13 @@ def compute_momentum_scores(companies: list[dict], hists: dict) -> dict[str, flo
 
 
 def compute_seasonality(hist: pd.DataFrame) -> Optional[list[Optional[float]]]:
-    """TIER 3: Average return for each calendar month over last 5 years."""
+    """Average return for each calendar month over last 5 years."""
     if hist is None or len(hist) < TRADING_DAYS_1Y * 2:
         return None
     try:
         closes = hist["close"].copy()
         monthly = closes.resample("ME").last()
         monthly_ret = monthly.pct_change().dropna()
-        # Filter to last ~5 years
         cutoff = monthly_ret.index[-1] - pd.DateOffset(years=5)
         monthly_ret = monthly_ret[monthly_ret.index >= cutoff]
         if len(monthly_ret) < 12:
@@ -533,7 +549,6 @@ def compute_dividend_consistency(ticker_obj, ticker_str: str) -> Optional[Divide
             return DividendConsistency(yearsWithDividend=0, trend="none")
 
         divs = divs.reset_index()
-        # Handle multi-index (ticker + date)
         if "date" in divs.columns:
             date_col = "date"
         elif "index" in divs.columns:
@@ -543,26 +558,23 @@ def compute_dividend_consistency(ticker_obj, ticker_str: str) -> Optional[Divide
 
         divs["year"] = pd.to_datetime(divs[date_col]).dt.year
 
-        # Determine dividend column name
         div_col = None
         for candidate in ["dividends", "dividend", "amount"]:
             if candidate in [c.lower() for c in divs.columns]:
                 div_col = [c for c in divs.columns if c.lower() == candidate][0]
                 break
         if div_col is None:
-            # Last numeric column
             numeric_cols = divs.select_dtypes(include=[np.number]).columns
             if len(numeric_cols) == 0:
                 return DividendConsistency(yearsWithDividend=0, trend="none")
             div_col = numeric_cols[-1]
 
         current_year = datetime.now().year
-        target_years = list(range(current_year - 5, current_year))  # last 5 full years
+        target_years = list(range(current_year - 5, current_year))
         yearly_totals = divs.groupby("year")[div_col].sum()
 
         years_with = sum(1 for y in target_years if y in yearly_totals.index and yearly_totals[y] > 0)
 
-        # Trend
         paid_years = sorted([y for y in target_years if y in yearly_totals.index and yearly_totals[y] > 0])
         if len(paid_years) < 2:
             trend = "none" if years_with == 0 else "stable"
@@ -592,12 +604,10 @@ def fetch_history(ticker_str: str, period: str = "10y") -> Optional[pd.DataFrame
         h = t.history(period=period)
         if isinstance(h, str) or h is None or h.empty:
             return None
-        # If multi-index, drop the symbol level
         if isinstance(h.index, pd.MultiIndex):
             h = h.droplevel("symbol")
         h.index = pd.to_datetime(h.index)
         h = h.sort_index()
-        # Standardise column names to lowercase
         h.columns = [c.lower() for c in h.columns]
         return h
     except Exception as e:
@@ -615,12 +625,11 @@ def fetch_benchmarks() -> tuple[dict[str, pd.DataFrame], list[BenchmarkData]]:
         h = fetch_history(tk, period="10y")
         if h is not None:
             histories[tk] = h
-            log.info(f"    ✓ {len(h)} data points")
+            log.info(f"    Got {len(h)} data points")
         else:
-            log.warning(f"    ✗ No data for {tk}")
+            log.warning(f"    No data for {tk}")
         time.sleep(0.3)
 
-    # Build benchmark summary records
     name_map = {"OSEBX.OL": "OSEBX", "OBX.OL": "OBX", "OSEFX.OL": "OSEFX"}
     for tk in BENCHMARK_TICKERS:
         h = histories.get(tk)
@@ -655,43 +664,37 @@ def fetch_fundamentals_batch(tickers: list[str]) -> dict:
 
     for tk in tickers:
         data = {}
-        # Price data
         p = safe_get(prices, tk)
         if p and isinstance(p, dict):
             data["companyName"] = p.get("shortName") or p.get("longName")
             data["marketCap"] = p.get("marketCap")
             data["currentPrice"] = p.get("regularMarketPrice")
 
-        # Summary detail
         sd = safe_get(summaries, tk)
         if sd and isinstance(sd, dict):
             data["peRatio"] = sd.get("trailingPE")
             data["forwardPE"] = sd.get("forwardPE")
             data["dividendYield"] = sd.get("dividendYield")
             if data["dividendYield"] is not None:
-                data["dividendYield"] = data["dividendYield"] * 100  # to percentage
+                data["dividendYield"] = data["dividendYield"] * 100
             data["week52Low"] = sd.get("fiftyTwoWeekLow")
             data["week52High"] = sd.get("fiftyTwoWeekHigh")
             data["dividendRate"] = sd.get("dividendRate")
             data["trailingEPS_from_PE"] = None
-            # Compute EPS from PE if available
             if data.get("peRatio") and data.get("currentPrice") and data["peRatio"] > 0:
                 data["trailingEPS_from_PE"] = data["currentPrice"] / data["peRatio"]
 
-        # Summary profile
         sp = safe_get(profiles, tk)
         if sp and isinstance(sp, dict):
             data["sector"] = sp.get("sector")
             data["industry"] = sp.get("industry")
 
-        # Key stats
         ks = safe_get(keystats, tk)
         if ks and isinstance(ks, dict):
             data["pbRatio"] = ks.get("priceToBook")
             data["enterpriseValue"] = ks.get("enterpriseValue")
             data["trailingEPS"] = ks.get("trailingEps")
 
-        # Financial data
         fd = safe_get(fin_data, tk)
         if fd and isinstance(fd, dict):
             data["analystTarget"] = fd.get("targetMeanPrice")
@@ -716,72 +719,50 @@ def process_company(
     """Build a CompanyRecord for one company, computing all derived metrics."""
     f = fundamentals or {}
 
-    # Basic info
     company_name = f.get("companyName") or display_name
     current_price = f.get("currentPrice")
 
-    # Week52
     w52 = Week52(
         low=to_py(f.get("week52Low")),
         high=to_py(f.get("week52High")),
         current=to_py(current_price),
     )
 
-    # Returns
     ytd = compute_ytd_return(hist)
     r6m = compute_return(hist, TRADING_DAYS_6M)
     r1y = compute_return(hist, TRADING_DAYS_1Y)
 
-    # Alpha
     alpha = Alpha(
         threeMonth=compute_alpha(hist, osebx_hist, TRADING_DAYS_3M),
         sixMonth=compute_alpha(hist, osebx_hist, TRADING_DAYS_6M),
         oneYear=compute_alpha(hist, osebx_hist, TRADING_DAYS_1Y),
     )
 
-    # Sharpe
     sharpe = compute_sharpe(hist)
-
-    # Max drawdown
     mdd = compute_max_drawdown(hist)
-
-    # Mean reversion
     mr = compute_mean_reversion(hist)
-
-    # Volatility percentile
     vol_pct = compute_volatility_percentile(hist)
-
-    # Correlation to OSEBX
     corr = compute_correlation_to_osebx(hist, osebx_hist)
-
-    # Beta to Brent (Tier 3)
     beta_brent = compute_beta_to_brent(hist, brent_hist)
-
-    # Seasonality (Tier 3)
     season = compute_seasonality(hist)
 
-    # Earnings yield
     eps = f.get("trailingEPS") or f.get("trailingEPS_from_PE")
     earnings_yield = None
     if eps and current_price and current_price > 0:
         earnings_yield = to_py((eps / current_price) * 100)
 
-    # EV/EBITDA
     ev_ebitda = None
     ev = f.get("enterpriseValue")
     ebitda = f.get("ebitda")
     if ev and ebitda and ebitda > 0:
         ev_ebitda = to_py(ev / ebitda)
 
-    # Dividend payout ratio
     div_payout = None
     div_rate = f.get("dividendRate")
     if div_rate and eps and eps > 0:
         div_payout = to_py((div_rate / eps) * 100)
 
-    # Liquidity score
     liquidity = None
-    # We'll compute this from history if available
     if hist is not None and len(hist) > 30 and "volume" in hist.columns and current_price:
         try:
             avg_vol = hist["volume"].iloc[-30:].mean()
@@ -790,8 +771,9 @@ def process_company(
         except Exception:
             pass
 
-    # Use sector from yahooquery if available, else from our hardcoded list
-    actual_sector = f.get("sector") or sector
+    # Normalise sector: prefer Yahoo's sector (normalised), fall back to hardcoded
+    yahoo_sector = f.get("sector")
+    actual_sector = norm_sector(yahoo_sector) if yahoo_sector else sector
 
     record = CompanyRecord(
         ticker=ticker_str,
@@ -812,11 +794,11 @@ def process_company(
         returns1Y=r1y,
         alpha=alpha,
         sharpeRatio=sharpe,
-        momentumScore=None,  # Set later after normalisation
+        momentumScore=None,
         maxDrawdown=mdd,
         volatilityPercentile=vol_pct,
         correlationToOSEBX=corr,
-        dividendConsistency=None,  # Set later
+        dividendConsistency=None,
         dividendPayoutRatio=div_payout,
         liquidityScore=liquidity,
         earningsYield=earnings_yield,
@@ -830,7 +812,7 @@ def process_company(
 
 
 def compute_sector_summary(companies: list[CompanyRecord]) -> list[SectorSummary]:
-    """Compute aggregate stats per sector."""
+    """Compute aggregate stats per sector, requiring at least 2 companies with data."""
     sectors: dict[str, list[CompanyRecord]] = {}
     for c in companies:
         s = c.sector or "Unknown"
@@ -840,7 +822,7 @@ def compute_sector_summary(companies: list[CompanyRecord]) -> list[SectorSummary
     for sector_name, members in sorted(sectors.items()):
         def avg(vals):
             clean = [v for v in vals if v is not None]
-            return round(sum(clean) / len(clean), 2) if clean else None
+            return round(sum(clean) / len(clean), 2) if len(clean) >= 2 else (clean[0] if len(clean) == 1 else None)
 
         summaries.append(SectorSummary(
             sector=sector_name,
@@ -862,7 +844,7 @@ def compute_sector_summary(companies: list[CompanyRecord]) -> list[SectorSummary
 
 def main():
     log.info("=" * 60)
-    log.info("OSEBX Heatmap Data Pipeline — Starting")
+    log.info("OSEBX Heatmap Data Pipeline -- Starting")
     log.info("=" * 60)
 
     # Step 1: Fetch benchmarks
@@ -872,7 +854,7 @@ def main():
     brent_hist = bench_histories.get(BRENT_TICKER)
 
     if osebx_hist is None:
-        log.warning("⚠  OSEBX history unavailable — alpha calculations will return null")
+        log.warning("OSEBX history unavailable -- alpha calculations will return null")
 
     # Step 2: Fetch fundamentals in batches
     log.info(f"\n[Step 2/5] Fetching fundamentals for {len(CONSTITUENTS)} companies...")
@@ -893,17 +875,16 @@ def main():
     log.info(f"\n[Step 3/5] Fetching price histories and computing metrics...")
     all_histories: dict[str, pd.DataFrame] = {}
     company_records: list[CompanyRecord] = []
-    partial_records: list[dict] = []  # For momentum normalisation
 
     for idx, (ticker, name, sector, weight) in enumerate(CONSTITUENTS, 1):
-        log.info(f"  [{idx}/{len(CONSTITUENTS)}] {ticker} — {name}")
+        log.info(f"  [{idx}/{len(CONSTITUENTS)}] {ticker} -- {name}")
         try:
             hist = fetch_history(ticker, period="10y")
             if hist is not None:
                 all_histories[ticker] = hist
-                log.info(f"    ✓ {len(hist)} data points")
+                log.info(f"    {len(hist)} data points")
             else:
-                log.warning(f"    ✗ No history data")
+                log.warning(f"    No history data")
 
             fund = all_fundamentals.get(ticker, {})
             record = process_company(
@@ -912,7 +893,6 @@ def main():
             )
 
             if record:
-                # Fetch dividend consistency
                 try:
                     t_obj = Ticker(ticker)
                     record.dividendConsistency = compute_dividend_consistency(t_obj, ticker)
@@ -920,14 +900,12 @@ def main():
                     pass
 
                 company_records.append(record)
-                partial_records.append({"ticker": ticker})
             else:
-                log.warning(f"    ✗ Skipped (no usable data)")
+                log.warning(f"    Skipped (no usable data)")
 
         except Exception as e:
-            log.warning(f"    ✗ Failed: {e}")
+            log.warning(f"    Failed: {e}")
 
-        # Small delay between individual fetches
         if idx % 5 == 0:
             time.sleep(0.3)
 
@@ -956,7 +934,6 @@ def main():
         sectorSummary=sector_summary,
     )
 
-    # Serialize to JSON
     output_dict = output.model_dump(mode="json")
     json_str = json.dumps(output_dict, indent=2, ensure_ascii=False, default=str)
 
@@ -964,7 +941,7 @@ def main():
         f.write(json_str)
 
     log.info(f"\n{'=' * 60}")
-    log.info(f"✓ Done! {len(company_records)} companies written to data.json")
+    log.info(f"Done! {len(company_records)} companies written to data.json")
     log.info(f"  Sectors: {len(sector_summary)}")
     log.info(f"  Benchmarks: {len(benchmark_records)}")
     log.info(f"  File size: {len(json_str):,} bytes")
