@@ -1,387 +1,968 @@
+#!/usr/bin/env python3
+"""
+OSEBX Company Heatmap — Data Pipeline
+======================================
+Fetches fundamental and historical data for all OSEBX constituents via yahooquery,
+computes analytical metrics (alpha, Sharpe, momentum, drawdown, etc.), validates
+through Pydantic, and writes data.json for the frontend dashboard.
+
+Intended to run weekly via GitHub Actions (see .github/workflows/update-data.yml).
+
+IMPORTANT: The constituent list below is manually maintained and should be updated
+when the OSEBX index rebalances (typically in June and December each year).
+Last updated: April 2026.
+"""
+
 import json
+import logging
+import sys
 import time
-import datetime
+from datetime import datetime, timezone
+from typing import Optional
+
 import numpy as np
 import pandas as pd
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 from yahooquery import Ticker
-from pydantic import BaseModel, ConfigDict, Field
-from typing import List, Optional, Dict, Any
 
-import random
-from yahooquery import utils
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
 
-# Override the default yahooquery User-Agent to pretend to be a real Chrome browser
-utils.USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s  %(message)s",
+    datefmt="%H:%M:%S",
+)
+log = logging.getLogger(__name__)
 
-# ==========================================
-# PYDANTIC MODELS (Validation Layer)
-# ==========================================
+# Norwegian reference rates — update these periodically when rates change.
+RISK_FREE_RATE = 0.035        # 3-month Norwegian government bill yield (approx.)
+BOND_YIELD_10Y = 0.035        # 10-year Norwegian government bond yield (approx.)
+
+TRADING_DAYS_1M = 21
+TRADING_DAYS_3M = 63
+TRADING_DAYS_6M = 126
+TRADING_DAYS_1Y = 252
+TRADING_DAYS_5Y = 1260
+
+BENCHMARK_TICKERS = ["OSEBX.OL", "OBX.OL", "OSEFX.OL"]
+BRENT_TICKER = "BZ=F"
+
+BATCH_SIZE = 12               # Tickers per yahooquery batch for fundamentals
+FETCH_DELAY = 0.4             # Seconds between batch fetches
+
+# ---------------------------------------------------------------------------
+# OSEBX Constituent List (source of truth)
+# ---------------------------------------------------------------------------
+# Each entry: (Yahoo ticker, short display name, GICS sector, approx OSEBX weight %)
+# Weights are approximate and manually maintained. They will not sum to exactly 100%.
+
+CONSTITUENTS = [
+    # Energy
+    ("EQNR.OL",  "Equinor",               "Energy",                  9.50),
+    ("AKRBP.OL", "Aker BP",               "Energy",                  3.20),
+    ("VAR.OL",   "Vår Energi",            "Energy",                  1.60),
+    ("SUBC.OL",  "Subsea 7",              "Energy",                  1.50),
+    ("AKSO.OL",  "Aker Solutions",         "Energy",                  0.70),
+    ("BWE.OL",   "BW Energy",             "Energy",                  0.10),
+    ("BWLPG.OL", "BW LPG",               "Energy",                  0.35),
+    ("TGS.OL",   "TGS",                   "Energy",                  0.50),
+    ("BORR.OL",  "Borr Drilling",         "Energy",                  0.25),
+    ("HAUTO.OL", "Hafnia",                "Energy",                  0.60),
+
+    # Financials
+    ("DNB.OL",   "DNB Bank",              "Financials",              8.50),
+    ("MORG.OL",  "SpareBank 1 SMN",       "Financials",              0.55),
+    ("SRBNK.OL", "SpareBank 1 SR-Bank",   "Financials",              0.70),
+    ("NOFI.OL",  "SpareBank 1 Østlandet", "Financials",              0.30),
+    ("HELG.OL",  "SpareBank 1 Helgeland", "Financials",              0.10),
+    ("NONG.OL",  "SpareBank 1 Nord-Norge","Financials",              0.25),
+    ("SBANK.OL", "Sbanken (DNB subsidiary)", "Financials",           0.05),
+    ("GJF.OL",   "Gjensidige Forsikring", "Financials",              1.50),
+    ("STB.OL",   "Storebrand",            "Financials",              1.40),
+    ("PROTCT.OL","Protector Forsikring",   "Financials",             0.25),
+    ("PARB.OL",  "Pareto Bank",           "Financials",              0.10),
+    ("ABG.OL",   "ABG Sundal Collier",    "Financials",              0.10),
+    ("ADE.OL",   "Adevinta",              "Financials",              0.60),
+
+    # Consumer Staples
+    ("MOWI.OL",  "Mowi",                  "Consumer Staples",        3.00),
+    ("SALM.OL",  "SalMar",                "Consumer Staples",        1.60),
+    ("LSG.OL",   "Lerøy Seafood",         "Consumer Staples",        0.70),
+    ("AUSS.OL",  "Austevoll Seafood",     "Consumer Staples",        0.35),
+    ("BAKKA.OL", "Bakkafrost",            "Consumer Staples",        0.60),
+    ("ORK.OL",   "Orkla",                 "Consumer Staples",        2.10),
+    ("GSF.OL",   "Grieg Seafood",         "Consumer Staples",        0.20),
+    ("SCHB.OL",  "Schibsted A",           "Consumer Discretionary",  1.40),
+
+    # Industrials
+    ("KOG.OL",   "Kongsberg Gruppen",     "Industrials",             4.50),
+    ("WILS.OL",  "Wilh. Wilhelmsen Hldg", "Industrials",             0.50),
+    ("WWI.OL",   "Wallenius Wilhelmsen",  "Industrials",             1.20),
+    ("FLNG.OL",  "Flex LNG",             "Industrials",              0.25),
+    ("COOL.OL",  "CoolCo",               "Industrials",              0.15),
+    ("TOM.OL",   "Tomra Systems",         "Industrials",             1.40),
+    ("AUTO.OL",  "Autostore Holdings",    "Industrials",             0.80),
+    ("MPCC.OL",  "MPC Container Ships",   "Industrials",             0.20),
+    ("BELCO.OL", "Bonheur",              "Industrials",              0.20),
+    ("KIT.OL",   "Kitron",               "Industrials",              0.25),
+    ("EPR.OL",   "Europris",             "Consumer Discretionary",   0.30),
+
+    # Materials
+    ("NHY.OL",   "Norsk Hydro",          "Materials",               3.00),
+    ("YAR.OL",   "Yara International",   "Materials",               2.50),
+    ("ELMRA.OL", "Elkem",                "Materials",               0.50),
+
+    # Information Technology
+    ("CRAYN.OL", "Crayon Group",         "Information Technology",   0.60),
+    ("NOD.OL",   "Nordic Semiconductor", "Information Technology",   1.20),
+    ("OPER.OL",  "Opera Ltd",            "Information Technology",   0.25),
+    ("VOLUE.OL", "Volue",                "Information Technology",   0.15),
+    ("PEXIP.OL", "Pexip Holding",        "Information Technology",   0.15),
+    ("B2H.OL",   "B2Holding",            "Information Technology",   0.10),
+
+    # Communication Services / Telecom
+    ("TEL.OL",   "Telenor",              "Communication Services",   4.50),
+    ("ATEA.OL",  "Atea",                 "Communication Services",   0.40),
+
+    # Utilities
+    ("SCHA.OL",  "Scatec",               "Utilities",               0.40),
+    ("HEX.OL",   "Hexagon Composites",   "Utilities",               0.20),
+    ("NEL.OL",   "Nel",                  "Utilities",               0.40),
+
+    # Real Estate
+    ("ENTRA.OL", "Entra",                "Real Estate",             0.60),
+    ("OLT.OL",   "Olav Thon Eiendom",   "Real Estate",             0.30),
+    ("SOR.OL",   "Self Storage Group",   "Real Estate",             0.10),
+
+    # Health Care
+    ("PHO.OL",   "Photocure",            "Health Care",             0.10),
+    ("MEDI.OL",  "Medistim",             "Health Care",             0.10),
+
+    # Additional constituents (may shift between sectors/rebalances)
+    ("AKER.OL",  "Aker",                 "Industrials",             1.00),
+    ("AKAST.OL", "Aker Horizons",        "Industrials",             0.15),
+    ("FRO.OL",   "Frontline",            "Energy",                  1.20),
+    ("GOGL.OL",  "Golden Ocean Group",   "Energy",                  0.50),
+    ("KOA.OL",   "Kongsberg Automotive", "Consumer Discretionary",  0.10),
+    ("PGS.OL",   "PGS",                  "Energy",                  0.20),
+    ("RECSI.OL", "REC Silicon",          "Information Technology",   0.15),
+    ("KAHOT.OL", "Kahoot!",              "Information Technology",   0.25),
+]
+
+# ---------------------------------------------------------------------------
+# Pydantic Models (data validation)
+# ---------------------------------------------------------------------------
+
 class Week52(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
     low: Optional[float] = None
     high: Optional[float] = None
     current: Optional[float] = None
-
-class MeanReversion(BaseModel):
-    fiveYearAverage: Optional[float] = None
-    distancePercentage: Optional[float] = None
 
 class Alpha(BaseModel):
     threeMonth: Optional[float] = None
     sixMonth: Optional[float] = None
     oneYear: Optional[float] = None
 
+class MeanReversion(BaseModel):
+    fiveYearAverage: Optional[float] = None
+    distancePercentage: Optional[float] = None
+
 class DividendConsistency(BaseModel):
     yearsWithDividend: Optional[int] = None
-    trend: Optional[str] = None
+    trend: Optional[str] = None  # "growing" | "stable" | "cut" | "none"
 
 class CompanyRecord(BaseModel):
-    model_config = ConfigDict(coerce_numbers_to_str=False)
-    
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     ticker: str
     companyName: Optional[str] = None
     sector: Optional[str] = None
     industry: Optional[str] = None
-    osebxWeight: float
-    
-    # Fundamentals
+    osebxWeight: Optional[float] = None
     marketCap: Optional[float] = None
     peRatio: Optional[float] = None
     forwardPE: Optional[float] = None
     pbRatio: Optional[float] = None
     dividendYield: Optional[float] = None
-    earningsYield: Optional[float] = None
-    evToEbitda: Optional[float] = None
-    dividendPayoutRatio: Optional[float] = None
-    liquidityScore: Optional[float] = None
+    week52: Optional[Week52] = None
     analystTarget: Optional[float] = None
     recommendation: Optional[str] = None
-    
-    # Nested & Arrays
-    week52: Optional[Week52] = None
-    meanReversion: Optional[MeanReversion] = None
-    alpha: Optional[Alpha] = None
-    dividendConsistency: Optional[DividendConsistency] = None
-    seasonality: Optional[List[Optional[float]]] = None
-    
-    # Computed Performance & Risk
+
     returnsYTD: Optional[float] = None
     returns6M: Optional[float] = None
     returns1Y: Optional[float] = None
+
+    alpha: Optional[Alpha] = None
     sharpeRatio: Optional[float] = None
     momentumScore: Optional[float] = None
     maxDrawdown: Optional[float] = None
-    betaToBrent: Optional[float] = None
+
+    # Tier 2
     volatilityPercentile: Optional[int] = None
     correlationToOSEBX: Optional[float] = None
+    dividendConsistency: Optional[DividendConsistency] = None
+    dividendPayoutRatio: Optional[float] = None
+    liquidityScore: Optional[float] = None
+
+    # Tier 1 valuation
+    earningsYield: Optional[float] = None
+    evToEbitda: Optional[float] = None
+    meanReversion: Optional[MeanReversion] = None
+
+    # Tier 3
+    betaToBrent: Optional[float] = None
+    seasonality: Optional[list[Optional[float]]] = None
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def sanitise_nan(cls, v):
+        """Replace NaN / Inf with None before Pydantic processes."""
+        if isinstance(v, float):
+            if np.isnan(v) or np.isinf(v):
+                return None
+        return v
+
+
+class BenchmarkData(BaseModel):
+    ticker: str
+    name: Optional[str] = None
+    returnsYTD: Optional[float] = None
+    returns6M: Optional[float] = None
+    returns1Y: Optional[float] = None
+    latestClose: Optional[float] = None
+
+
+class SectorSummary(BaseModel):
+    sector: str
+    companyCount: int = 0
+    totalWeight: Optional[float] = None
+    avgReturnYTD: Optional[float] = None
+    avgPE: Optional[float] = None
+    avgEvToEbitda: Optional[float] = None
+    avgDividendYield: Optional[float] = None
+    avgSharpe: Optional[float] = None
+
 
 class HeatmapData(BaseModel):
     lastUpdated: str
-    referenceRates: Dict[str, float]
-    benchmarks: Dict[str, Optional[float]]
-    sectorSummary: Dict[str, Dict[str, Optional[float]]]
-    companies: List[CompanyRecord]
+    referenceRates: dict
+    benchmarks: list[BenchmarkData]
+    companies: list[CompanyRecord]
+    sectorSummary: list[SectorSummary]
 
-# ==========================================
-# CONFIGURATION & CONSTANTS
-# ==========================================
-REFERENCE_RATES = {
-    "riskFreeRate": 0.035, # Norwegian 3-month bill proxy
-    "bondYield10Y": 0.035  # Norwegian 10-year bond proxy
-}
 
-# The hardcoded source of truth (Update manually during June/Dec rebalancing)
-# Format: "TICKER": Estimated Weight %
-OSEBX_CONSTITUENTS = {
-    "EQNR.OL": 14.5,
-    "DNB.OL": 10.2,
-    "MOWI.OL": 4.8,
-    # Add the remaining ~66 constituents here...
-}
+# ---------------------------------------------------------------------------
+# Helper utilities
+# ---------------------------------------------------------------------------
 
-# ==========================================
-# HELPER FUNCTIONS
-# ==========================================
-def clean_float(val: Any) -> Optional[float]:
-    """Cleans Pandas NaN, NaT, and Inf to Python None for JSON/Pydantic."""
-    if pd.isna(val) or val in [np.inf, -np.inf]:
+def safe_get(d, *keys, default=None):
+    """Safely traverse nested dicts/objects. Returns default on any failure."""
+    current = d
+    for k in keys:
+        if isinstance(current, dict):
+            current = current.get(k, default)
+        else:
+            return default
+        if current is None or (isinstance(current, str) and "no data" in current.lower()):
+            return default
+    return current
+
+
+def to_py(val):
+    """Convert numpy/pandas scalar to Python native (or None)."""
+    if val is None:
+        return None
+    if isinstance(val, (np.integer,)):
+        return int(val)
+    if isinstance(val, (np.floating,)):
+        v = float(val)
+        if np.isnan(v) or np.isinf(v):
+            return None
+        return round(v, 6)
+    if isinstance(val, float):
+        if np.isnan(val) or np.isinf(val):
+            return None
+        return round(val, 6)
+    if isinstance(val, (pd.Timestamp, pd.NaT.__class__)):
+        return None
+    return val
+
+
+def clean_series(s: pd.Series) -> pd.Series:
+    """Replace inf with NaN in a series."""
+    return s.replace([np.inf, -np.inf], np.nan)
+
+
+def compute_return(hist: pd.DataFrame, days: int) -> Optional[float]:
+    """Compute simple return over the last N trading days from a history DataFrame."""
+    if hist is None or len(hist) < days + 1:
         return None
     try:
-        return float(val)
-    except (ValueError, TypeError):
+        recent = hist["close"].iloc[-1]
+        past = hist["close"].iloc[-days]
+        if past == 0 or pd.isna(past) or pd.isna(recent):
+            return None
+        return to_py(((recent - past) / past) * 100)
+    except Exception:
         return None
 
-def calc_return(series: pd.Series, periods: int) -> Optional[float]:
-    if len(series) < periods + 1: return None
-    return clean_float((series.iloc[-1] / series.iloc[-(periods+1)]) - 1)
 
-def get_ytd_return(series: pd.Series) -> Optional[float]:
-    if series.empty: return None
-    current_year = datetime.datetime.now().year
-    ytd_data = series[series.index.year == current_year]
-    if ytd_data.empty: return None
-    return clean_float((series.iloc[-1] / ytd_data.iloc[0]) - 1)
-
-def compute_drawdown(series: pd.Series, periods=252) -> Optional[float]:
-    recent = series.tail(periods)
-    if recent.empty: return None
-    roll_max = recent.cummax()
-    drawdown = (recent - roll_max) / roll_max
-    return clean_float(drawdown.min())
-
-def compute_beta(stock_returns: pd.Series, benchmark_returns: pd.Series) -> Optional[float]:
-    # Inner join aligns trading days exactly (e.g., Oslo Børs vs ICE Brent)
-    df = pd.concat([stock_returns, benchmark_returns], axis=1, join='inner').dropna()
-    if len(df) < 50: return None
-    cov = df.cov().iloc[0, 1]
-    var = df.iloc[:, 1].var()
-    return clean_float(cov / var) if var != 0 else None
-
-def compute_seasonality(returns: pd.Series) -> List[Optional[float]]:
-    if len(returns) < 252 * 2: # Need at least 2 years for meaningful averages
-        return [None] * 12
-    monthly_returns = returns.resample('M').apply(lambda x: (x + 1).prod() - 1)
-    seasonality = monthly_returns.groupby(monthly_returns.index.month).mean()
-    return [clean_float(seasonality.get(i, None)) for i in range(1, 13)]
-
-# ==========================================
-# MAIN PIPELINE
-# ==========================================
-def main():
-    print("Starting OSEBX data pipeline...")
-    
-    # Sleep for a random amount of time between 5 and 20 seconds to avoid GitHub Actions IP clustering
-    sleep_time = random.randint(5, 20)
-    print(f"Jitter delay: sleeping for {sleep_time} seconds to avoid rate limits...")
-    time.sleep(sleep_time)
-    
-    # 1. Fetch Benchmarks & Oil
-    print("Fetching benchmark histories...")
-    b_tickers = Ticker("OSEBX.OL OBX.OL OSEFX.OL BZ=F")
-    b_hist = b_tickers.history(period="5y")
-    
+def compute_ytd_return(hist: pd.DataFrame) -> Optional[float]:
+    """Compute YTD return from the first trading day of the current year."""
+    if hist is None or hist.empty:
+        return None
     try:
-        osebx_close = b_hist.loc["OSEBX.OL", "close"]
-        osebx_returns = osebx_close.pct_change().dropna()
-        bz_close = b_hist.loc["BZ=F", "close"]
-        bz_returns = bz_close.pct_change().dropna()
-        
-        benchmarks = {
-            "OSEBX": get_ytd_return(osebx_close),
-            "OBX": get_ytd_return(b_hist.loc["OBX.OL", "close"] if "OBX.OL" in b_hist.index else pd.Series()),
-            "OSEFX": get_ytd_return(b_hist.loc["OSEFX.OL", "close"] if "OSEFX.OL" in b_hist.index else pd.Series())
-        }
-    except Exception as e:
-        print(f"Error processing benchmarks: {e}")
-        osebx_close, osebx_returns, bz_returns = pd.Series(), pd.Series(), pd.Series()
-        benchmarks = {"OSEBX": None, "OBX": None, "OSEFX": None}
+        current_year = datetime.now().year
+        ytd = hist[hist.index >= f"{current_year}-01-01"]
+        if len(ytd) < 2:
+            return None
+        start = ytd["close"].iloc[0]
+        end = ytd["close"].iloc[-1]
+        if start == 0 or pd.isna(start) or pd.isna(end):
+            return None
+        return to_py(((end - start) / start) * 100)
+    except Exception:
+        return None
 
-    companies_data = []
-    tickers = list(OSEBX_CONSTITUENTS.keys())
-    
-    # 2. Fetch Companies
-    for i, ticker in enumerate(tickers):
-        print(f"[{i+1}/{len(tickers)}] {ticker}...", end=" ")
+
+def compute_max_drawdown(hist: pd.DataFrame, days: int = TRADING_DAYS_1Y) -> Optional[float]:
+    """Largest peak-to-trough decline in trailing N trading days."""
+    if hist is None or len(hist) < 10:
+        return None
+    try:
+        closes = hist["close"].iloc[-days:]
+        running_max = closes.cummax()
+        drawdown = (closes - running_max) / running_max
+        dd = drawdown.min()
+        return to_py(dd * 100)
+    except Exception:
+        return None
+
+
+def compute_sharpe(hist: pd.DataFrame, risk_free: float = RISK_FREE_RATE) -> Optional[float]:
+    """Annualised Sharpe ratio over trailing 1 year."""
+    if hist is None or len(hist) < TRADING_DAYS_1Y:
+        return None
+    try:
+        closes = hist["close"].iloc[-TRADING_DAYS_1Y:]
+        daily_ret = closes.pct_change().dropna()
+        if len(daily_ret) < 100:
+            return None
+        ann_ret = (1 + daily_ret.mean()) ** 252 - 1
+        ann_vol = daily_ret.std() * np.sqrt(252)
+        if ann_vol == 0 or np.isnan(ann_vol):
+            return None
+        return to_py((ann_ret - risk_free) / ann_vol)
+    except Exception:
+        return None
+
+
+def compute_alpha(stock_hist: pd.DataFrame, bench_hist: pd.DataFrame, days: int) -> Optional[float]:
+    """Stock return minus benchmark return over N trading days."""
+    sr = compute_return(stock_hist, days)
+    br = compute_return(bench_hist, days)
+    if sr is None or br is None:
+        return None
+    return to_py(sr - br)
+
+
+def compute_mean_reversion(hist: pd.DataFrame) -> Optional[MeanReversion]:
+    """Distance from 5-year SMA."""
+    if hist is None or len(hist) < TRADING_DAYS_5Y:
+        return None
+    try:
+        closes = hist["close"]
+        sma = closes.iloc[-TRADING_DAYS_5Y:].mean()
+        current = closes.iloc[-1]
+        if pd.isna(sma) or sma == 0 or pd.isna(current):
+            return None
+        dist = ((current - sma) / sma) * 100
+        return MeanReversion(
+            fiveYearAverage=to_py(sma),
+            distancePercentage=to_py(dist),
+        )
+    except Exception:
+        return None
+
+
+def compute_volatility_percentile(hist: pd.DataFrame) -> Optional[int]:
+    """30-day realised vol ranked as percentile against 5Y rolling vol history."""
+    if hist is None or len(hist) < TRADING_DAYS_1Y:
+        return None
+    try:
+        closes = hist["close"]
+        daily_ret = closes.pct_change().dropna()
+        # Rolling 30-day vol (annualised)
+        rolling_vol = daily_ret.rolling(30).std() * np.sqrt(252)
+        rolling_vol = rolling_vol.dropna()
+        if len(rolling_vol) < 30:
+            return None
+        current_vol = rolling_vol.iloc[-1]
+        if pd.isna(current_vol):
+            return None
+        percentile = (rolling_vol < current_vol).sum() / len(rolling_vol) * 100
+        return int(round(percentile))
+    except Exception:
+        return None
+
+
+def compute_correlation_to_osebx(stock_hist: pd.DataFrame, osebx_hist: pd.DataFrame) -> Optional[float]:
+    """Pearson correlation of daily returns, trailing 1Y, aligned by date."""
+    if stock_hist is None or osebx_hist is None:
+        return None
+    try:
+        sr = stock_hist["close"].pct_change().dropna()
+        br = osebx_hist["close"].pct_change().dropna()
+        # Inner join on dates
+        combined = pd.concat([sr, br], axis=1, join="inner")
+        combined.columns = ["stock", "bench"]
+        combined = combined.iloc[-TRADING_DAYS_1Y:]
+        combined = combined.dropna()
+        if len(combined) < 50:
+            return None
+        corr = combined["stock"].corr(combined["bench"])
+        return to_py(corr)
+    except Exception:
+        return None
+
+
+def compute_beta_to_brent(stock_hist: pd.DataFrame, brent_hist: pd.DataFrame) -> Optional[float]:
+    """OLS beta of stock daily returns vs Brent crude daily returns, trailing 1Y."""
+    if stock_hist is None or brent_hist is None:
+        return None
+    try:
+        sr = stock_hist["close"].pct_change().dropna()
+        br = brent_hist["close"].pct_change().dropna()
+        combined = pd.concat([sr, br], axis=1, join="inner")
+        combined.columns = ["stock", "brent"]
+        combined = combined.iloc[-TRADING_DAYS_1Y:]
+        combined = combined.dropna()
+        if len(combined) < 50:
+            return None
+        cov = combined["stock"].cov(combined["brent"])
+        var = combined["brent"].var()
+        if var == 0 or np.isnan(var):
+            return None
+        return to_py(cov / var)
+    except Exception:
+        return None
+
+
+def compute_momentum_scores(companies: list[dict], hists: dict) -> dict[str, float]:
+    """
+    Compute raw momentum for each ticker, then normalise to 0–100.
+    Momentum = 0.3*(12M_return_ex_1M) + 0.3*(6M_return) + 0.25*(3M_return) + 0.15*(1M_return)
+    """
+    raw = {}
+    for c in companies:
+        ticker = c["ticker"]
+        h = hists.get(ticker)
+        if h is None or len(h) < TRADING_DAYS_1Y:
+            continue
         try:
-            t = Ticker(ticker)
-            
-            # Use dict.get() safely because yahooquery can return string errors instead of dicts
-            info_summary = t.summary_detail.get(ticker, {})
-            info_summary = info_summary if isinstance(info_summary, dict) else {}
-            
-            info_profile = t.summary_profile.get(ticker, {})
-            info_profile = info_profile if isinstance(info_profile, dict) else {}
-            
-            info_price = t.price.get(ticker, {})
-            info_price = info_price if isinstance(info_price, dict) else {}
-            
-            info_fin = t.financial_data.get(ticker, {})
-            info_fin = info_fin if isinstance(info_fin, dict) else {}
-            
-            info_stats = t.key_stats.get(ticker, {})
-            info_stats = info_stats if isinstance(info_stats, dict) else {}
+            closes = h["close"]
+            ret_1m = (closes.iloc[-1] / closes.iloc[-TRADING_DAYS_1M] - 1) if len(closes) > TRADING_DAYS_1M else None
+            ret_3m = (closes.iloc[-1] / closes.iloc[-TRADING_DAYS_3M] - 1) if len(closes) > TRADING_DAYS_3M else None
+            ret_6m = (closes.iloc[-1] / closes.iloc[-TRADING_DAYS_6M] - 1) if len(closes) > TRADING_DAYS_6M else None
+            ret_12m = (closes.iloc[-1] / closes.iloc[-TRADING_DAYS_1Y] - 1) if len(closes) > TRADING_DAYS_1Y else None
 
-            # Core fields
-            current_price = info_price.get("regularMarketPrice")
-            market_cap = info_price.get("marketCap")
-            eps = info_stats.get("trailingEps")
-            pe = info_summary.get("trailingPE")
-            
-            # Calculated Valuation
-            earnings_yield = None
-            if eps and current_price and current_price > 0:
-                earnings_yield = (eps / current_price) * 100
-            elif pe and pe > 0:
-                earnings_yield = (1 / pe) * 100
+            if any(v is None or pd.isna(v) for v in [ret_1m, ret_3m, ret_6m, ret_12m]):
+                continue
 
-            ev = info_stats.get("enterpriseValue")
-            ebitda = info_fin.get("ebitda")
-            ev_ebitda = (ev / ebitda) if ev and ebitda and ebitda > 0 else None
+            # 12M return ex-1M (remove most recent month to reduce reversal noise)
+            ret_12m_ex_1m = ret_12m - ret_1m
 
-            # Dividends
-            div_yield = info_summary.get("dividendYield")
-            if div_yield: div_yield *= 100
-            
-            div_rate = info_summary.get("dividendRate")
-            payout_ratio = (div_rate / eps * 100) if div_rate and eps and eps > 0 else None
+            score = 0.3 * ret_12m_ex_1m + 0.3 * ret_6m + 0.25 * ret_3m + 0.15 * ret_1m
+            if not np.isnan(score) and not np.isinf(score):
+                raw[ticker] = float(score)
+        except Exception:
+            continue
 
-            # Historical processing
-            hist = t.history(period="10y")
-            
-            ytd, ret_6m, ret_1y, sharpe, max_dd, mom_score = None, None, None, None, None, None
-            beta, vol_pct, corr = None, None, None
-            alpha = Alpha()
-            mean_rev = MeanReversion()
-            seasonality_arr = [None]*12
-            
-            if not isinstance(hist, dict) and not hist.empty and "close" in hist.columns:
-                close = hist.reset_index().set_index('date')["close"]
-                returns = close.pct_change().dropna()
-                
-                ytd = get_ytd_return(close)
-                ret_1m = calc_return(close, 21)
-                ret_3m = calc_return(close, 63)
-                ret_6m = calc_return(close, 126)
-                ret_1y = calc_return(close, 252)
-                ret_12m_ex_1m = calc_return(close.iloc[:-21] if len(close) > 21 else close, 231)
-                
-                # Sharpe (1Y)
-                if ret_1y is not None and len(returns) >= 252:
-                    ann_vol = returns.tail(252).std() * np.sqrt(252)
-                    if ann_vol > 0:
-                        sharpe = (ret_1y - REFERENCE_RATES["riskFreeRate"]) / ann_vol
+    if not raw:
+        return {}
 
-                # Momentum Score
-                if all(v is not None for v in [ret_12m_ex_1m, ret_6m, ret_3m, ret_1m]):
-                    mom_score = (0.3*ret_12m_ex_1m) + (0.3*ret_6m) + (0.25*ret_3m) + (0.15*ret_1m)
-                
-                # Mean Reversion (5Y = 1260 days)
-                if len(close) >= 1260:
-                    sma5y = close.tail(1260).mean()
-                    mean_rev = MeanReversion(
-                        fiveYearAverage=clean_float(sma5y),
-                        distancePercentage=clean_float((current_price - sma5y)/sma5y * 100) if current_price else None
-                    )
+    min_s = min(raw.values())
+    max_s = max(raw.values())
+    rng = max_s - min_s
+    if rng == 0:
+        return {t: 50.0 for t in raw}
 
-                max_dd = compute_drawdown(close, 252)
-                
-                # Aligned metrics (Alpha, Beta, Corr)
-                if not osebx_returns.empty:
-                    df_aligned = pd.concat([returns, osebx_returns], axis=1, join='inner').dropna()
-                    if len(df_aligned) >= 252:
-                        corr = clean_float(df_aligned.iloc[-252:, 0].corr(df_aligned.iloc[-252:, 1]))
-                        
-                        osebx_3m = calc_return(osebx_close, 63)
-                        osebx_6m = calc_return(osebx_close, 126)
-                        osebx_1y = calc_return(osebx_close, 252)
-                        
-                        alpha = Alpha(
-                            threeMonth=clean_float(ret_3m - osebx_3m) if ret_3m and osebx_3m else None,
-                            sixMonth=clean_float(ret_6m - osebx_6m) if ret_6m and osebx_6m else None,
-                            oneYear=clean_float(ret_1y - osebx_1y) if ret_1y and osebx_1y else None
-                        )
+    return {t: round((v - min_s) / rng * 100, 1) for t, v in raw.items()}
 
-                if not bz_returns.empty:
-                    beta = compute_beta(returns.tail(252), bz_returns.tail(252))
 
-                # Volatility Percentile
-                if len(returns) > 252:
-                    rolling_vol = returns.rolling(30).std() * np.sqrt(252)
-                    current_vol = rolling_vol.iloc[-1]
-                    vol_pct = int((rolling_vol.rank(pct=True).iloc[-1]) * 100) if not pd.isna(current_vol) else None
+def compute_seasonality(hist: pd.DataFrame) -> Optional[list[Optional[float]]]:
+    """TIER 3: Average return for each calendar month over last 5 years."""
+    if hist is None or len(hist) < TRADING_DAYS_1Y * 2:
+        return None
+    try:
+        closes = hist["close"].copy()
+        monthly = closes.resample("ME").last()
+        monthly_ret = monthly.pct_change().dropna()
+        # Filter to last ~5 years
+        cutoff = monthly_ret.index[-1] - pd.DateOffset(years=5)
+        monthly_ret = monthly_ret[monthly_ret.index >= cutoff]
+        if len(monthly_ret) < 12:
+            return None
+        avg_by_month = monthly_ret.groupby(monthly_ret.index.month).mean()
+        result = []
+        for m in range(1, 13):
+            if m in avg_by_month.index:
+                result.append(to_py(avg_by_month[m] * 100))
+            else:
+                result.append(None)
+        return result
+    except Exception:
+        return None
 
-                seasonality_arr = compute_seasonality(returns)
 
-            avg_vol = info_summary.get("averageVolume") or info_price.get("averageDailyVolume3Month")
-            liq_score = (avg_vol * current_price) if avg_vol and current_price else None
+def compute_dividend_consistency(ticker_obj, ticker_str: str) -> Optional[DividendConsistency]:
+    """Assess dividend payment history over the last 5 calendar years."""
+    try:
+        divs = ticker_obj.dividend_history(start="2021-01-01")
+        if isinstance(divs, str) or divs is None or divs.empty:
+            return DividendConsistency(yearsWithDividend=0, trend="none")
 
-            # Construct Pydantic Model
-            record = CompanyRecord(
-                ticker=ticker,
-                companyName=info_price.get("shortName") or info_price.get("longName"),
-                sector=info_profile.get("sector"),
-                industry=info_profile.get("industry"),
-                osebxWeight=OSEBX_CONSTITUENTS[ticker],
-                marketCap=clean_float(market_cap),
-                peRatio=clean_float(pe),
-                forwardPE=clean_float(info_summary.get("forwardPE")),
-                pbRatio=clean_float(info_stats.get("priceToBook")),
-                dividendYield=clean_float(div_yield),
-                earningsYield=clean_float(earnings_yield),
-                evToEbitda=clean_float(ev_ebitda),
-                dividendPayoutRatio=clean_float(payout_ratio),
-                liquidityScore=clean_float(liq_score),
-                analystTarget=clean_float(info_fin.get("targetMeanPrice")),
-                recommendation=info_fin.get("recommendationKey"),
-                week52=Week52(
-                    low=clean_float(info_summary.get("fiftyTwoWeekLow")),
-                    high=clean_float(info_summary.get("fiftyTwoWeekHigh")),
-                    current=clean_float(current_price)
-                ),
-                meanReversion=mean_rev,
-                alpha=alpha,
-                seasonality=seasonality_arr,
-                returnsYTD=clean_float(ytd),
-                returns6M=clean_float(ret_6m),
-                returns1Y=clean_float(ret_1y),
-                sharpeRatio=clean_float(sharpe),
-                momentumScore=clean_float(mom_score),
-                maxDrawdown=clean_float(max_dd),
-                betaToBrent=clean_float(beta),
-                volatilityPercentile=vol_pct,
-                correlationToOSEBX=clean_float(corr)
-            )
-            
-            companies_data.append(record)
-            print("✓")
-            time.sleep(0.4) # Rate limit safety
-            
-        except Exception as e:
-            print(f"Failed: {e}")
+        divs = divs.reset_index()
+        # Handle multi-index (ticker + date)
+        if "date" in divs.columns:
+            date_col = "date"
+        elif "index" in divs.columns:
+            date_col = "index"
+        else:
+            date_col = divs.columns[0]
 
-    # 3. Normalise Momentum
-    mom_scores = [c.momentumScore for c in companies_data if c.momentumScore is not None]
-    if mom_scores:
-        mom_min, mom_max = min(mom_scores), max(mom_scores)
-        for c in companies_data:
-            if c.momentumScore is not None:
-                if mom_max > mom_min:
-                    c.momentumScore = round(((c.momentumScore - mom_min) / (mom_max - mom_min)) * 100, 1)
-                else:
-                    c.momentumScore = 50.0
+        divs["year"] = pd.to_datetime(divs[date_col]).dt.year
 
-    # 4. Sector Summary
-    sector_summary = {}
-    for c in companies_data:
-        s = c.sector or "Unknown"
-        if s not in sector_summary:
-            sector_summary[s] = {"count": 0, "weight": 0, "ytd_sum": 0, "pe_sum": 0}
-        sector_summary[s]["count"] += 1
-        sector_summary[s]["weight"] += c.osebxWeight
-        if c.returnsYTD: sector_summary[s]["ytd_sum"] += c.returnsYTD
-        if c.peRatio: sector_summary[s]["pe_sum"] += c.peRatio
+        # Determine dividend column name
+        div_col = None
+        for candidate in ["dividends", "dividend", "amount"]:
+            if candidate in [c.lower() for c in divs.columns]:
+                div_col = [c for c in divs.columns if c.lower() == candidate][0]
+                break
+        if div_col is None:
+            # Last numeric column
+            numeric_cols = divs.select_dtypes(include=[np.number]).columns
+            if len(numeric_cols) == 0:
+                return DividendConsistency(yearsWithDividend=0, trend="none")
+            div_col = numeric_cols[-1]
 
-    final_summary = {}
-    for s, data in sector_summary.items():
-        count = data["count"]
-        final_summary[s] = {
-            "weight": clean_float(data["weight"]),
-            "averageYTD": clean_float(data["ytd_sum"] / count) if count else None,
-            "averagePE": clean_float(data["pe_sum"] / count) if count else None
-        }
+        current_year = datetime.now().year
+        target_years = list(range(current_year - 5, current_year))  # last 5 full years
+        yearly_totals = divs.groupby("year")[div_col].sum()
 
-    # 5. Export
-    output = HeatmapData(
-        lastUpdated=datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        referenceRates=REFERENCE_RATES,
-        benchmarks=benchmarks,
-        sectorSummary=final_summary,
-        companies=companies_data
+        years_with = sum(1 for y in target_years if y in yearly_totals.index and yearly_totals[y] > 0)
+
+        # Trend
+        paid_years = sorted([y for y in target_years if y in yearly_totals.index and yearly_totals[y] > 0])
+        if len(paid_years) < 2:
+            trend = "none" if years_with == 0 else "stable"
+        else:
+            first_val = yearly_totals[paid_years[0]]
+            last_val = yearly_totals[paid_years[-1]]
+            if last_val > first_val * 1.05:
+                trend = "growing"
+            elif last_val < first_val * 0.90:
+                trend = "cut"
+            else:
+                trend = "stable"
+
+        return DividendConsistency(yearsWithDividend=years_with, trend=trend)
+    except Exception:
+        return DividendConsistency(yearsWithDividend=0, trend="none")
+
+
+# ---------------------------------------------------------------------------
+# Main data fetching logic
+# ---------------------------------------------------------------------------
+
+def fetch_history(ticker_str: str, period: str = "10y") -> Optional[pd.DataFrame]:
+    """Fetch price history for a single ticker. Returns DataFrame or None."""
+    try:
+        t = Ticker(ticker_str)
+        h = t.history(period=period)
+        if isinstance(h, str) or h is None or h.empty:
+            return None
+        # If multi-index, drop the symbol level
+        if isinstance(h.index, pd.MultiIndex):
+            h = h.droplevel("symbol")
+        h.index = pd.to_datetime(h.index)
+        h = h.sort_index()
+        # Standardise column names to lowercase
+        h.columns = [c.lower() for c in h.columns]
+        return h
+    except Exception as e:
+        log.warning(f"  History fetch failed for {ticker_str}: {e}")
+        return None
+
+
+def fetch_benchmarks() -> tuple[dict[str, pd.DataFrame], list[BenchmarkData]]:
+    """Fetch history for OSEBX, OBX, OSEFX, and Brent crude."""
+    histories = {}
+    benchmark_records = []
+
+    for tk in BENCHMARK_TICKERS + [BRENT_TICKER]:
+        log.info(f"  Fetching benchmark: {tk}")
+        h = fetch_history(tk, period="10y")
+        if h is not None:
+            histories[tk] = h
+            log.info(f"    ✓ {len(h)} data points")
+        else:
+            log.warning(f"    ✗ No data for {tk}")
+        time.sleep(0.3)
+
+    # Build benchmark summary records
+    name_map = {"OSEBX.OL": "OSEBX", "OBX.OL": "OBX", "OSEFX.OL": "OSEFX"}
+    for tk in BENCHMARK_TICKERS:
+        h = histories.get(tk)
+        rec = BenchmarkData(
+            ticker=tk,
+            name=name_map.get(tk, tk),
+            returnsYTD=compute_ytd_return(h) if h is not None else None,
+            returns6M=compute_return(h, TRADING_DAYS_6M) if h is not None else None,
+            returns1Y=compute_return(h, TRADING_DAYS_1Y) if h is not None else None,
+            latestClose=to_py(h["close"].iloc[-1]) if h is not None and len(h) > 0 else None,
+        )
+        benchmark_records.append(rec)
+
+    return histories, benchmark_records
+
+
+def fetch_fundamentals_batch(tickers: list[str]) -> dict:
+    """Fetch fundamental data for a batch of tickers. Returns a dict keyed by ticker."""
+    joined = " ".join(tickers)
+    t = Ticker(joined)
+
+    result = {}
+    try:
+        prices = t.price
+        summaries = t.summary_detail
+        profiles = t.summary_profile
+        keystats = t.key_stats
+        fin_data = t.financial_data
+    except Exception as e:
+        log.warning(f"  Batch fundamental fetch failed: {e}")
+        return result
+
+    for tk in tickers:
+        data = {}
+        # Price data
+        p = safe_get(prices, tk)
+        if p and isinstance(p, dict):
+            data["companyName"] = p.get("shortName") or p.get("longName")
+            data["marketCap"] = p.get("marketCap")
+            data["currentPrice"] = p.get("regularMarketPrice")
+
+        # Summary detail
+        sd = safe_get(summaries, tk)
+        if sd and isinstance(sd, dict):
+            data["peRatio"] = sd.get("trailingPE")
+            data["forwardPE"] = sd.get("forwardPE")
+            data["dividendYield"] = sd.get("dividendYield")
+            if data["dividendYield"] is not None:
+                data["dividendYield"] = data["dividendYield"] * 100  # to percentage
+            data["week52Low"] = sd.get("fiftyTwoWeekLow")
+            data["week52High"] = sd.get("fiftyTwoWeekHigh")
+            data["dividendRate"] = sd.get("dividendRate")
+            data["trailingEPS_from_PE"] = None
+            # Compute EPS from PE if available
+            if data.get("peRatio") and data.get("currentPrice") and data["peRatio"] > 0:
+                data["trailingEPS_from_PE"] = data["currentPrice"] / data["peRatio"]
+
+        # Summary profile
+        sp = safe_get(profiles, tk)
+        if sp and isinstance(sp, dict):
+            data["sector"] = sp.get("sector")
+            data["industry"] = sp.get("industry")
+
+        # Key stats
+        ks = safe_get(keystats, tk)
+        if ks and isinstance(ks, dict):
+            data["pbRatio"] = ks.get("priceToBook")
+            data["enterpriseValue"] = ks.get("enterpriseValue")
+            data["trailingEPS"] = ks.get("trailingEps")
+
+        # Financial data
+        fd = safe_get(fin_data, tk)
+        if fd and isinstance(fd, dict):
+            data["analystTarget"] = fd.get("targetMeanPrice")
+            data["recommendation"] = fd.get("recommendationKey")
+            data["ebitda"] = fd.get("ebitda")
+
+        result[tk] = data
+
+    return result
+
+
+def process_company(
+    ticker_str: str,
+    display_name: str,
+    sector: str,
+    weight: float,
+    fundamentals: dict,
+    hist: Optional[pd.DataFrame],
+    osebx_hist: Optional[pd.DataFrame],
+    brent_hist: Optional[pd.DataFrame],
+) -> Optional[CompanyRecord]:
+    """Build a CompanyRecord for one company, computing all derived metrics."""
+    f = fundamentals or {}
+
+    # Basic info
+    company_name = f.get("companyName") or display_name
+    current_price = f.get("currentPrice")
+
+    # Week52
+    w52 = Week52(
+        low=to_py(f.get("week52Low")),
+        high=to_py(f.get("week52High")),
+        current=to_py(current_price),
     )
 
-    with open("data.json", "w") as f:
-        json.dump(output.model_dump(), f, indent=2)
-        
-    print(f"Done. Exported {len(companies_data)} companies.")
+    # Returns
+    ytd = compute_ytd_return(hist)
+    r6m = compute_return(hist, TRADING_DAYS_6M)
+    r1y = compute_return(hist, TRADING_DAYS_1Y)
+
+    # Alpha
+    alpha = Alpha(
+        threeMonth=compute_alpha(hist, osebx_hist, TRADING_DAYS_3M),
+        sixMonth=compute_alpha(hist, osebx_hist, TRADING_DAYS_6M),
+        oneYear=compute_alpha(hist, osebx_hist, TRADING_DAYS_1Y),
+    )
+
+    # Sharpe
+    sharpe = compute_sharpe(hist)
+
+    # Max drawdown
+    mdd = compute_max_drawdown(hist)
+
+    # Mean reversion
+    mr = compute_mean_reversion(hist)
+
+    # Volatility percentile
+    vol_pct = compute_volatility_percentile(hist)
+
+    # Correlation to OSEBX
+    corr = compute_correlation_to_osebx(hist, osebx_hist)
+
+    # Beta to Brent (Tier 3)
+    beta_brent = compute_beta_to_brent(hist, brent_hist)
+
+    # Seasonality (Tier 3)
+    season = compute_seasonality(hist)
+
+    # Earnings yield
+    eps = f.get("trailingEPS") or f.get("trailingEPS_from_PE")
+    earnings_yield = None
+    if eps and current_price and current_price > 0:
+        earnings_yield = to_py((eps / current_price) * 100)
+
+    # EV/EBITDA
+    ev_ebitda = None
+    ev = f.get("enterpriseValue")
+    ebitda = f.get("ebitda")
+    if ev and ebitda and ebitda > 0:
+        ev_ebitda = to_py(ev / ebitda)
+
+    # Dividend payout ratio
+    div_payout = None
+    div_rate = f.get("dividendRate")
+    if div_rate and eps and eps > 0:
+        div_payout = to_py((div_rate / eps) * 100)
+
+    # Liquidity score
+    liquidity = None
+    # We'll compute this from history if available
+    if hist is not None and len(hist) > 30 and "volume" in hist.columns and current_price:
+        try:
+            avg_vol = hist["volume"].iloc[-30:].mean()
+            if not pd.isna(avg_vol):
+                liquidity = to_py(avg_vol * current_price)
+        except Exception:
+            pass
+
+    # Use sector from yahooquery if available, else from our hardcoded list
+    actual_sector = f.get("sector") or sector
+
+    record = CompanyRecord(
+        ticker=ticker_str,
+        companyName=company_name,
+        sector=actual_sector,
+        industry=f.get("industry"),
+        osebxWeight=weight,
+        marketCap=to_py(f.get("marketCap")),
+        peRatio=to_py(f.get("peRatio")),
+        forwardPE=to_py(f.get("forwardPE")),
+        pbRatio=to_py(f.get("pbRatio")),
+        dividendYield=to_py(f.get("dividendYield")),
+        week52=w52,
+        analystTarget=to_py(f.get("analystTarget")),
+        recommendation=f.get("recommendation"),
+        returnsYTD=ytd,
+        returns6M=r6m,
+        returns1Y=r1y,
+        alpha=alpha,
+        sharpeRatio=sharpe,
+        momentumScore=None,  # Set later after normalisation
+        maxDrawdown=mdd,
+        volatilityPercentile=vol_pct,
+        correlationToOSEBX=corr,
+        dividendConsistency=None,  # Set later
+        dividendPayoutRatio=div_payout,
+        liquidityScore=liquidity,
+        earningsYield=earnings_yield,
+        evToEbitda=ev_ebitda,
+        meanReversion=mr,
+        betaToBrent=beta_brent,
+        seasonality=season,
+    )
+
+    return record
+
+
+def compute_sector_summary(companies: list[CompanyRecord]) -> list[SectorSummary]:
+    """Compute aggregate stats per sector."""
+    sectors: dict[str, list[CompanyRecord]] = {}
+    for c in companies:
+        s = c.sector or "Unknown"
+        sectors.setdefault(s, []).append(c)
+
+    summaries = []
+    for sector_name, members in sorted(sectors.items()):
+        def avg(vals):
+            clean = [v for v in vals if v is not None]
+            return round(sum(clean) / len(clean), 2) if clean else None
+
+        summaries.append(SectorSummary(
+            sector=sector_name,
+            companyCount=len(members),
+            totalWeight=round(sum(c.osebxWeight or 0 for c in members), 2),
+            avgReturnYTD=avg([c.returnsYTD for c in members]),
+            avgPE=avg([c.peRatio for c in members]),
+            avgEvToEbitda=avg([c.evToEbitda for c in members]),
+            avgDividendYield=avg([c.dividendYield for c in members]),
+            avgSharpe=avg([c.sharpeRatio for c in members]),
+        ))
+
+    return summaries
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main():
+    log.info("=" * 60)
+    log.info("OSEBX Heatmap Data Pipeline — Starting")
+    log.info("=" * 60)
+
+    # Step 1: Fetch benchmarks
+    log.info("\n[Step 1/5] Fetching benchmark indices...")
+    bench_histories, benchmark_records = fetch_benchmarks()
+    osebx_hist = bench_histories.get("OSEBX.OL")
+    brent_hist = bench_histories.get(BRENT_TICKER)
+
+    if osebx_hist is None:
+        log.warning("⚠  OSEBX history unavailable — alpha calculations will return null")
+
+    # Step 2: Fetch fundamentals in batches
+    log.info(f"\n[Step 2/5] Fetching fundamentals for {len(CONSTITUENTS)} companies...")
+    all_fundamentals: dict[str, dict] = {}
+    tickers_only = [c[0] for c in CONSTITUENTS]
+
+    for i in range(0, len(tickers_only), BATCH_SIZE):
+        batch = tickers_only[i : i + BATCH_SIZE]
+        log.info(f"  Batch {i // BATCH_SIZE + 1}: {', '.join(batch)}")
+        try:
+            batch_data = fetch_fundamentals_batch(batch)
+            all_fundamentals.update(batch_data)
+        except Exception as e:
+            log.warning(f"  Batch failed: {e}")
+        time.sleep(FETCH_DELAY)
+
+    # Step 3: Fetch individual histories + compute per-company metrics
+    log.info(f"\n[Step 3/5] Fetching price histories and computing metrics...")
+    all_histories: dict[str, pd.DataFrame] = {}
+    company_records: list[CompanyRecord] = []
+    partial_records: list[dict] = []  # For momentum normalisation
+
+    for idx, (ticker, name, sector, weight) in enumerate(CONSTITUENTS, 1):
+        log.info(f"  [{idx}/{len(CONSTITUENTS)}] {ticker} — {name}")
+        try:
+            hist = fetch_history(ticker, period="10y")
+            if hist is not None:
+                all_histories[ticker] = hist
+                log.info(f"    ✓ {len(hist)} data points")
+            else:
+                log.warning(f"    ✗ No history data")
+
+            fund = all_fundamentals.get(ticker, {})
+            record = process_company(
+                ticker, name, sector, weight, fund,
+                hist, osebx_hist, brent_hist,
+            )
+
+            if record:
+                # Fetch dividend consistency
+                try:
+                    t_obj = Ticker(ticker)
+                    record.dividendConsistency = compute_dividend_consistency(t_obj, ticker)
+                except Exception:
+                    pass
+
+                company_records.append(record)
+                partial_records.append({"ticker": ticker})
+            else:
+                log.warning(f"    ✗ Skipped (no usable data)")
+
+        except Exception as e:
+            log.warning(f"    ✗ Failed: {e}")
+
+        # Small delay between individual fetches
+        if idx % 5 == 0:
+            time.sleep(0.3)
+
+    # Step 4: Compute momentum scores (requires all companies)
+    log.info(f"\n[Step 4/5] Computing momentum scores...")
+    momentum_scores = compute_momentum_scores(
+        [{"ticker": c.ticker} for c in company_records],
+        all_histories,
+    )
+    for record in company_records:
+        if record.ticker in momentum_scores:
+            record.momentumScore = momentum_scores[record.ticker]
+
+    # Step 5: Build output
+    log.info(f"\n[Step 5/5] Building output JSON...")
+    sector_summary = compute_sector_summary(company_records)
+
+    output = HeatmapData(
+        lastUpdated=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        referenceRates={
+            "riskFreeRate": RISK_FREE_RATE,
+            "bondYield10Y": BOND_YIELD_10Y,
+        },
+        benchmarks=benchmark_records,
+        companies=company_records,
+        sectorSummary=sector_summary,
+    )
+
+    # Serialize to JSON
+    output_dict = output.model_dump(mode="json")
+    json_str = json.dumps(output_dict, indent=2, ensure_ascii=False, default=str)
+
+    with open("data.json", "w", encoding="utf-8") as f:
+        f.write(json_str)
+
+    log.info(f"\n{'=' * 60}")
+    log.info(f"✓ Done! {len(company_records)} companies written to data.json")
+    log.info(f"  Sectors: {len(sector_summary)}")
+    log.info(f"  Benchmarks: {len(benchmark_records)}")
+    log.info(f"  File size: {len(json_str):,} bytes")
+    log.info(f"{'=' * 60}")
+
 
 if __name__ == "__main__":
     main()
