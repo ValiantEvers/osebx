@@ -1,989 +1,572 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nb">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OSEBX Sector Heatmap</title>
-<meta name="description" content="Interactive sector heatmap for the Oslo Børs Benchmark Index (OSEBX). Weekly updated market data with sector performance, fundamentals, and analysis.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
-<style>
-/* ── RESET & BASE ──────────────────────────────────────────── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0a0c10;--bg-card:#12151c;--bg-card-hover:#181c26;
-  --bg-elevated:#1a1e28;--bg-modal:#0e1118;
-  --border:rgba(255,255,255,.06);--border-hover:rgba(255,255,255,.12);
-  --text:#e8eaed;--text-muted:rgba(232,234,237,.55);--text-dim:rgba(232,234,237,.35);
-  --green-vivid:#22c55e;--green-soft:rgba(34,197,94,.15);
-  --red-vivid:#ef4444;--red-soft:rgba(239,68,68,.15);
-  --amber:#f59e0b;--amber-soft:rgba(245,158,11,.15);
-  --blue:#3b82f6;--blue-soft:rgba(59,130,246,.12);
-  --font-display:'Playfair Display',Georgia,serif;
-  --font-body:'DM Sans','Segoe UI',sans-serif;
-  --font-mono:'JetBrains Mono','Fira Code',monospace;
-  --radius:12px;--radius-sm:8px;--radius-xs:6px;
-  --shadow:0 4px 24px rgba(0,0,0,.4);
-  --transition:all .3s cubic-bezier(.4,0,.2,1);
-}
-html{scroll-behavior:smooth}
-body{
-  font-family:var(--font-body);font-size:15px;line-height:1.6;
-  color:var(--text);background:var(--bg);
-  min-height:100vh;overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-}
-a{color:var(--blue);text-decoration:none}
-button{cursor:pointer;font-family:inherit;border:none;background:none;color:inherit}
-img{max-width:100%;display:block}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSEBX Company Heatmap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Theme Colors */
+            --bg: #0a0c10;
+            --bg-elevated: #12151c;
+            --border: #1f242e;
+            --text-primary: #f0f2f5;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            
+            /* Performance Colors */
+            --gain: #10b981;
+            --loss: #ef4444;
+            --neutral: #64748b;
 
-/* ── SCROLLBAR ─────────────────────────────────────────────── */
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2)}
+            /* GICS Sector Colors (Muted) */
+            --sector-energy: #f59e0b;
+            --sector-financials: #3b82f6;
+            --sector-staples: #14b8a6;
+            --sector-industrials: #64748b;
+            --sector-materials: #f97316;
+            --sector-it: #8b5cf6;
+            --sector-telecom: #6366f1;
+            --sector-utilities: #22c55e;
+            --sector-realestate: #f43f5e;
+            --sector-healthcare: #10b981;
+            --sector-discretionary: #ec4899;
+        }
 
-/* ── LAYOUT ────────────────────────────────────────────────── */
-.page-wrapper{
-  max-width:1400px;margin:0 auto;padding:0 1.5rem 4rem;
-}
-.main-layout{
-  display:grid;gap:2rem;
-  grid-template-columns:1fr;
-}
-@media(min-width:1080px){
-  .main-layout{grid-template-columns:1fr 300px}
-}
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            margin: 0;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
 
-/* ── HEADER ────────────────────────────────────────────────── */
-.site-header{
-  padding:2rem 0 1rem;text-align:center;
-}
-.site-header h1{
-  font-family:var(--font-display);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);
-  letter-spacing:-.02em;margin-bottom:.25rem;
-  background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.65) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-.site-header .subtitle{
-  font-size:.9rem;color:var(--text-muted);font-weight:400;
-}
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
 
-/* ── BENCHMARK PILLS ───────────────────────────────────────── */
-.benchmarks{
-  display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;
-  margin:1.25rem 0;
-}
-.bench-pill{
-  display:inline-flex;align-items:center;gap:.5rem;
-  padding:.5rem 1rem;border-radius:50px;
-  background:var(--bg-card);border:1px solid var(--border);
-  font-size:.82rem;font-weight:500;transition:var(--transition);
-}
-.bench-pill:hover{border-color:var(--border-hover);background:var(--bg-card-hover)}
-.bench-pill .bench-name{
-  font-family:var(--font-mono);font-weight:600;font-size:.78rem;
-  color:var(--text);letter-spacing:.03em;
-}
-.bench-pill .bench-ytd{
-  font-family:var(--font-mono);font-weight:700;font-size:.82rem;
-}
+        /* Layout */
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        
+        /* Header & Benchmarks */
+        header { margin-bottom: 2rem; }
+        .title-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
+        .benchmarks { display: flex; gap: 0.75rem; margin-top: 1rem; }
+        .benchmark-pill {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+        }
 
-/* ── DISCLAIMER BANNER ─────────────────────────────────────── */
-.disclaimer-banner{
-  text-align:center;padding:.65rem 1rem;
-  background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);
-  border-radius:var(--radius-sm);margin-bottom:1.5rem;
-  font-size:.76rem;color:rgba(245,158,11,.85);line-height:1.5;
-}
-.disclaimer-banner .last-updated{
-  display:block;margin-top:.2rem;
-  font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);
-}
+        .disclaimer-banner {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
 
-/* ── CONTROLS BAR ──────────────────────────────────────────── */
-.controls{
-  display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;
-  margin-bottom:1.75rem;
-}
-.sort-group{
-  display:flex;flex-wrap:wrap;gap:.4rem;
-}
-.sort-btn{
-  padding:.4rem .85rem;border-radius:50px;font-size:.76rem;font-weight:600;
-  background:var(--bg-card);border:1px solid var(--border);
-  color:var(--text-muted);transition:var(--transition);letter-spacing:.02em;
-}
-.sort-btn:hover{border-color:var(--border-hover);color:var(--text)}
-.sort-btn.active{
-  background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.35);color:var(--blue);
-}
-.legend-bar{
-  display:flex;align-items:center;gap:.5rem;margin-left:auto;font-size:.72rem;color:var(--text-dim);
-}
-.legend-gradient{
-  width:120px;height:8px;border-radius:4px;
-  background:linear-gradient(90deg,var(--red-vivid),#333,var(--green-vivid));
-}
-.metrics-btn{
-  padding:.4rem .85rem;border-radius:50px;font-size:.76rem;font-weight:600;
-  background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);
-  color:var(--blue);transition:var(--transition);
-  display:inline-flex;align-items:center;gap:.35rem;
-}
-.metrics-btn:hover{background:rgba(59,130,246,.2);border-color:rgba(59,130,246,.4)}
-.metrics-btn svg{width:14px;height:14px}
+        /* Controls */
+        .controls-bar {
+            display: flex; flex-direction: column; gap: 1.5rem;
+            margin-bottom: 2rem; position: sticky; top: 0;
+            background: var(--bg); z-index: 10; padding: 1rem 0;
+        }
 
-/* ── SECTOR GRID ───────────────────────────────────────────── */
-.sector-grid{
-  display:grid;gap:1rem;
-  grid-template-columns:1fr;
-}
-@media(min-width:640px){.sector-grid{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:1080px){.sector-grid{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:1300px){.sector-grid{grid-template-columns:repeat(3,1fr)}}
+        .tabs-row { 
+            display: flex; gap: 0.5rem; overflow-x: auto; 
+            padding-bottom: 0.5rem; scrollbar-width: none; 
+        }
+        .tabs-row::-webkit-scrollbar { display: none; }
+        
+        .tab {
+            white-space: nowrap; padding: 0.5rem 1rem;
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+        .tab.active { background: var(--text-primary); color: var(--bg); font-weight: 700; border-color: var(--text-primary); }
 
-/* ── SKELETON LOADER ───────────────────────────────────────── */
-.skeleton-card{
-  background:var(--bg-card);border-radius:var(--radius);
-  padding:1.5rem;border:1px solid var(--border);
-  min-height:180px;
-}
-.skeleton-line{
-  height:12px;border-radius:6px;margin-bottom:.75rem;
-  background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);
-  background-size:200% 100%;animation:shimmer 1.5s infinite;
-}
-.skeleton-line.w60{width:60%}
-.skeleton-line.w80{width:80%}
-.skeleton-line.w40{width:40%}
-.skeleton-line.w100{width:100%}
-.skeleton-line.thick{height:20px;margin-bottom:1rem}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+        .search-sort-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .search-container { position: relative; flex-grow: 1; max-width: 400px; }
+        input[type="text"] {
+            width: 100%; background: var(--bg-elevated); border: 1px solid var(--border);
+            color: white; padding: 0.75rem 1rem; border-radius: 0.5rem; outline: none;
+        }
+        
+        .sort-container { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 5px; }
+        .sort-btn {
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            color: var(--text-secondary); padding: 0.5rem 0.75rem; border-radius: 0.4rem;
+            cursor: pointer; font-size: 0.8rem; white-space: nowrap;
+        }
+        .sort-btn.active { border-color: var(--accent); color: white; }
 
-/* ── ERROR STATE ───────────────────────────────────────────── */
-.error-state{
-  text-align:center;padding:3rem 1.5rem;
-  background:var(--bg-card);border-radius:var(--radius);border:1px solid rgba(239,68,68,.2);
-}
-.error-state h3{font-family:var(--font-display);font-size:1.3rem;margin-bottom:.5rem;color:var(--red-vivid)}
-.error-state p{color:var(--text-muted);font-size:.88rem}
+        /* Legend */
+        .legend-container { display: flex; align-items: center; gap: 1rem; font-size: 0.75rem; color: var(--text-secondary); }
+        .legend-bar { width: 120px; height: 8px; border-radius: 4px; background: linear-gradient(to right, var(--loss), #333, var(--gain)); }
 
-/* ── SECTOR CARD ───────────────────────────────────────────── */
-.sector-card{
-  background:var(--bg-card);border-radius:var(--radius);
-  border:1px solid var(--border);
-  overflow:hidden;transition:var(--transition);
-  cursor:pointer;position:relative;
-  opacity:0;transform:translateY(20px);
-}
-.sector-card.visible{opacity:1;transform:translateY(0)}
-.sector-card:hover{
-  border-color:var(--border-hover);
-  transform:translateY(-2px);
-  box-shadow:var(--shadow);
-}
-.sector-card.visible:hover{transform:translateY(-2px)}
-.card-color-accent{
-  position:absolute;top:0;left:0;right:0;height:3px;
-}
-.card-header{padding:1.25rem 1.25rem .75rem;position:relative}
-.card-top-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem}
-.sector-name{
-  font-family:var(--font-display);font-weight:700;font-size:1.1rem;
-  line-height:1.2;flex:1;
-}
-.consensus-badge{
-  font-family:var(--font-mono);font-size:.65rem;font-weight:700;
-  padding:.2rem .55rem;border-radius:50px;letter-spacing:.04em;
-  text-transform:uppercase;white-space:nowrap;position:relative;
-}
-.consensus-badge.buy{background:var(--green-soft);color:var(--green-vivid)}
-.consensus-badge.hold{background:var(--amber-soft);color:var(--amber)}
-.consensus-badge.sell{background:var(--red-soft);color:var(--red-vivid)}
-.consensus-badge .mock-dot{
-  display:inline-block;width:5px;height:5px;border-radius:50%;
-  background:currentColor;opacity:.4;margin-left:3px;vertical-align:middle;
-  cursor:help;
-}
-.card-ticker-row{
-  display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem;
-}
-.ticker-tag{
-  font-family:var(--font-mono);font-size:.72rem;font-weight:600;
-  color:var(--text-dim);letter-spacing:.04em;
-}
-.weight-tag{
-  font-family:var(--font-mono);font-size:.72rem;font-weight:500;
-  color:var(--text-muted);
-  padding:.15rem .5rem;border-radius:50px;
-  background:rgba(255,255,255,.04);
-}
+        /* Grid & Cards */
+        .grid {
+            display: grid; gap: 1.25rem;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        }
 
-/* Returns row */
-.returns-row{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-bottom:.85rem;
-}
-.return-cell{text-align:center}
-.return-label{
-  font-size:.62rem;font-weight:600;color:var(--text-dim);
-  text-transform:uppercase;letter-spacing:.06em;margin-bottom:.15rem;
-}
-.return-value{
-  font-family:var(--font-mono);font-size:.88rem;font-weight:700;
-}
+        .card {
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            border-radius: 0.75rem; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer; position: relative; height: min-content;
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
-/* Fundamentals row */
-.fundamentals-row{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;
-  padding-top:.75rem;border-top:1px solid var(--border);
-}
-.fund-cell{text-align:center}
-.fund-label{
-  font-size:.6rem;font-weight:600;color:var(--text-dim);
-  text-transform:uppercase;letter-spacing:.06em;margin-bottom:.15rem;
-  display:flex;align-items:center;justify-content:center;gap:.25rem;
-}
-.fund-label .mock-indicator{
-  display:inline-block;width:4px;height:4px;border-radius:50%;
-  background:var(--amber);opacity:.6;cursor:help;
-}
-.fund-value{
-  font-family:var(--font-mono);font-size:.82rem;font-weight:600;color:var(--text-muted);
-}
+        /* Performance Heatmap Coloring */
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--color-indicator);
+        }
 
-/* Expand chevron */
-.expand-hint{
-  text-align:center;padding:.4rem 0 .2rem;
-  color:var(--text-dim);font-size:.7rem;transition:var(--transition);
-}
-.sector-card:hover .expand-hint{color:var(--text-muted)}
-.expand-hint svg{
-  width:16px;height:16px;transition:transform .3s ease;
-}
-.sector-card[aria-expanded="true"] .expand-hint svg{
-  transform:rotate(180deg);
-}
+        .card-inner { padding: 1.25rem; }
+        
+        /* Card Collapsed View */
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .company-name { font-size: 1.1rem; font-weight: 700; margin: 0; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ticker-badge { font-size: 0.7rem; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; color: var(--text-secondary); }
+        
+        .sector-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--sector-color); margin-bottom: 1rem; display: block; }
+        
+        .main-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .metric-group { display: flex; flex-direction: column; }
+        .metric-val { font-size: 1.25rem; font-weight: 800; }
+        .metric-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; }
 
-/* ── EXPANDED CONTENT ──────────────────────────────────────── */
-.card-expanded{
-  display:grid;
-  grid-template-rows:0fr;
-  transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
-}
-.sector-card[aria-expanded="true"] .card-expanded{
-  grid-template-rows:1fr;
-}
-.card-expanded-inner{
-  overflow:hidden;
-}
-.expanded-content{
-  padding:0 1.25rem 1.25rem;
-  border-top:1px solid var(--border);
-  margin-top:.5rem;
-  padding-top:1rem;
-}
+        .sub-metrics { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem; }
+        .mini-metric { display: flex; flex-direction: column; align-items: center; }
+        .mini-val { font-size: 0.85rem; font-weight: 700; }
+        
+        /* Expanded Content */
+        .expanded-area { 
+            display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; 
+            border-top: 1px solid var(--border);
+        }
+        .card.expanded .expanded-area { grid-template-rows: 1fr; }
+        .expanded-inner { overflow: hidden; }
+        
+        .expanded-tabs { display: flex; border-bottom: 1px solid var(--border); }
+        .expanded-tab { 
+            flex: 1; text-align: center; padding: 0.75rem; font-size: 0.7rem; 
+            text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .expanded-tab.active { color: white; background: rgba(255,255,255,0.03); border-bottom: 2px solid var(--accent); }
+        
+        .tab-panel { padding: 1.25rem; display: none; }
+        .tab-panel.active { display: block; }
 
-/* Holdings */
-.holdings-title{
-  font-size:.7rem;font-weight:700;color:var(--text-dim);
-  text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;
-}
-.holdings-list{list-style:none;margin-bottom:1.25rem}
-.holding-item{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,.03);
-}
-.holding-item:last-child{border-bottom:none}
-.holding-ticker{
-  font-family:var(--font-mono);font-size:.75rem;font-weight:600;color:var(--text);
-}
-.holding-name{
-  font-size:.75rem;color:var(--text-muted);flex:1;margin-left:.5rem;
-}
-.holding-weight{
-  font-family:var(--font-mono);font-size:.75rem;font-weight:600;color:var(--text-dim);
-}
+        /* Gauges & Bars */
+        .gauge-container { margin-bottom: 1rem; }
+        .gauge-bar { height: 6px; background: #222; border-radius: 3px; position: relative; margin: 8px 0; }
+        .gauge-marker { position: absolute; height: 12px; width: 4px; background: white; top: -3px; border-radius: 2px; }
+        
+        .season-grid { display: flex; gap: 2px; height: 30px; align-items: flex-end; margin-top: 10px; }
+        .season-bar { flex: 1; border-radius: 1px; min-height: 2px; }
 
-/* Market Cap Bar */
-.mcap-section{margin-bottom:1.25rem}
-.mcap-bar{
-  display:flex;height:10px;border-radius:5px;overflow:hidden;margin-top:.4rem;
-}
-.mcap-large{background:var(--blue)}
-.mcap-mid{background:rgba(59,130,246,.45)}
-.mcap-small{background:rgba(59,130,246,.2)}
-.mcap-labels{
-  display:flex;justify-content:space-between;margin-top:.35rem;
-  font-size:.65rem;color:var(--text-dim);font-family:var(--font-mono);
-}
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            padding: 2rem; backdrop-filter: blur(4px);
+        }
+        .modal {
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            width: 100%; max-width: 800px; max-height: 90vh; border-radius: 1rem;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 2rem; overflow-y: auto; }
+        .strategy-entry { margin-bottom: 2rem; }
+        .strategy-entry h4 { font-family: 'DM Sans', sans-serif; margin: 0 0 0.5rem 0; color: var(--gain); }
+        .strategy-calc { font-size: 0.8rem; color: var(--text-secondary); font-style: italic; margin-top: 0.5rem; border-left: 2px solid var(--border); padding-left: 0.5rem; }
 
-/* 52-Week Range */
-.range-section{margin-bottom:1.25rem}
-.range-track{
-  position:relative;height:6px;background:rgba(255,255,255,.06);
-  border-radius:3px;margin:.6rem 0 .35rem;
-}
-.range-fill{
-  position:absolute;top:0;left:0;height:100%;border-radius:3px;
-  background:linear-gradient(90deg,var(--red-vivid),var(--green-vivid));opacity:.3;
-}
-.range-marker{
-  position:absolute;top:50%;width:12px;height:12px;
-  border-radius:50%;background:var(--text);
-  border:2px solid var(--bg-card);
-  transform:translate(-50%,-50%);
-  box-shadow:0 0 8px rgba(255,255,255,.3);
-}
-.range-labels{
-  display:flex;justify-content:space-between;
-  font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim);
-}
+        /* Skeleton */
+        .skeleton { animation: pulse 1.5s infinite ease-in-out; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 0.75rem; height: 250px; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-/* Mean Reversion Gauge */
-.mr-section{}
-.mr-gauge{
-  position:relative;height:8px;background:rgba(255,255,255,.06);
-  border-radius:4px;margin:.6rem 0 .35rem;overflow:visible;
-}
-.mr-center{
-  position:absolute;top:-2px;left:50%;width:2px;height:12px;
-  background:var(--text-dim);transform:translateX(-50%);border-radius:1px;
-}
-.mr-marker{
-  position:absolute;top:50%;width:10px;height:10px;border-radius:50%;
-  transform:translate(-50%,-50%);
-  border:2px solid var(--bg-card);
-}
-.mr-labels{
-  display:flex;justify-content:space-between;align-items:center;
-  font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim);
-}
-.mr-labels .mr-center-label{
-  position:absolute;left:50%;transform:translateX(-50%);
-  font-size:.6rem;color:var(--text-dim);
-}
+        /* Show More */
+        .load-more-container { text-align: center; margin-top: 3rem; }
+        .load-more-btn {
+            background: transparent; border: 1px solid var(--border); color: white;
+            padding: 0.75rem 2rem; border-radius: 0.5rem; cursor: pointer;
+        }
 
-/* ── SIDEBAR / EXPLAINER ───────────────────────────────────── */
-.explainer-panel{
-  position:sticky;top:1rem;
-}
-.explainer-toggle{
-  width:100%;padding:.75rem 1rem;
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-family:var(--font-display);font-size:.95rem;font-weight:600;
-  text-align:left;display:flex;justify-content:space-between;align-items:center;
-  transition:var(--transition);color:var(--text);
-}
-.explainer-toggle:hover{border-color:var(--border-hover);background:var(--bg-card-hover)}
-.explainer-toggle svg{
-  width:16px;height:16px;transition:transform .3s ease;color:var(--text-dim);
-}
-.explainer-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}
-.explainer-body{
-  display:grid;grid-template-rows:0fr;
-  transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1);
-}
-.explainer-toggle[aria-expanded="true"] + .explainer-body{
-  grid-template-rows:1fr;
-}
-.explainer-body-inner{overflow:hidden}
-.explainer-content{
-  padding:1.25rem;margin-top:.5rem;
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--radius-sm);
-}
-.explainer-content h3{
-  font-family:var(--font-display);font-size:1rem;font-weight:700;
-  margin-bottom:.6rem;
-}
-.explainer-content p{
-  font-size:.82rem;color:var(--text-muted);line-height:1.65;margin-bottom:.75rem;
-}
-.explainer-content p:last-child{margin-bottom:0}
-.explainer-disclaimer{
-  margin-top:1rem;padding:.75rem;
-  background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.1);
-  border-radius:var(--radius-xs);
-  font-size:.72rem;color:rgba(245,158,11,.75);line-height:1.5;
-}
-
-/* ── MODAL ─────────────────────────────────────────────────── */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.7);
-  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-  z-index:1000;display:flex;align-items:center;justify-content:center;
-  opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;
-  padding:1.5rem;
-}
-.modal-overlay.open{opacity:1;visibility:visible}
-.modal{
-  background:var(--bg-modal);border:1px solid var(--border);
-  border-radius:var(--radius);max-width:640px;width:100%;
-  max-height:85vh;overflow-y:auto;
-  box-shadow:0 24px 80px rgba(0,0,0,.6);
-  transform:translateY(12px);transition:transform .3s cubic-bezier(.4,0,.2,1);
-}
-.modal-overlay.open .modal{transform:translateY(0)}
-.modal-header{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:1.5rem 1.5rem 1rem;border-bottom:1px solid var(--border);
-  position:sticky;top:0;background:var(--bg-modal);z-index:1;
-}
-.modal-header h2{
-  font-family:var(--font-display);font-size:1.3rem;font-weight:700;
-}
-.modal-close{
-  width:32px;height:32px;border-radius:50%;
-  background:rgba(255,255,255,.06);
-  display:flex;align-items:center;justify-content:center;
-  transition:var(--transition);color:var(--text-muted);
-}
-.modal-close:hover{background:rgba(255,255,255,.12);color:var(--text)}
-.modal-body{padding:1.5rem}
-.metric-entry{margin-bottom:1.5rem}
-.metric-entry:last-child{margin-bottom:0}
-.metric-entry h4{
-  font-family:var(--font-body);font-size:.88rem;font-weight:700;
-  color:var(--text);margin-bottom:.3rem;
-}
-.metric-entry p{
-  font-size:.82rem;color:var(--text-muted);line-height:1.65;
-}
-
-/* ── FOOTER ────────────────────────────────────────────────── */
-.site-footer{
-  text-align:center;padding:3rem 0 2rem;
-  font-size:.72rem;color:var(--text-dim);
-}
-.site-footer a{color:var(--text-muted)}
-
-/* ── UTILITY ───────────────────────────────────────────────── */
-.positive{color:var(--green-vivid)}
-.negative{color:var(--red-vivid)}
-.neutral{color:var(--text-muted)}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
-
-/* ── MOBILE OVERRIDES ──────────────────────────────────────── */
-@media(max-width:1079px){
-  .main-layout{grid-template-columns:1fr}
-  .explainer-panel{position:static;margin-top:1.5rem}
-}
-@media(max-width:480px){
-  .page-wrapper{padding:0 1rem 3rem}
-  .benchmarks{gap:.5rem}
-  .bench-pill{padding:.4rem .75rem;font-size:.75rem}
-  .controls{gap:.5rem}
-  .legend-bar{margin-left:0;margin-top:.25rem;width:100%;justify-content:flex-start}
-}
-</style>
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .search-sort-row { flex-direction: column; align-items: stretch; }
+            .search-container { max-width: 100%; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="page-wrapper">
-
-  <!-- HEADER -->
-  <header class="site-header">
-    <h1>OSEBX Sector Heatmap</h1>
-    <p class="subtitle">Oslo Børs Benchmark Index — Sector Performance Overview</p>
-  </header>
-
-  <!-- BENCHMARK PILLS (dynamic) -->
-  <div class="benchmarks" id="benchmarks" role="region" aria-label="Market benchmarks">
-    <div class="bench-pill"><span class="bench-name">OSEBX</span><span class="bench-ytd neutral">—</span></div>
-    <div class="bench-pill"><span class="bench-name">OBX</span><span class="bench-ytd neutral">—</span></div>
-    <div class="bench-pill"><span class="bench-name">OSEFX</span><span class="bench-ytd neutral">—</span></div>
-  </div>
-
-  <!-- DISCLAIMER -->
-  <div class="disclaimer-banner" role="status">
-    Market data is delayed and updated weekly. Certain fundamental metrics are illustrative placeholders. This dashboard is for informational and educational purposes only&nbsp;— not to be used for financial analysis or investment decisions.
-    <span class="last-updated" id="lastUpdated"></span>
-  </div>
-
-  <!-- CONTROLS -->
-  <div class="controls" role="toolbar" aria-label="Sort and filter controls">
-    <div class="sort-group" role="radiogroup" aria-label="Sort sectors by">
-      <button class="sort-btn active" data-sort="ytd" role="radio" aria-checked="true">YTD</button>
-      <button class="sort-btn" data-sort="weight" role="radio" aria-checked="false">Weight</button>
-      <button class="sort-btn" data-sort="pe" role="radio" aria-checked="false">P/E</button>
-      <button class="sort-btn" data-sort="pb" role="radio" aria-checked="false">P/B</button>
-      <button class="sort-btn" data-sort="divyield" role="radio" aria-checked="false">Div Yield</button>
-      <button class="sort-btn" data-sort="meanrev" role="radio" aria-checked="false">% from 5Y Mean</button>
-    </div>
-    <button class="metrics-btn" id="openMetrics" aria-haspopup="dialog">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-      Metrics Explained
-    </button>
-    <div class="legend-bar" aria-hidden="true">
-      <span>Loss</span>
-      <div class="legend-gradient"></div>
-      <span>Gain</span>
-    </div>
-  </div>
-
-  <!-- MAIN LAYOUT: grid + sidebar -->
-  <div class="main-layout">
-
-    <!-- SECTOR GRID -->
-    <main>
-      <div class="sector-grid" id="sectorGrid" role="list" aria-label="Sector heatmap cards">
-        <!-- Skeleton loaders (replaced on data load) -->
-        <div class="skeleton-card"><div class="skeleton-line thick w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w100"></div><div class="skeleton-line w40"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line thick w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w100"></div><div class="skeleton-line w40"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line thick w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w100"></div><div class="skeleton-line w40"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line thick w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w100"></div><div class="skeleton-line w40"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line thick w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w100"></div><div class="skeleton-line w40"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line thick w60"></div><div class="skeleton-line w80"></div><div class="skeleton-line w100"></div><div class="skeleton-line w40"></div></div>
-      </div>
-    </main>
-
-    <!-- SIDEBAR: EXPLAINER -->
-    <aside class="explainer-panel" aria-label="Oslo Børs explainer">
-      <button class="explainer-toggle" id="explainerToggle" aria-expanded="false" aria-controls="explainerBody">
-        What is Oslo Børs?
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="explainer-body" id="explainerBody" role="region">
-        <div class="explainer-body-inner">
-          <div class="explainer-content">
-            <h3>The Oslo Børs in a Nutshell</h3>
-            <p>The Oslo Stock Exchange (Oslo Børs) is one of Europe's most distinctive equity markets. Unlike broader indices such as the S&P 500 or STOXX 600, the OSEBX is <strong>heavily concentrated</strong> in just a few sectors — most notably <strong>Energy</strong> and <strong>Seafood</strong>.</p>
-            <p><strong>Energy</strong> alone can account for over 30% of the index weight, driven primarily by Equinor (formerly Statoil) and Aker BP. This makes the OSEBX uniquely sensitive to global oil and gas prices.</p>
-            <p><strong>Seafood &amp; Consumer Staples</strong> is another distinctive feature. Norway is the world's largest producer of farmed Atlantic salmon, and companies like Mowi, SalMar, and Lerøy Seafood are significant index constituents — a sector composition you won't find in any other major market.</p>
-            <p><strong>Financials</strong>, led by DNB (Norway's largest bank), form the third pillar. The sector benefits from Norway's strong economic fundamentals, backed by the Government Pension Fund Global (the world's largest sovereign wealth fund).</p>
-            <p>The combination of these factors makes the Oslo Børs a <strong>cyclical, commodity-sensitive market</strong> with characteristics quite different from the tech-heavy US indices or the diversified European benchmarks.</p>
-            <div class="explainer-disclaimer">
-              Market data shown on this dashboard is delayed and updated weekly. Fundamental metrics (P/E, P/B, Dividend Yield, Analyst Consensus) are illustrative placeholders. Do not use this data for financial analysis or investment decisions.
+<div class="container">
+    <header>
+        <div class="title-row">
+            <div>
+                <h1>OSEBX Company Heatmap</h1>
+                <div class="mono" style="color: var(--text-secondary); font-size: 0.8rem;" id="lastUpdated">Laster markedsdata...</div>
             </div>
-          </div>
+            <button class="tab active" style="font-weight: 500;" onclick="toggleModal(true)">Strategy Guide</button>
         </div>
-      </div>
-    </aside>
+        <div class="benchmarks mono" id="benchmarkContainer"></div>
+    </header>
 
-  </div><!-- /main-layout -->
-
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    Data sourced via <a href="https://github.com/ranaroussi/yfinance" target="_blank" rel="noopener">yfinance</a> from Yahoo Finance. For educational purposes only.
-    <br>&copy; 2026 Valiant Evers, Oslo
-  </footer>
-
-</div><!-- /page-wrapper -->
-
-<!-- METRICS MODAL -->
-<div class="modal-overlay" id="metricsModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 id="modalTitle">Metrics Explained</h2>
-      <button class="modal-close" id="closeMetrics" aria-label="Close modal">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+    <div class="disclaimer-banner">
+        Markedsdata er forsinket og oppdateres ukentlig via Yahoo Finance. Dette dashbordet er kun til informasjonsformål og skal ikke brukes til finansielle beslutninger.
     </div>
-    <div class="modal-body">
-      <div class="metric-entry">
-        <h4>Year to Date (YTD)</h4>
-        <p>YTD refers to the period beginning on the first day of the current calendar year up to the present date. In finance, it is a standard metric used to track the performance and returns of a stock, sector, or index since January 1st, providing a quick snapshot of current-year momentum.</p>
-      </div>
-      <div class="metric-entry">
-        <h4>Weight (Index/Portfolio Weight)</h4>
-        <p>Weight represents the percentage of an entire index or portfolio's value that is made up of a specific asset or sector. For the OSEBX, a sector's weight dictates exactly how much influence its price fluctuations will have on the performance of the broader market index.</p>
-      </div>
-      <div class="metric-entry">
-        <h4>Price-to-Earnings (P/E) Ratio</h4>
-        <p>The P/E ratio is a primary valuation metric that measures a company's current share price relative to its earnings per share (EPS). It essentially illustrates how much investors are willing to pay today for one dollar of the company's current earnings.</p>
-      </div>
-      <div class="metric-entry">
-        <h4>Price-to-Book (P/B) Ratio</h4>
-        <p>The P/B ratio compares a company's market capitalisation to its "book value" (its total assets minus total liabilities). This is a critical metric for evaluating asset-heavy businesses like banks, shipping, and energy companies.</p>
-      </div>
-      <div class="metric-entry">
-        <h4>Dividend Yield</h4>
-        <p>Expressed as a percentage, this financial ratio shows how much a company pays out in dividends each year relative to its stock price. It is calculated by dividing the annual dividend per share by the current share price.</p>
-      </div>
-      <div class="metric-entry">
-        <h4>% from 5Y Mean (Mean Reversion)</h4>
-        <p>This metric is based on the financial theory of mean reversion, which suggests that asset prices and historical returns eventually return to their long-run average levels. By measuring the percentage distance between a sector's current price and its 5-Year Simple Moving Average (SMA), investors can gauge whether a cyclical sector is currently overextended or deeply compressed compared to its baseline.</p>
-      </div>
+
+    <div class="controls-bar">
+        <div class="tabs-row" id="sectorTabs">
+            <div class="tab active" data-sector="All">All Sectors</div>
+        </div>
+        
+        <div class="search-sort-row">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Søk etter selskap eller ticker...">
+            </div>
+            <div class="legend-container">
+                <span>Loss</span>
+                <div class="legend-bar"></div>
+                <span>Gain</span>
+            </div>
+        </div>
+
+        <div class="sort-container" id="sortContainer">
+            </div>
     </div>
-  </div>
+
+    <div class="mono" id="countIndicator" style="margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-secondary);"></div>
+
+    <div class="grid" id="heatmapGrid">
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+
+    <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+        <button class="load-more-btn" id="loadMoreBtn">Show more</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="strategyModal" onclick="if(event.target === this) toggleModal(false)">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Strategy Guide & Metrics</h3>
+            <button onclick="toggleModal(false)" style="background:transparent; border:none; color:white; cursor:pointer; font-size:1.5rem;">&times;</button>
+        </div>
+        <div class="modal-body" id="strategyContent">
+            </div>
+    </div>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════
-   OSEBX Sector Heatmap — Frontend Logic
-   ═══════════════════════════════════════════════════════════════ */
+    // --- State & Config ---
+    let appData = null;
+    let filteredCompanies = [];
+    let visibleCount = 20;
+    let currentSector = 'All';
+    let currentSort = { key: 'returnsYTD', dir: -1 };
 
-(function () {
-  'use strict';
+    const formatters = {
+        currency: new Intl.NumberFormat('nb-NO', { style: 'currency', currency: 'NOK', notation: 'compact' }),
+        percent: new Intl.NumberFormat('nb-NO', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+        decimal: new Intl.NumberFormat('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    };
 
-  // ── State ──────────────────────────────────────────────────
-  let sectorData = [];
-  let currentSort = 'ytd';
+    const sectorColors = {
+        "Energy": "var(--sector-energy)",
+        "Financial Services": "var(--sector-financials)",
+        "Consumer Defensive": "var(--sector-staples)",
+        "Industrials": "var(--sector-industrials)",
+        "Basic Materials": "var(--sector-materials)",
+        "Technology": "var(--sector-it)",
+        "Communication Services": "var(--sector-telecom)",
+        "Utilities": "var(--sector-utilities)",
+        "Real Estate": "var(--sector-realestate)",
+        "Healthcare": "var(--sector-healthcare)",
+        "Consumer Cyclical": "var(--sector-discretionary)"
+    };
 
-  // ── DOM refs ───────────────────────────────────────────────
-  const grid = document.getElementById('sectorGrid');
-  const benchmarksEl = document.getElementById('benchmarks');
-  const lastUpdatedEl = document.getElementById('lastUpdated');
+    const sortMetrics = [
+        { label: 'YTD', key: 'returnsYTD', def: -1 },
+        { label: 'Market Cap', key: 'marketCap', def: -1 },
+        { label: 'P/E', key: 'peRatio', def: 1 },
+        { label: 'P/B', key: 'pbRatio', def: 1 },
+        { label: 'Div Yield', key: 'dividendYield', def: -1 },
+        { label: '5Y Mean Dist', key: 'meanReversion.distancePercentage', def: 1 },
+        { label: 'Alpha (1Y)', key: 'alpha.oneYear', def: -1 },
+        { label: 'Sharpe', key: 'sharpeRatio', def: -1 },
+        { label: 'Momentum', key: 'momentumScore', def: -1 },
+        { label: 'EV/EBITDA', key: 'evToEbitda', def: 1 }
+    ];
 
-  // ── Fetch Data ─────────────────────────────────────────────
-  async function loadData() {
-    try {
-      const res = await fetch('./data.json');
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      sectorData = data.sectors || [];
-      renderBenchmarks(data.benchmarks);
-      renderLastUpdated(data.lastUpdated);
-      sortAndRender();
-    } catch (err) {
-      console.error('Failed to load data:', err);
-      grid.innerHTML = `
-        <div class="error-state" style="grid-column:1/-1">
-          <h3>Unable to Load Data</h3>
-          <p>Could not fetch market data. Please check that data.json exists and try refreshing the page.</p>
-        </div>`;
-    }
-  }
+    // --- Initialization ---
+    async function init() {
+        try {
+            const response = await fetch('./data.json');
+            appData = await response.json();
+            
+            renderBenchmarks();
+            renderSectorTabs();
+            renderSortButtons();
+            renderStrategyGuide();
+            
+            document.getElementById('lastUpdated').textContent = `Sist oppdatert: ${new Date(appData.lastUpdated).toLocaleString('nb-NO')}`;
+            
+            updateFilters();
+            
+            // Events
+            document.getElementById('searchInput').addEventListener('input', () => updateFilters());
+            document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                visibleCount += 20;
+                renderGrid();
+            });
 
-  // ── Render Benchmarks ──────────────────────────────────────
-  function renderBenchmarks(benchmarks) {
-    if (!benchmarks) return;
-    const keys = ['OSEBX', 'OBX', 'OSEFX'];
-    benchmarksEl.innerHTML = keys.map(key => {
-      const b = benchmarks[key];
-      if (!b) return '';
-      const ytd = b.ytd;
-      const cls = ytd > 0 ? 'positive' : ytd < 0 ? 'negative' : 'neutral';
-      const sign = ytd > 0 ? '+' : '';
-      const display = ytd != null ? `${sign}${ytd.toFixed(2)}%` : '—';
-      return `<div class="bench-pill">
-        <span class="bench-name">${key}</span>
-        <span class="bench-ytd ${cls}">${display}</span>
-      </div>`;
-    }).join('');
-  }
-
-  // ── Render Timestamp ───────────────────────────────────────
-  function renderLastUpdated(iso) {
-    if (!iso) return;
-    const d = new Date(iso);
-    const opts = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC', timeZoneName: 'short' };
-    lastUpdatedEl.textContent = `Last updated: ${d.toLocaleDateString('en-GB', opts)}`;
-  }
-
-  // ── Color Logic ────────────────────────────────────────────
-  function ytdColor(ytd) {
-    if (ytd == null) return { bg: 'var(--bg-card)', accent: 'var(--border)', textCls: 'neutral' };
-    const mag = Math.min(Math.abs(ytd) / 20, 1); // Normalize: ±20% = full intensity
-    const alpha = 0.08 + mag * 0.18;
-    if (ytd > 0) {
-      return {
-        bg: `rgba(34,197,94,${alpha})`,
-        accent: `rgba(34,197,94,${0.3 + mag * 0.7})`,
-        textCls: 'positive'
-      };
-    } else {
-      return {
-        bg: `rgba(239,68,68,${alpha})`,
-        accent: `rgba(239,68,68,${0.3 + mag * 0.7})`,
-        textCls: 'negative'
-      };
-    }
-  }
-
-  function returnDisplay(val) {
-    if (val == null) return { text: '—', cls: 'neutral' };
-    const sign = val > 0 ? '+' : '';
-    const cls = val > 0 ? 'positive' : val < 0 ? 'negative' : 'neutral';
-    return { text: `${sign}${val.toFixed(2)}%`, cls };
-  }
-
-  // ── Render Cards ───────────────────────────────────────────
-  function renderCards(sectors) {
-    grid.innerHTML = '';
-    sectors.forEach((s, i) => {
-      const color = ytdColor(s.returnsYTD);
-      const ytd = returnDisplay(s.returnsYTD);
-      const r6m = returnDisplay(s.returns6M);
-      const r1y = returnDisplay(s.returns1Y);
-      const consensusCls = (s.analystConsensus || '').toLowerCase();
-
-      // 52-week range
-      let rangeHTML = '';
-      if (s.week52) {
-        const w = s.week52;
-        const span = w.high - w.low;
-        const pct = span > 0 ? ((w.current - w.low) / span * 100) : 50;
-        rangeHTML = `
-          <div class="range-section">
-            <div class="holdings-title">52-Week Range</div>
-            <div class="range-track">
-              <div class="range-fill" style="width:100%"></div>
-              <div class="range-marker" style="left:${pct}%"></div>
-            </div>
-            <div class="range-labels">
-              <span>${w.low.toLocaleString()}</span>
-              <span style="color:var(--text);font-weight:600">${w.current.toLocaleString()}</span>
-              <span>${w.high.toLocaleString()}</span>
-            </div>
-          </div>`;
-      }
-
-      // Mean Reversion
-      let mrHTML = '';
-      if (s.meanReversion && s.meanReversion.distancePercentage != null) {
-        const mr = s.meanReversion;
-        // Map -30% to +30% → 0% to 100% (center = 50%)
-        const pct = Math.max(0, Math.min(100, 50 + (mr.distancePercentage / 30) * 50));
-        const mrColor = mr.distancePercentage > 0 ? 'var(--green-vivid)' : 'var(--red-vivid)';
-        const mrSign = mr.distancePercentage > 0 ? '+' : '';
-        mrHTML = `
-          <div class="mr-section">
-            <div class="holdings-title">Mean Reversion (5Y SMA)</div>
-            <div class="mr-gauge">
-              <div class="mr-center"></div>
-              <div class="mr-marker" style="left:${pct}%;background:${mrColor}"></div>
-            </div>
-            <div class="mr-labels" style="position:relative">
-              <span>-30%</span>
-              <span style="font-size:.7rem;color:var(--text-dim)">5Y Avg: ${mr.fiveYearAverage.toLocaleString()}</span>
-              <span>+30%</span>
-            </div>
-            <div style="text-align:center;margin-top:.3rem">
-              <span style="font-family:var(--font-mono);font-size:.82rem;font-weight:700;color:${mrColor}">${mrSign}${mr.distancePercentage.toFixed(2)}%</span>
-              <span style="font-size:.68rem;color:var(--text-dim);margin-left:.3rem">from mean</span>
-            </div>
-          </div>`;
-      }
-
-      // Market Cap
-      let mcapHTML = '';
-      if (s.marketCapBreakdown) {
-        const mc = s.marketCapBreakdown;
-        mcapHTML = `
-          <div class="mcap-section">
-            <div class="holdings-title">Market Cap Breakdown</div>
-            <div class="mcap-bar">
-              <div class="mcap-large" style="width:${mc.large}%"></div>
-              <div class="mcap-mid" style="width:${mc.mid}%"></div>
-              <div class="mcap-small" style="width:${mc.small}%"></div>
-            </div>
-            <div class="mcap-labels">
-              <span>Large ${mc.large}%</span>
-              <span>Mid ${mc.mid}%</span>
-              <span>Small ${mc.small}%</span>
-            </div>
-          </div>`;
-      }
-
-      // Holdings
-      let holdingsHTML = '';
-      if (s.topHoldings && s.topHoldings.length) {
-        holdingsHTML = `
-          <div class="holdings-title">Top 5 Holdings</div>
-          <ul class="holdings-list">
-            ${s.topHoldings.map(h => `
-              <li class="holding-item">
-                <span class="holding-ticker">${h.ticker}</span>
-                <span class="holding-name">${h.name}</span>
-                <span class="holding-weight">${h.weight}%</span>
-              </li>`).join('')}
-          </ul>`;
-      }
-
-      const card = document.createElement('div');
-      card.className = 'sector-card';
-      card.setAttribute('role', 'listitem');
-      card.setAttribute('aria-expanded', 'false');
-      card.setAttribute('tabindex', '0');
-      card.style.transitionDelay = `${i * 60}ms`;
-      card.style.background = color.bg;
-
-      card.innerHTML = `
-        <div class="card-color-accent" style="background:${color.accent}"></div>
-        <div class="card-header">
-          <div class="card-top-row">
-            <span class="sector-name">${s.sectorName}</span>
-            <span class="consensus-badge ${consensusCls}">${s.analystConsensus || '—'}<span class="mock-dot" title="Illustrative placeholder"></span></span>
-          </div>
-          <div class="card-ticker-row">
-            <span class="ticker-tag">${s.ticker}</span>
-            <span class="weight-tag">${s.osebxWeight}% of OSEBX</span>
-          </div>
-          <div class="returns-row">
-            <div class="return-cell">
-              <div class="return-label">YTD</div>
-              <div class="return-value ${ytd.cls}">${ytd.text}</div>
-            </div>
-            <div class="return-cell">
-              <div class="return-label">6M</div>
-              <div class="return-value ${r6m.cls}">${r6m.text}</div>
-            </div>
-            <div class="return-cell">
-              <div class="return-label">1Y</div>
-              <div class="return-value ${r1y.cls}">${r1y.text}</div>
-            </div>
-          </div>
-          <div class="fundamentals-row">
-            <div class="fund-cell">
-              <div class="fund-label">P/E <span class="mock-indicator" title="Illustrative placeholder"></span></div>
-              <div class="fund-value">${s.peRatio != null ? s.peRatio.toFixed(1) : '—'}</div>
-            </div>
-            <div class="fund-cell">
-              <div class="fund-label">P/B <span class="mock-indicator" title="Illustrative placeholder"></span></div>
-              <div class="fund-value">${s.pbRatio != null ? s.pbRatio.toFixed(1) : '—'}</div>
-            </div>
-            <div class="fund-cell">
-              <div class="fund-label">Div Yield <span class="mock-indicator" title="Illustrative placeholder"></span></div>
-              <div class="fund-value">${s.dividendYield != null ? s.dividendYield.toFixed(1) + '%' : '—'}</div>
-            </div>
-          </div>
-        </div>
-        <div class="expand-hint" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="card-expanded">
-          <div class="card-expanded-inner">
-            <div class="expanded-content">
-              ${holdingsHTML}
-              ${mcapHTML}
-              ${rangeHTML}
-              ${mrHTML}
-            </div>
-          </div>
-        </div>`;
-
-      // Toggle expand
-      card.addEventListener('click', () => toggleCard(card));
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleCard(card);
+        } catch (err) {
+            document.getElementById('heatmapGrid').innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--loss);">Kunne ikke laste data. Vennligst sjekk om data.json eksisterer.</p>`;
+            console.error(err);
         }
-      });
-
-      grid.appendChild(card);
-    });
-
-    // Trigger scroll animations
-    observeCards();
-  }
-
-  function toggleCard(card) {
-    const isExpanded = card.getAttribute('aria-expanded') === 'true';
-    card.setAttribute('aria-expanded', String(!isExpanded));
-  }
-
-  // ── Sorting ────────────────────────────────────────────────
-  function getSortValue(s, key) {
-    switch (key) {
-      case 'ytd': return s.returnsYTD ?? -Infinity;
-      case 'weight': return s.osebxWeight ?? 0;
-      case 'pe': return s.peRatio ?? Infinity;
-      case 'pb': return s.pbRatio ?? Infinity;
-      case 'divyield': return s.dividendYield ?? 0;
-      case 'meanrev': return s.meanReversion?.distancePercentage ?? -Infinity;
-      default: return 0;
     }
-  }
 
-  function sortAndRender() {
-    const sorted = [...sectorData].sort((a, b) => {
-      const va = getSortValue(a, currentSort);
-      const vb = getSortValue(b, currentSort);
-      // For P/E and P/B, lower is "better" so sort ascending
-      if (currentSort === 'pe' || currentSort === 'pb') return va - vb;
-      return vb - va; // Descending by default
-    });
-    renderCards(sorted);
-  }
+    // --- Core Logic ---
+    function updateFilters() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        filteredCompanies = appData.companies.filter(c => {
+            const matchesSearch = c.companyName?.toLowerCase().includes(searchTerm) || c.ticker.toLowerCase().includes(searchTerm);
+            const matchesSector = currentSector === 'All' || c.sector === currentSector;
+            return matchesSearch && matchesSector;
+        });
 
-  // ── Sort Buttons ───────────────────────────────────────────
-  document.querySelectorAll('.sort-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.sort-btn').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-checked', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-checked', 'true');
-      currentSort = btn.dataset.sort;
-      sortAndRender();
-    });
-  });
-
-  // ── Scroll Animation ──────────────────────────────────────
-  function observeCards() {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-
-    document.querySelectorAll('.sector-card').forEach(card => observer.observe(card));
-  }
-
-  // ── Explainer Toggle ───────────────────────────────────────
-  const explainerToggle = document.getElementById('explainerToggle');
-  explainerToggle.addEventListener('click', () => {
-    const expanded = explainerToggle.getAttribute('aria-expanded') === 'true';
-    explainerToggle.setAttribute('aria-expanded', String(!expanded));
-  });
-
-  // ── Metrics Modal ──────────────────────────────────────────
-  const modalOverlay = document.getElementById('metricsModal');
-  const openBtn = document.getElementById('openMetrics');
-  const closeBtn = document.getElementById('closeMetrics');
-  let lastFocused = null;
-
-  function openModal() {
-    lastFocused = document.activeElement;
-    modalOverlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    // Focus trap
-    closeBtn.focus();
-  }
-
-  function closeModal() {
-    modalOverlay.classList.remove('open');
-    document.body.style.overflow = '';
-    if (lastFocused) lastFocused.focus();
-  }
-
-  openBtn.addEventListener('click', openModal);
-  closeBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) closeModal();
-  });
-
-  // Focus trapping within modal
-  modalOverlay.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeModal();
-      return;
+        sortData();
+        visibleCount = 20;
+        renderGrid();
     }
-    if (e.key !== 'Tab') return;
-    const focusable = modalOverlay.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (e.shiftKey) {
-      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
-    } else {
-      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+
+    function sortData() {
+        const { key, dir } = currentSort;
+        filteredCompanies.sort((a, b) => {
+            const valA = getNestedValue(a, key);
+            const valB = getNestedValue(b, key);
+            
+            if (valA === null) return 1;
+            if (valB === null) return -1;
+            return (valA - valB) * dir;
+        });
     }
-  });
 
-  // ── Init ───────────────────────────────────────────────────
-  loadData();
+    function getNestedValue(obj, path) {
+        return path.split('.').reduce((prev, curr) => prev ? prev[curr] : null, obj);
+    }
 
-})();
+    // --- Rendering ---
+    function renderGrid() {
+        const grid = document.getElementById('heatmapGrid');
+        const show = filteredCompanies.slice(0, visibleCount);
+        
+        grid.innerHTML = show.map(c => createCardHTML(c)).join('');
+        
+        const remaining = filteredCompanies.length - visibleCount;
+        const loader = document.getElementById('loadMoreContainer');
+        loader.style.display = remaining > 0 ? 'block' : 'none';
+        document.getElementById('loadMoreBtn').textContent = `Show more (${remaining} remaining)`;
+        
+        document.getElementById('countIndicator').textContent = `Viser ${show.length} av ${filteredCompanies.length} selskaper`;
+    }
+
+    function createCardHTML(c) {
+        const color = getHeatColor(c.returnsYTD);
+        const sColor = sectorColors[c.sector] || "#666";
+        
+        return `
+            <div class="card" id="card-${c.ticker}" onclick="toggleExpand('${c.ticker}')" style="--color-indicator: ${color}; --sector-color: ${sColor}">
+                <div class="card-inner">
+                    <div class="card-header">
+                        <h3 class="company-name">${c.companyName || c.ticker}</h3>
+                        <div class="mono ticker-badge">${c.ticker.split('.')[0]} • ${c.osebxWeight}%</div>
+                    </div>
+                    <span class="sector-label">${c.sector || 'N/A'}</span>
+                    
+                    <div class="main-metrics">
+                        <div class="metric-group">
+                            <span class="metric-label">YTD Return</span>
+                            <span class="metric-val mono" style="color: ${color}">${formatPercent(c.returnsYTD)}</span>
+                        </div>
+                        <div class="metric-group">
+                            <span class="metric-label">Div Yield</span>
+                            <span class="metric-val mono">${c.dividendYield ? formatPercent(c.dividendYield / 100) : '—'}</span>
+                        </div>
+                    </div>
+
+                    <div class="sub-metrics">
+                        <div class="mini-metric"><span class="metric-label">P/E</span><span class="mini-val mono">${c.peRatio || '—'}</span></div>
+                        <div class="mini-metric"><span class="metric-label">P/B</span><span class="mini-val mono">${c.pbRatio || '—'}</span></div>
+                        <div class="mini-metric"><span class="metric-label">1Y Alpha</span><span class="mini-val mono" style="color: ${getHeatColor(c.alpha?.oneYear)}">${c.alpha?.oneYear ? (c.alpha.oneYear > 0 ? '+' : '') + formatPercent(c.alpha.oneYear) : '—'}</span></div>
+                    </div>
+                </div>
+
+                <div class="expanded-area">
+                    <div class="expanded-inner">
+                        <div class="expanded-tabs">
+                            <div class="expanded-tab active" onclick="event.stopPropagation(); switchTab('${c.ticker}', 1)">Perf</div>
+                            <div class="expanded-tab" onclick="event.stopPropagation(); switchTab('${c.ticker}', 2)">Risk</div>
+                            <div class="expanded-tab" onclick="event.stopPropagation(); switchTab('${c.ticker}', 3)">Value</div>
+                        </div>
+
+                        <div class="tab-panel active" data-tab="1">
+                            <div class="main-metrics">
+                                <div class="metric-group"><span class="metric-label">Sharpe Ratio</span><span class="mini-val mono">${c.sharpeRatio || '—'}</span></div>
+                                <div class="metric-group"><span class="metric-label">Momentum Score</span><span class="mini-val mono">${c.momentumScore || '—'}/100</span></div>
+                            </div>
+                            <div class="metric-label">Historical Seasonality</div>
+                            <div class="season-grid">${(c.seasonality || []).map(s => `<div class="season-bar" style="height: ${Math.abs(s || 0) * 200}px; background: ${s > 0 ? 'var(--gain)' : 'var(--loss)'}"></div>`).join('')}</div>
+                        </div>
+
+                        <div class="tab-panel" data-tab="2">
+                            <div class="metric-label">Max Drawdown (1Y)</div>
+                            <div class="gauge-container"><div class="gauge-bar"><div class="gauge-marker" style="left: ${Math.abs(c.maxDrawdown || 0) * 100}%"></div></div><div class="mono" style="font-size: 0.7rem">${formatPercent(c.maxDrawdown)}</div></div>
+                            <div class="sub-metrics">
+                                <div class="mini-metric"><span class="metric-label">Correlation</span><span class="mini-val mono">${c.correlationToOSEBX || '—'}</span></div>
+                                <div class="mini-metric"><span class="metric-label">Vol Pctl</span><span class="mini-val mono">${c.volatilityPercentile || '—'}%</span></div>
+                            </div>
+                        </div>
+
+                        <div class="tab-panel" data-tab="3">
+                            <div class="metric-group"><span class="metric-label">Market Cap</span><span class="mini-val mono">${c.marketCap ? formatters.currency.format(c.marketCap) : '—'}</span></div>
+                            <div class="sub-metrics" style="margin-top: 10px;">
+                                <div class="mini-metric"><span class="metric-label">EV/EBITDA</span><span class="mini-val mono">${c.evToEbitda || '—'}</span></div>
+                                <div class="mini-metric"><span class="metric-label">Earnings Yield</span><span class="mini-val mono">${c.earningsYield ? formatters.decimal.format(c.earningsYield) + '%' : '—'}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- Helpers ---
+    function getHeatColor(val) {
+        if (val === null || val === undefined) return 'var(--neutral)';
+        if (val > 0) return `rgba(16, 185, 129, ${Math.min(0.2 + val * 2, 1)})`;
+        if (val < 0) return `rgba(239, 68, 68, ${Math.min(0.2 + Math.abs(val) * 2, 1)})`;
+        return 'var(--neutral)';
+    }
+
+    function formatPercent(val) {
+        if (val === null) return '—';
+        return (val * 100).toFixed(1) + '%';
+    }
+
+    function toggleExpand(ticker) {
+        const card = document.getElementById(`card-${ticker}`);
+        card.classList.toggle('expanded');
+    }
+
+    function switchTab(ticker, tabIdx) {
+        const card = document.getElementById(`card-${ticker}`);
+        const tabs = card.querySelectorAll('.expanded-tab');
+        const panels = card.querySelectorAll('.tab-panel');
+        
+        tabs.forEach((t, i) => t.classList.toggle('active', i === tabIdx - 1));
+        panels.forEach((p, i) => p.classList.toggle('active', i === tabIdx - 1));
+    }
+
+    function renderBenchmarks() {
+        const container = document.getElementById('benchmarkContainer');
+        container.innerHTML = Object.entries(appData.benchmarks).map(([key, val]) => `
+            <div class="benchmark-pill">
+                ${key}: <span style="color: ${val > 0 ? 'var(--gain)' : 'var(--loss)'}">${formatPercent(val)}</span>
+            </div>
+        `).join('');
+    }
+
+    function renderSectorTabs() {
+        const container = document.getElementById('sectorTabs');
+        const sectors = Object.keys(appData.sectorSummary);
+        
+        container.innerHTML = `<div class="tab active" data-sector="All">All Sectors</div>` + 
+            sectors.map(s => {
+                const data = appData.sectorSummary[s];
+                const color = getHeatColor(data.averageYTD);
+                return `<div class="tab" data-sector="${s}">${s} <span class="mono" style="font-size: 0.7rem; color: ${color}">${formatPercent(data.averageYTD)}</span></div>`;
+            }).join('');
+
+        container.querySelectorAll('.tab').forEach(t => {
+            t.addEventListener('click', () => {
+                container.querySelector('.active').classList.remove('active');
+                t.classList.add('active');
+                currentSector = t.dataset.sector;
+                updateFilters();
+            });
+        });
+    }
+
+    function renderSortButtons() {
+        const container = document.getElementById('sortContainer');
+        container.innerHTML = sortMetrics.map(m => `
+            <button class="sort-btn ${currentSort.key === m.key ? 'active' : ''}" data-key="${m.key}" data-def="${m.def}">
+                ${m.label} ${currentSort.key === m.key ? (currentSort.dir === 1 ? '↑' : '↓') : ''}
+            </button>
+        `).join('');
+
+        container.querySelectorAll('.sort-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                const key = b.dataset.key;
+                const def = parseInt(b.dataset.def);
+                
+                if (currentSort.key === key) {
+                    currentSort.dir *= -1;
+                } else {
+                    currentSort.key = key;
+                    currentSort.dir = def;
+                }
+                
+                renderSortButtons();
+                updateFilters();
+            });
+        });
+    }
+
+    function toggleModal(show) {
+        document.getElementById('strategyModal').style.display = show ? 'flex' : 'none';
+    }
+
+    function renderStrategyGuide() {
+        // This is where the long definitions from the prompt go
+        const content = document.getElementById('strategyContent');
+        const definitions = [
+            { t: "YTD Return", d: "Avkastning siden 1. januar i år.", c: "(Dagens pris - Pris 1. jan) / Pris 1. jan" },
+            { t: "Alpha (Relative Strength)", d: "Viser om en aksje slår indeksen (OSEBX). Positiv alpha betyr meravkastning.", c: "Aksjeavkastning - Indeksavkastning" },
+            { t: "Sharpe Ratio", d: "Mål på risikojustert avkastning. Høyere er bedre.", c: "(Avkastning - Risikofri rente) / Volatilitet" },
+            { t: "Mean Reversion", d: "Avstand fra 5-års glidende gjennomsnitt. Indikerer om aksjen er strukket eller presset.", c: "(Pris - 5Y SMA) / 5Y SMA" }
+        ];
+        
+        content.innerHTML = definitions.map(item => `
+            <div class="strategy-entry">
+                <h4>${item.t}</h4>
+                <p>${item.d}</p>
+                <div class="strategy-calc">${item.c}</div>
+            </div>
+        `).join('');
+    }
+
+    init();
 </script>
 </body>
 </html>
