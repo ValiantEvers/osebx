@@ -2,8 +2,7 @@ name: Update Heatmap Data
 
 on:
   schedule:
-    - cron: '0 20 * * 0' # Runs every Sunday at 20:00 UTC
-  workflow_dispatch: # Allows manual trigger from GitHub UI
+    - cron: '17 20 * * 0' # Runs at 20:17 UTC to avoid top-of-the-hour rate limits  workflow_dispatch: # Allows manual trigger from GitHub UI
 
 permissions:
   contents: write
