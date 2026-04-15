@@ -288,68 +288,12 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .guide-btn:hover { border-color: var(--blue); color: var(--blue); }
 
-/* ===== Main Layout ===== */
-.main-layout {
-  display: flex;
-  gap: 28px;
-  margin-top: 24px;
-  padding-bottom: 60px;
-  align-items: flex-start;
-}
-.grid-area { flex: 1; min-width: 0; }
-
-/* Explainer Sidebar (desktop) */
-.explainer-sidebar {
-  width: 300px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 20px;
-}
-@media (max-width: 1024px) {
-  .main-layout { flex-direction: column; }
-  .explainer-sidebar { width: 100%; position: static; }
-}
-
-.explainer-panel {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-.explainer-toggle {
-  width: 100%;
-  padding: 14px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  background: transparent;
-  cursor: pointer;
-}
-.explainer-toggle .chevron { transition: transform 0.3s ease; font-size: 0.75rem; }
-.explainer-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
-.explainer-body {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease;
-}
-.explainer-body.open { max-height: 2000px; }
-.explainer-content {
-  padding: 0 18px 18px;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  line-height: 1.65;
-}
-.explainer-content p { margin-bottom: 10px; }
-.explainer-content strong { color: var(--text-primary); }
-
-/* ===== Grid ===== */
+/* ===== Grid (full width, tighter tiles) ===== */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  margin-top: 24px;
 }
 @media (max-width: 420px) {
   .cards-grid { grid-template-columns: 1fr; gap: 10px; }
@@ -372,7 +316,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 .show-more-btn:hover { border-color: var(--blue); color: var(--blue); }
 
-/* ===== Company Card ===== */
+/* ===== Company Card (compact) ===== */
 .company-card {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
@@ -380,12 +324,12 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   overflow: hidden;
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(12px);
 }
 .company-card.visible {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .company-card:hover {
   border-color: var(--border-hover);
@@ -396,7 +340,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 /* Collapsed */
 .card-header {
-  padding: 14px 16px 12px;
+  padding: 12px 14px 10px;
   cursor: pointer;
   position: relative;
 }
@@ -405,19 +349,28 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 8px;
+  gap: 6px;
 }
 .card-name {
-  font-size: 0.92rem;
+  font-size: 0.82rem;
   font-weight: 700;
   line-height: 1.25;
   flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-ytd-main {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 .rec-badge {
   flex-shrink: 0;
   padding: 2px 8px;
   border-radius: 100px;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -429,81 +382,30 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .card-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: 4px;
 }
 .ticker-tag {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 500;
   color: var(--text-muted);
 }
 .weight-badge {
   font-family: var(--font-mono);
-  font-size: 0.62rem;
-  padding: 1px 6px;
+  font-size: 0.6rem;
+  padding: 1px 5px;
   border-radius: 4px;
   background: rgba(255,255,255,0.04);
   color: var(--text-muted);
 }
 .sector-badge {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 600;
-  padding: 1px 8px;
+  padding: 1px 7px;
   border-radius: 100px;
   color: #fff;
   opacity: 0.85;
-}
-
-/* Returns row */
-.returns-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-}
-.return-item {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.return-label {
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-.return-val {
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-/* Fundamentals row */
-.fundamentals-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-.fund-item {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.fund-label {
-  font-size: 0.58rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-.fund-val {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text-secondary);
 }
 
 /* ===== Expanded Area ===== */
@@ -519,8 +421,59 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   overflow: hidden;
 }
 .card-expanded-content {
-  padding: 0 16px 16px;
+  padding: 0 14px 14px;
   border-top: 1px solid var(--border);
+}
+
+/* Returns row inside expanded */
+.returns-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.return-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.return-label {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.return-val {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Fundamentals row inside expanded */
+.fundamentals-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.fund-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.fund-label {
+  font-size: 0.56rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.fund-val {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 /* Tabs inside expanded */
@@ -732,24 +685,24 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 /* ===== Skeleton Loader ===== */
 .skeleton-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
   margin-top: 24px;
 }
 .skeleton-card {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 16px;
-  height: 160px;
+  padding: 14px;
+  height: 80px;
 }
 .skeleton-line {
-  height: 12px;
+  height: 10px;
   background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-hover) 50%, var(--bg-surface) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .skeleton-line.w60 { width: 60%; }
 .skeleton-line.w40 { width: 40%; }
@@ -853,26 +806,53 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   font-style: italic;
   line-height: 1.5;
 }
-.tier-badge {
-  display: inline-block;
-  font-size: 0.6rem;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: var(--amber-dim);
-  color: var(--amber);
-  margin-left: 6px;
-  vertical-align: middle;
-}
 
 /* ===== Footer ===== */
 .site-footer {
   text-align: center;
-  padding: 24px 0 40px;
+  padding: 24px 0 16px;
   font-size: 0.72rem;
   color: var(--text-muted);
   border-top: 1px solid var(--border);
+  margin-top: 48px;
 }
+
+/* ===== About section (subtle, below footer) ===== */
+.about-section {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+.about-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: color var(--transition);
+}
+.about-toggle:hover { color: var(--text-secondary); }
+.about-toggle .chevron { transition: transform 0.3s ease; font-size: 0.6rem; }
+.about-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+.about-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.about-body.open { max-height: 2000px; }
+.about-content {
+  padding-top: 12px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+.about-content p { margin-bottom: 8px; }
+.about-content strong { color: var(--text-secondary); }
 
 /* ===== Utility ===== */
 .clr-green { color: var(--green); }
@@ -925,50 +905,29 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   </div>
 </div>
 
-<!-- ===== Main ===== -->
+<!-- ===== Main Grid (full width, no sidebar) ===== -->
 <div class="container">
-  <div class="main-layout">
-    <div class="grid-area">
-      <!-- Skeleton -->
-      <div class="skeleton-grid" id="skeleton">
-        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
-        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
-      </div>
-      <!-- Error -->
-      <div class="error-state hidden" id="errorState">
-        <div class="error-icon">⚠</div>
-        <h3>Unable to load market data</h3>
-        <p>Please try refreshing the page. If the issue persists, the data feed may be temporarily unavailable.</p>
-      </div>
-      <!-- Grid -->
-      <div class="cards-grid hidden" id="cardsGrid"></div>
-      <div class="show-more-wrap hidden" id="showMoreWrap">
-        <button class="show-more-btn" id="showMoreBtn"></button>
-      </div>
-    </div>
-
-    <!-- Explainer Sidebar -->
-    <aside class="explainer-sidebar">
-      <div class="explainer-panel">
-        <button class="explainer-toggle" aria-expanded="false" id="explainerToggle">
-          <span>About Oslo Børs & OSEBX</span>
-          <span class="chevron">▼</span>
-        </button>
-        <div class="explainer-body" id="explainerBody">
-          <div class="explainer-content">
-            <p><strong>The Oslo Stock Exchange (Oslo Børs)</strong> is one of the oldest stock exchanges in the world, founded in 1819. Today it is owned by Euronext and serves as the primary marketplace for Norwegian equities.</p>
-            <p><strong>OSEBX</strong> (Oslo Børs Benchmark Index) is the main benchmark — a free-float-adjusted, semi-annually rebalanced index of roughly 69 of the most traded companies on the exchange.</p>
-            <p>The index is <strong>heavily concentrated in energy and seafood</strong>. Equinor alone typically accounts for ~9–10% of the index weight, while the combined salmon farming sector (Mowi, SalMar, Lerøy, etc.) represents another ~6%. Financials (led by DNB) and defence/industrials (Kongsberg Gruppen) round out the top holdings.</p>
-            <p>Norway's unique position as a major petroleum exporter means OSEBX has a <strong>structurally higher correlation to oil prices</strong> than most developed-market indices. The Government Pension Fund Global (the "Oil Fund"), the world's largest sovereign wealth fund, does not invest in Norwegian equities — creating a somewhat distinct domestic investor base.</p>
-            <p>This dashboard shows <strong>delayed data updated weekly</strong> via Yahoo Finance. It is for informational and educational purposes only — not to be used for financial analysis or investment decisions.</p>
-          </div>
-        </div>
-      </div>
-    </aside>
+  <!-- Skeleton -->
+  <div class="skeleton-grid" id="skeleton">
+    <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w30"></div></div>
+    <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w30"></div></div>
+    <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w30"></div></div>
+    <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w30"></div></div>
+    <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w30"></div></div>
+    <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w30"></div></div>
+    <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w30"></div></div>
+    <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w30"></div></div>
+  </div>
+  <!-- Error -->
+  <div class="error-state hidden" id="errorState">
+    <div class="error-icon">⚠</div>
+    <h3>Unable to load market data</h3>
+    <p>Please try refreshing the page. If the issue persists, the data feed may be temporarily unavailable.</p>
+  </div>
+  <!-- Grid -->
+  <div class="cards-grid hidden" id="cardsGrid"></div>
+  <div class="show-more-wrap hidden" id="showMoreWrap">
+    <button class="show-more-btn" id="showMoreBtn"></button>
   </div>
 </div>
 
@@ -995,7 +954,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
     <div class="metric-entry"><h4>Analyst Recommendation</h4><p class="what-it-tells">The consensus view of professional sell-side analysts covering this stock. Ranges from Strong Buy to Sell. Useful as a sentiment gauge, but remember analysts have their own biases.</p><p class="how-calc">Source: Aggregated from Yahoo Finance's analyst consensus data.</p></div>
 
-    <h3 class="modal-category">Performance & Momentum (Tab 1)</h3>
+    <h3 class="modal-category">Performance & Momentum</h3>
 
     <div class="metric-entry"><h4>Relative Strength vs OSEBX (Alpha)</h4><p class="what-it-tells">Whether a stock is outperforming or underperforming the Norwegian market as a whole. A stock up +4% sounds decent — but if OSEBX is up +12%, the stock is actually lagging by 8 percentage points. Alpha strips away the market tide and shows you the stock-specific signal.</p><p class="how-calc">How it's calculated: Stock return over period − OSEBX return over the same period. Shown for 3-month, 6-month, and 1-year timeframes.</p></div>
 
@@ -1005,17 +964,17 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
     <div class="metric-entry"><h4>Momentum Score (Multi-Timeframe)</h4><p class="what-it-tells">A composite measure of whether a stock has been consistently trending upward across multiple timeframes. Based on the academic momentum factor — stocks with strong recent momentum tend to continue outperforming in the near term.</p><p class="how-calc">How it's calculated: Weighted average of 1-month, 3-month, 6-month, and 12-month returns (with the most recent 1-month subtracted from the 12-month return to reduce short-term reversal noise). Normalised to a 0–100 score across all OSEBX constituents.</p></div>
 
-    <div class="metric-entry"><h4>Monthly Seasonality <span class="tier-badge">Tier 3</span></h4><p class="what-it-tells">The stock's historical average return for each calendar month, based on the last 5 years. Norwegian markets have documented seasonal patterns — dividend season in spring, salmon price cycles in Q3/Q4, and year-end effects.</p><p class="how-calc">How it's calculated: For each of the 12 calendar months, compute the average return across the last 5 years of data. Displayed as a 12-bar sparkline.</p></div>
+    <div class="metric-entry"><h4>Monthly Seasonality</h4><p class="what-it-tells">The stock's historical average return for each calendar month, based on the last 5 years. Norwegian markets have documented seasonal patterns — dividend season in spring, salmon price cycles in Q3/Q4, and year-end effects.</p><p class="how-calc">How it's calculated: For each of the 12 calendar months, compute the average return across the last 5 years of data. Displayed as a 12-bar sparkline.</p></div>
 
-    <div class="metric-entry"><h4>Beta to Brent Crude <span class="tier-badge">Tier 3</span></h4><p class="what-it-tells">How sensitive a stock is to oil price movements. For an index where Energy is 30%+ of weight, this is critical. A beta of 1.2 means the stock tends to move 1.2% for every 1% move in oil. Even non-energy stocks (like DNB) can have meaningful oil betas due to Norway's petroleum-dependent economy.</p><p class="how-calc">How it's calculated: Slope of a linear regression of the stock's daily returns against Brent crude (BZ=F) daily returns, using 1 year of data. Returns are aligned by date (inner join) to handle different trading calendars.</p></div>
+    <div class="metric-entry"><h4>Beta to Brent Crude</h4><p class="what-it-tells">How sensitive a stock is to oil price movements. For an index where Energy is 30%+ of weight, this is critical. A beta of 1.2 means the stock tends to move 1.2% for every 1% move in oil. Even non-energy stocks (like DNB) can have meaningful oil betas due to Norway's petroleum-dependent economy.</p><p class="how-calc">How it's calculated: Slope of a linear regression of the stock's daily returns against Brent crude (BZ=F) daily returns, using 1 year of data. Returns are aligned by date (inner join) to handle different trading calendars.</p></div>
 
-    <h3 class="modal-category">Risk Profile (Tab 2)</h3>
+    <h3 class="modal-category">Risk Profile</h3>
 
     <div class="metric-entry"><h4>Volatility Percentile</h4><p class="what-it-tells">Not "is this stock volatile" but "is this stock more volatile than usual for itself right now." A stock at the 90th percentile of its own 5-year volatility history is in an unusual regime — something is happening (earnings, sector rotation, macro shock). A stock at the 10th percentile is unusually calm.</p><p class="how-calc">How it's calculated: Compute the trailing 30-day realised volatility (annualised standard deviation of daily returns). Rank this value as a percentile against all 30-day rolling volatility readings from the past 5 years.</p></div>
 
     <div class="metric-entry"><h4>Correlation to OSEBX</h4><p class="what-it-tells">How closely this stock moves with the broader Norwegian market. Most Norwegian investors are already heavily exposed to OSEBX through pension funds. A stock with 0.9 correlation adds almost no diversification value. A stock with 0.3 correlation is genuinely different exposure.</p><p class="how-calc">How it's calculated: Pearson correlation coefficient between the stock's daily returns and OSEBX daily returns, trailing 1 year (252 trading days).</p></div>
 
-    <h3 class="modal-category">Valuation & Dividends (Tab 3)</h3>
+    <h3 class="modal-category">Valuation & Dividends</h3>
 
     <div class="metric-entry"><h4>Earnings Yield</h4><p class="what-it-tells">The inverse of P/E, expressed as a percentage — making it directly comparable to bond yields. If a stock's earnings yield is 12% and Norwegian 10-year government bonds yield 3.5%, the equity risk premium is 8.5 percentage points. This is how institutional investors actually assess whether equities are cheap relative to fixed income.</p><p class="how-calc">How it's calculated: (Trailing 12-month earnings per share ÷ current share price) × 100. Displayed alongside the Norwegian 10-year bond yield (~3.5%) as a reference line.</p></div>
 
@@ -1038,12 +997,42 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   </div>
 </footer>
 
+<!-- About section (subtle, below footer) -->
+<div class="about-section">
+  <button class="about-toggle" aria-expanded="false" id="aboutToggle">
+    <span>About Oslo Børs & OSEBX</span>
+    <span class="chevron">▼</span>
+  </button>
+  <div class="about-body" id="aboutBody">
+    <div class="about-content">
+      <p><strong>The Oslo Stock Exchange (Oslo Børs)</strong> is one of the oldest stock exchanges in the world, founded in 1819. Today it is owned by Euronext and serves as the primary marketplace for Norwegian equities.</p>
+      <p><strong>OSEBX</strong> (Oslo Børs Benchmark Index) is the main benchmark — a free-float-adjusted, semi-annually rebalanced index of roughly 69 of the most traded companies on the exchange.</p>
+      <p>The index is <strong>heavily concentrated in energy and seafood</strong>. Equinor alone typically accounts for ~9-10% of the index weight, while the combined salmon farming sector (Mowi, SalMar, Lerøy, etc.) represents another ~6%. Financials (led by DNB) and defence/industrials (Kongsberg Gruppen) round out the top holdings.</p>
+      <p>Norway's unique position as a major petroleum exporter means OSEBX has a <strong>structurally higher correlation to oil prices</strong> than most developed-market indices. The Government Pension Fund Global (the "Oil Fund"), the world's largest sovereign wealth fund, does not invest in Norwegian equities — creating a somewhat distinct domestic investor base.</p>
+      <p>This dashboard shows <strong>delayed data updated weekly</strong> via Yahoo Finance. It is for informational and educational purposes only.</p>
+    </div>
+  </div>
+</div>
+
 <script>
 /* =====================================================================
-   OSEBX Company Heatmap — Frontend Logic
+   OSEBX Company Heatmap — Frontend Logic (v2, cleaned up)
    ===================================================================== */
 (function () {
   'use strict';
+
+  // ---- Sector name normalisation ----
+  // Yahoo Finance returns different GICS names than our hardcoded list.
+  // This map merges duplicates into canonical names.
+  const SECTOR_MAP = {
+    'Financial Services': 'Financials',
+    'Consumer Defensive': 'Consumer Staples',
+    'Consumer Cyclical':  'Consumer Discretionary',
+    'Basic Materials':    'Materials',
+    'Healthcare':         'Health Care',
+    'Technology':         'Information Technology',
+  };
+  function normSector(s) { return SECTOR_MAP[s] || s || 'Unknown'; }
 
   // ---- State ----
   let DATA = null;
@@ -1053,8 +1042,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   let currentSort = { key: 'returnsYTD', dir: 'desc' };
   let searchQuery = '';
   let visibleCount = 0;
-  const PAGE_SIZE = 20;
-  const MOBILE_BP = 768;
+  const PAGE_SIZE = 30;
 
   // ---- Sector colour map ----
   const SECTOR_COLORS = {
@@ -1075,7 +1063,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   // ---- Norwegian formatting ----
   const fmtPct = (v) => {
     if (v == null) return '—';
-    return new Intl.NumberFormat('nb-NO', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v) + ' %';
+    return new Intl.NumberFormat('nb-NO', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v) + '%';
   };
   const fmtNum = (v, d = 1) => {
     if (v == null) return '—';
@@ -1110,7 +1098,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   function heatBg(ytd) {
     if (ytd == null) return 'var(--bg-elevated)';
     const clamped = Math.max(-30, Math.min(30, ytd));
-    const t = (clamped + 30) / 60; // 0..1
+    const t = (clamped + 30) / 60;
     if (t < 0.5) {
       const a = 0.06 + (0.5 - t) * 0.16;
       return `rgba(239,68,68,${a.toFixed(3)})`;
@@ -1148,6 +1136,48 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
 
+  // ---- Check if a company has meaningful data ----
+  function hasData(c) {
+    return c.returnsYTD != null || c.marketCap != null || c.peRatio != null;
+  }
+
+  // ---- Normalise data on load ----
+  function normaliseData() {
+    // Normalise sector names on all companies
+    DATA.companies.forEach(c => { c.sector = normSector(c.sector); });
+
+    // Filter out companies with no meaningful data
+    DATA.companies = DATA.companies.filter(hasData);
+
+    // Rebuild sector summary from clean data
+    DATA.sectorSummary = buildSectorSummary(DATA.companies);
+  }
+
+  function buildSectorSummary(companies) {
+    const sectors = {};
+    companies.forEach(c => {
+      const s = c.sector || 'Unknown';
+      if (!sectors[s]) sectors[s] = [];
+      sectors[s].push(c);
+    });
+
+    function avg(vals) {
+      const clean = vals.filter(v => v != null);
+      return clean.length >= 2 ? Math.round(clean.reduce((a, b) => a + b, 0) / clean.length * 100) / 100 : (clean.length === 1 ? clean[0] : null);
+    }
+
+    return Object.entries(sectors).map(([name, members]) => ({
+      sector: name,
+      companyCount: members.length,
+      totalWeight: Math.round(members.reduce((a, c) => a + (c.osebxWeight || 0), 0) * 100) / 100,
+      avgReturnYTD: avg(members.map(c => c.returnsYTD)),
+      avgPE: avg(members.map(c => c.peRatio)),
+      avgEvToEbitda: avg(members.map(c => c.evToEbitda)),
+      avgDividendYield: avg(members.map(c => c.dividendYield)),
+      avgSharpe: avg(members.map(c => c.sharpeRatio)),
+    })).sort((a, b) => (b.totalWeight || 0) - (a.totalWeight || 0));
+  }
+
   // ---- Init ----
   async function init() {
     try {
@@ -1159,6 +1189,8 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
       $('#errorState').classList.remove('hidden');
       return;
     }
+
+    normaliseData();
 
     $('#skeleton').classList.add('hidden');
     $('#cardsGrid').classList.remove('hidden');
@@ -1176,7 +1208,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     $('#guideModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#guideModal').classList.contains('open')) closeModal(); });
     $('#showMoreBtn').addEventListener('click', showMore);
-    $('#explainerToggle').addEventListener('click', toggleExplainer);
+    $('#aboutToggle').addEventListener('click', toggleAbout);
   }
 
   // ---- Benchmarks ----
@@ -1204,7 +1236,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   // ---- Sector Tabs ----
   function renderSectorTabs() {
     const container = $('#sectorTabs');
-    const sectors = (DATA.sectorSummary || []).sort((a, b) => (b.totalWeight || 0) - (a.totalWeight || 0));
+    const sectors = DATA.sectorSummary;
 
     let html = `<button class="sector-tab active" data-sector="All">All</button>`;
     sectors.forEach(s => {
@@ -1247,7 +1279,6 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
       } else {
         currentSort = { key, dir: btn.dataset.default };
       }
-      // Update active states
       $$('.sort-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.sort === currentSort.key);
         if (b.dataset.sort === currentSort.key) {
@@ -1262,11 +1293,9 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   function onSearch(e) {
     searchQuery = e.target.value.trim().toLowerCase();
     if (searchQuery) {
-      // Override sector to All while searching
       $$('.sector-tab').forEach(t => t.classList.toggle('active', t.dataset.sector === 'All'));
       currentSector = 'All';
     } else {
-      // Restore previous sector
       currentSector = previousSector;
       $$('.sector-tab').forEach(t => t.classList.toggle('active', t.dataset.sector === currentSector));
     }
@@ -1310,24 +1339,21 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
   function showMore() {
     const grid = $('#cardsGrid');
-    const isMobile = window.innerWidth < MOBILE_BP;
-    const pageSize = isMobile ? PAGE_SIZE : filteredCompanies.length; // Show all on desktop
-    const end = Math.min(visibleCount + pageSize, filteredCompanies.length);
+    const end = Math.min(visibleCount + PAGE_SIZE, filteredCompanies.length);
 
     for (let i = visibleCount; i < end; i++) {
       grid.appendChild(createCard(filteredCompanies[i], i));
     }
     visibleCount = end;
 
-    // Observe new cards for animation
     observeCards();
 
     // Show/hide button
     const remaining = filteredCompanies.length - visibleCount;
     const wrap = $('#showMoreWrap');
-    if (remaining > 0 && isMobile) {
+    if (remaining > 0) {
       wrap.classList.remove('hidden');
-      $('#showMoreBtn').textContent = `Show more (${remaining} remaining)`;
+      $('#showMoreBtn').textContent = `Show ${remaining} more`;
     } else {
       wrap.classList.add('hidden');
     }
@@ -1336,7 +1362,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   function updateCount() {
     const total = DATA.companies.length;
     const shown = filteredCompanies.length;
-    $('#companyCount').textContent = `Showing ${shown} of ${total} companies`;
+    $('#companyCount').textContent = `${shown} of ${total} companies`;
   }
 
   // ---- Intersection Observer for fade-in ----
@@ -1346,7 +1372,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
       observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, idx) => {
           if (entry.isIntersecting) {
-            setTimeout(() => entry.target.classList.add('visible'), idx * 40);
+            setTimeout(() => entry.target.classList.add('visible'), idx * 30);
             observer.unobserve(entry.target);
           }
         });
@@ -1355,12 +1381,11 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     $$('.company-card:not(.visible)').forEach(c => observer.observe(c));
   }
 
-  // ---- Card Creation ----
+  // ---- Card Creation (compact collapsed state) ----
   function createCard(c, idx) {
     const el = document.createElement('div');
     el.className = 'company-card';
     el.setAttribute('aria-expanded', 'false');
-    el.style.setProperty('--heat', heatBg(c.returnsYTD));
     el.style.background = heatBg(c.returnsYTD);
 
     const recClass = (c.recommendation || '').replace(/\s+/g, '_').toLowerCase();
@@ -1370,22 +1395,13 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
       <div class="card-header" tabindex="0" role="button" aria-label="Expand ${c.companyName || c.ticker}">
         <div class="card-top-row">
           <span class="card-name">${c.companyName || c.ticker}</span>
-          ${recLabel ? `<span class="rec-badge ${recClass}">${recLabel}</span>` : ''}
+          <span class="card-ytd-main ${clrPct(c.returnsYTD)}">${fmtPct(c.returnsYTD)}</span>
         </div>
         <div class="card-meta">
           <span class="ticker-tag">${c.ticker.replace('.OL', '')}</span>
-          ${c.osebxWeight != null ? `<span class="weight-badge">${fmtNum(c.osebxWeight, 1)} %</span>` : ''}
+          ${c.osebxWeight != null ? `<span class="weight-badge">${fmtNum(c.osebxWeight, 1)}%</span>` : ''}
           <span class="sector-badge" style="background:${sectorColor(c.sector)}">${c.sector || '—'}</span>
-        </div>
-        <div class="returns-row">
-          <div class="return-item"><span class="return-label">YTD</span><span class="return-val ${clrPct(c.returnsYTD)}">${fmtPct(c.returnsYTD)}</span></div>
-          <div class="return-item"><span class="return-label">6M</span><span class="return-val ${clrPct(c.returns6M)}">${fmtPct(c.returns6M)}</span></div>
-          <div class="return-item"><span class="return-label">1Y</span><span class="return-val ${clrPct(c.returns1Y)}">${fmtPct(c.returns1Y)}</span></div>
-        </div>
-        <div class="fundamentals-row">
-          <div class="fund-item"><span class="fund-label">P/E</span><span class="fund-val">${fmtNum(c.peRatio)}</span></div>
-          <div class="fund-item"><span class="fund-label">P/B</span><span class="fund-val">${fmtNum(c.pbRatio)}</span></div>
-          <div class="fund-item"><span class="fund-label">Div</span><span class="fund-val">${c.dividendYield != null ? fmtNum(c.dividendYield) + ' %' : '—'}</span></div>
+          ${recLabel && recLabel !== 'none' ? `<span class="rec-badge ${recClass}">${recLabel}</span>` : ''}
         </div>
       </div>
       <div class="card-expanded"><div class="card-expanded-inner">${buildExpandedContent(c)}</div></div>
@@ -1413,10 +1429,25 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   }
 
   function buildExpandedContent(c) {
-    const sectorAvg = (DATA.sectorSummary || []).find(s => s.sector === c.sector);
+    const sectorAvg = DATA.sectorSummary.find(s => s.sector === c.sector);
     const refBond = DATA.referenceRates?.bondYield10Y ? (DATA.referenceRates.bondYield10Y * 100) : 3.5;
 
     return `<div class="card-expanded-content">
+
+      <!-- Quick stats (moved from collapsed) -->
+      <div class="returns-row">
+        <div class="return-item"><span class="return-label">YTD</span><span class="return-val ${clrPct(c.returnsYTD)}">${fmtPct(c.returnsYTD)}</span></div>
+        <div class="return-item"><span class="return-label">6M</span><span class="return-val ${clrPct(c.returns6M)}">${fmtPct(c.returns6M)}</span></div>
+        <div class="return-item"><span class="return-label">1Y</span><span class="return-val ${clrPct(c.returns1Y)}">${fmtPct(c.returns1Y)}</span></div>
+      </div>
+      <div class="fundamentals-row">
+        <div class="fund-item"><span class="fund-label">P/E</span><span class="fund-val">${fmtNum(c.peRatio)}</span></div>
+        <div class="fund-item"><span class="fund-label">Fwd P/E</span><span class="fund-val">${fmtNum(c.forwardPE)}</span></div>
+        <div class="fund-item"><span class="fund-label">P/B</span><span class="fund-val">${fmtNum(c.pbRatio)}</span></div>
+        <div class="fund-item"><span class="fund-label">Div</span><span class="fund-val">${c.dividendYield != null ? fmtNum(c.dividendYield) + '%' : '—'}</span></div>
+        <div class="fund-item"><span class="fund-label">Mkt Cap</span><span class="fund-val">${fmtMcap(c.marketCap)}</span></div>
+      </div>
+
       <div class="detail-tabs">
         <button class="detail-tab active" data-panel="perf">Performance</button>
         <button class="detail-tab" data-panel="risk">Risk</button>
@@ -1472,20 +1503,12 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
       <!-- Tab 3: Valuation & Dividends -->
       <div class="tab-panel" data-panel="val">
         <div class="metric-row">
-          <span class="metric-label">Market Cap</span>
-          <span class="metric-val">${fmtMcap(c.marketCap)}</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-label">Forward P/E</span>
-          <span class="metric-val">${fmtNum(c.forwardPE)}</span>
-        </div>
-        <div class="metric-row">
           <span class="metric-label">Analyst Target</span>
           <span class="metric-val">${c.analystTarget != null ? fmtPrice(c.analystTarget) + ' NOK' : '—'}</span>
         </div>
         <div class="metric-row">
           <span class="metric-label">Earnings Yield</span>
-          <span class="metric-val">${fmtPct(c.earningsYield)}<span class="metric-sub">vs bond ${fmtNum(refBond, 1)} %</span></span>
+          <span class="metric-val">${fmtPct(c.earningsYield)}<span class="metric-sub">vs bond ${fmtNum(refBond, 1)}%</span></span>
         </div>
         <div class="metric-row">
           <span class="metric-label">EV/EBITDA</span>
@@ -1566,7 +1589,6 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   function buildMeanReversion(c) {
     const mr = c.meanReversion;
     if (!mr || mr.distancePercentage == null) return '';
-    // Clamp to -50..+50 for gauge
     const clamped = Math.max(-50, Math.min(50, mr.distancePercentage));
     const pos = (clamped + 50) / 100 * 100;
     return `<div style="margin-top:6px">
@@ -1607,10 +1629,10 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     });
   }
 
-  // ---- Explainer ----
-  function toggleExplainer() {
-    const toggle = $('#explainerToggle');
-    const body = $('#explainerBody');
+  // ---- About toggle ----
+  function toggleAbout() {
+    const toggle = $('#aboutToggle');
+    const body = $('#aboutBody');
     const expanded = toggle.getAttribute('aria-expanded') === 'true';
     toggle.setAttribute('aria-expanded', !expanded);
     body.classList.toggle('open', !expanded);
