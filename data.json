@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-13T20:00:00Z",
+  "lastUpdated": "2026-04-15T08:54:25+00:00",
   "referenceRates": {
     "riskFreeRate": 0.035,
     "bondYield10Y": 0.035
@@ -8,198 +8,3922 @@
     {
       "ticker": "OSEBX.OL",
       "name": "OSEBX",
-      "returnsYTD": 7.82,
-      "returns6M": 11.45,
-      "returns1Y": 14.21,
-      "latestClose": 1423.67
+      "returnsYTD": 19.562751,
+      "returns6M": 22.900795,
+      "returns1Y": 44.765684,
+      "latestClose": 2028.920044
     },
     {
       "ticker": "OBX.OL",
       "name": "OBX",
-      "returnsYTD": 8.14,
-      "returns6M": 12.03,
-      "returns1Y": 15.06,
-      "latestClose": 1287.33
+      "returnsYTD": 23.036079,
+      "returns6M": 25.947513,
+      "returns1Y": 48.745302,
+      "latestClose": 1981.569946
     },
     {
       "ticker": "OSEFX.OL",
       "name": "OSEFX",
-      "returnsYTD": 7.56,
-      "returns6M": 10.89,
-      "returns1Y": 13.47,
-      "latestClose": 1198.42
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "latestClose": 1991.060059
     }
   ],
   "companies": [
     {
       "ticker": "EQNR.OL",
-      "companyName": "Equinor ASA",
+      "companyName": "EQUINOR",
       "sector": "Energy",
       "industry": "Oil & Gas Integrated",
       "osebxWeight": 9.5,
-      "marketCap": 612000000000,
-      "peRatio": 7.8,
-      "forwardPE": 8.4,
-      "pbRatio": 1.92,
-      "dividendYield": 3.85,
+      "marketCap": 888359878656.0,
+      "peRatio": 19.233675,
+      "forwardPE": 10.438593,
+      "pbRatio": 2.275026,
+      "dividendYield": 4.11,
       "week52": {
-        "low": 248.1,
-        "high": 342.6,
-        "current": 306.45
+        "low": 226.4,
+        "high": 422.3,
+        "current": 356.4
       },
-      "analystTarget": 328.0,
-      "recommendation": "buy",
-      "returnsYTD": 12.34,
-      "returns6M": 15.67,
-      "returns1Y": 18.92,
+      "analystTarget": 329.29337,
+      "recommendation": "hold",
+      "returnsYTD": 47.475157,
+      "returns6M": 49.079493,
+      "returns1Y": 50.021047,
       "alpha": {
-        "threeMonth": 2.14,
-        "sixMonth": 4.22,
-        "oneYear": 4.71
+        "threeMonth": 25.189156,
+        "sixMonth": 26.178698,
+        "oneYear": 5.255363
       },
-      "sharpeRatio": 1.12,
-      "momentumScore": 72.3,
-      "maxDrawdown": -14.2,
-      "volatilityPercentile": 42,
-      "correlationToOSEBX": 0.78,
+      "sharpeRatio": 1.645535,
+      "momentumScore": 82.6,
+      "maxDrawdown": -20.601607,
+      "volatilityPercentile": 99,
+      "correlationToOSEBX": 0.639401,
       "dividendConsistency": {
         "yearsWithDividend": 5,
         "trend": "growing"
       },
-      "dividendPayoutRatio": 38.5,
-      "liquidityScore": 892000000,
-      "earningsYield": 12.82,
-      "evToEbitda": 3.6,
+      "dividendPayoutRatio": 79.924447,
+      "liquidityScore": 2437610297.76,
+      "earningsYield": 5.199214,
+      "evToEbitda": 25.761652,
       "meanReversion": {
-        "fiveYearAverage": 278.32,
-        "distancePercentage": 10.1
+        "fiveYearAverage": 284.269698,
+        "distancePercentage": 25.338715
       },
-      "betaToBrent": 0.82,
-      "seasonality": [1.2, 0.8, -0.3, 1.5, 2.1, -0.6, 0.4, -1.1, 1.8, 0.7, -0.2, 1.9]
+      "betaToBrent": 0.456251,
+      "seasonality": [
+        -0.814819,
+        1.780484,
+        15.849756,
+        -4.188327,
+        2.664593,
+        2.653015,
+        0.307859,
+        1.380233,
+        2.810444,
+        1.456515,
+        -0.57124,
+        -2.101672
+      ]
+    },
+    {
+      "ticker": "AKRBP.OL",
+      "companyName": "AKER BP",
+      "sector": "Energy",
+      "industry": "Oil & Gas E&P",
+      "osebxWeight": 3.2,
+      "marketCap": 217065259008.0,
+      "peRatio": 171.8,
+      "forwardPE": 14.107597,
+      "pbRatio": 2.046305,
+      "dividendYield": 7.3,
+      "week52": {
+        "low": 215.2,
+        "high": 367.8,
+        "current": 343.6
+      },
+      "analystTarget": 299.52942,
+      "recommendation": "hold",
+      "returnsYTD": 32.281645,
+      "returns6M": 34.349354,
+      "returns1Y": 64.18338,
+      "alpha": {
+        "threeMonth": 7.415163,
+        "sixMonth": 11.448559,
+        "oneYear": 19.417696
+      },
+      "sharpeRatio": 2.183937,
+      "momentumScore": 78.7,
+      "maxDrawdown": -16.337146,
+      "volatilityPercentile": 96,
+      "correlationToOSEBX": 0.555188,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 1259.0,
+      "liquidityScore": 870044999.093333,
+      "earningsYield": 0.582072,
+      "evToEbitda": 24.406693,
+      "meanReversion": {
+        "fiveYearAverage": 278.162301,
+        "distancePercentage": 23.596902
+      },
+      "betaToBrent": 0.414586,
+      "seasonality": [
+        4.783741,
+        -5.328745,
+        10.098594,
+        -2.311962,
+        4.17274,
+        2.334445,
+        -1.697666,
+        -0.322399,
+        1.367804,
+        6.718795,
+        -3.960681,
+        -3.730368
+      ]
+    },
+    {
+      "ticker": "VAR.OL",
+      "companyName": "Vår Energi ASA",
+      "sector": "Energy",
+      "industry": "Oil & Gas E&P",
+      "osebxWeight": 1.6,
+      "marketCap": 111789072384.0,
+      "peRatio": 15.128378,
+      "forwardPE": 11.772214,
+      "pbRatio": null,
+      "dividendYield": 10.770001,
+      "week52": {
+        "low": 27.04,
+        "high": 50.7,
+        "current": 44.78
+      },
+      "analystTarget": 45.161224,
+      "recommendation": "buy",
+      "returnsYTD": 34.071847,
+      "returns6M": 34.717198,
+      "returns1Y": 64.149552,
+      "alpha": {
+        "threeMonth": 11.755355,
+        "sixMonth": 11.816403,
+        "oneYear": 19.383868
+      },
+      "sharpeRatio": 2.048056,
+      "momentumScore": 79.5,
+      "maxDrawdown": -13.731702,
+      "volatilityPercentile": 100,
+      "correlationToOSEBX": 0.561251,
+      "dividendConsistency": {
+        "yearsWithDividend": 4,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 163.513514,
+      "liquidityScore": 694864213.361333,
+      "earningsYield": 6.610094,
+      "evToEbitda": 18.147146,
+      "meanReversion": null,
+      "betaToBrent": 0.441123,
+      "seasonality": [
+        -2.637342,
+        -0.841547,
+        13.197531,
+        -1.42245,
+        1.59266,
+        3.687383,
+        2.039725,
+        2.483017,
+        -6.918201,
+        7.104711,
+        -2.094607,
+        -3.096921
+      ]
+    },
+    {
+      "ticker": "SUBC.OL",
+      "companyName": "SUBSEA 7",
+      "sector": "Energy",
+      "industry": "Oil & Gas Equipment & Services",
+      "osebxWeight": 1.5,
+      "marketCap": 91506081792.0,
+      "peRatio": 23.732718,
+      "forwardPE": 13.819165,
+      "pbRatio": 2.143333,
+      "dividendYield": 6.26,
+      "week52": {
+        "low": 143.4,
+        "high": 321.0,
+        "current": 309.0
+      },
+      "analystTarget": 267.78168,
+      "recommendation": "buy",
+      "returnsYTD": 48.557692,
+      "returns6M": 50.291824,
+      "returns1Y": 124.89084,
+      "alpha": {
+        "threeMonth": 22.488166,
+        "sixMonth": 27.391029,
+        "oneYear": 80.125156
+      },
+      "sharpeRatio": 5.011404,
+      "momentumScore": 98.1,
+      "maxDrawdown": -14.34619,
+      "volatilityPercentile": 82,
+      "correlationToOSEBX": 0.48452,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 149.769585,
+      "liquidityScore": 166379989.1,
+      "earningsYield": 4.213592,
+      "evToEbitda": 79.059573,
+      "meanReversion": {
+        "fiveYearAverage": 141.294611,
+        "distancePercentage": 118.691992
+      },
+      "betaToBrent": 0.07303,
+      "seasonality": [
+        7.178256,
+        2.477357,
+        9.286733,
+        -1.359734,
+        6.465432,
+        2.767266,
+        1.822991,
+        -1.575516,
+        1.279717,
+        1.529537,
+        0.56569,
+        1.37305
+      ]
+    },
+    {
+      "ticker": "AKSO.OL",
+      "companyName": "AKER SOLUTIONS",
+      "sector": "Energy",
+      "industry": "Oil & Gas Equipment & Services",
+      "osebxWeight": 0.7,
+      "marketCap": 23000948736.0,
+      "peRatio": 8.969697,
+      "forwardPE": 13.664285,
+      "pbRatio": 2.01352,
+      "dividendYield": 7.63,
+      "week52": {
+        "low": 25.92,
+        "high": 48.14,
+        "current": 47.36
+      },
+      "analystTarget": 39.88889,
+      "recommendation": "none",
+      "returnsYTD": 53.566798,
+      "returns6M": 71.594203,
+      "returns1Y": 69.870882,
+      "alpha": {
+        "threeMonth": 26.184314,
+        "sixMonth": 48.693408,
+        "oneYear": 25.105198
+      },
+      "sharpeRatio": 2.274439,
+      "momentumScore": 91.3,
+      "maxDrawdown": -31.160577,
+      "volatilityPercentile": 53,
+      "correlationToOSEBX": 0.499241,
+      "dividendConsistency": {
+        "yearsWithDividend": 4,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 68.181818,
+      "liquidityScore": 47538634.026667,
+      "earningsYield": 11.148649,
+      "evToEbitda": 5.519822,
+      "meanReversion": {
+        "fiveYearAverage": 34.181619,
+        "distancePercentage": 38.554001
+      },
+      "betaToBrent": 0.169408,
+      "seasonality": [
+        2.818875,
+        8.107161,
+        4.498017,
+        0.089556,
+        8.11694,
+        -2.926411,
+        7.765593,
+        2.149774,
+        0.66198,
+        10.559384,
+        -9.899271,
+        1.273236
+      ]
+    },
+    {
+      "ticker": "BWE.OL",
+      "companyName": "BW ENERGY LIMITED",
+      "sector": "Energy",
+      "industry": "Oil & Gas E&P",
+      "osebxWeight": 0.1,
+      "marketCap": 14437256192.0,
+      "peRatio": 11.47844,
+      "forwardPE": 5.649431,
+      "pbRatio": 1.504429,
+      "dividendYield": null,
+      "week52": {
+        "low": 26.0,
+        "high": 62.0,
+        "current": 55.9
+      },
+      "analystTarget": 71.23774,
+      "recommendation": "strong_buy",
+      "returnsYTD": 15.376678,
+      "returns6M": 13.733469,
+      "returns1Y": 122.709166,
+      "alpha": {
+        "threeMonth": -0.872502,
+        "sixMonth": -9.167326,
+        "oneYear": 77.943482
+      },
+      "sharpeRatio": 3.077301,
+      "momentumScore": 86.4,
+      "maxDrawdown": -29.388161,
+      "volatilityPercentile": 85,
+      "correlationToOSEBX": 0.45926,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": 10832354.173333,
+      "earningsYield": 8.711986,
+      "evToEbitda": 42.139038,
+      "meanReversion": {
+        "fiveYearAverage": 29.302571,
+        "distancePercentage": 90.768246
+      },
+      "betaToBrent": 0.410752,
+      "seasonality": [
+        7.426544,
+        3.795573,
+        8.348859,
+        -0.292617,
+        3.631765,
+        -1.110718,
+        5.819183,
+        -7.253166,
+        3.008394,
+        0.828309,
+        -7.797582,
+        6.008229
+      ]
+    },
+    {
+      "ticker": "BWLPG.OL",
+      "companyName": "BW LPG",
+      "sector": "Industrials",
+      "industry": "Marine Shipping",
+      "osebxWeight": 0.35,
+      "marketCap": 25595942912.0,
+      "peRatio": 11.034032,
+      "forwardPE": 12.021136,
+      "pbRatio": 1.466354,
+      "dividendYield": 8.56,
+      "week52": {
+        "low": 95.35,
+        "high": 185.0,
+        "current": 168.6
+      },
+      "analystTarget": 164.36201,
+      "recommendation": "hold",
+      "returnsYTD": 32.028199,
+      "returns6M": 28.408227,
+      "returns1Y": 82.467536,
+      "alpha": {
+        "threeMonth": -0.166132,
+        "sixMonth": 5.507432,
+        "oneYear": 37.701852
+      },
+      "sharpeRatio": 2.332283,
+      "momentumScore": 77.7,
+      "maxDrawdown": -28.399517,
+      "volatilityPercentile": 87,
+      "correlationToOSEBX": 0.343922,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 94.895288,
+      "liquidityScore": 109215146.0,
+      "earningsYield": 9.062871,
+      "evToEbitda": 61.030572,
+      "meanReversion": {
+        "fiveYearAverage": 108.736016,
+        "distancePercentage": 55.054427
+      },
+      "betaToBrent": 0.173891,
+      "seasonality": [
+        3.836134,
+        3.729021,
+        -2.487891,
+        5.990467,
+        13.647506,
+        1.985247,
+        1.64308,
+        -2.505153,
+        4.678926,
+        0.99418,
+        -0.883723,
+        -2.350114
+      ]
+    },
+    {
+      "ticker": "TGS.OL",
+      "companyName": "TGS ASA",
+      "sector": "Energy",
+      "industry": "Oil & Gas Equipment & Services",
+      "osebxWeight": 0.5,
+      "marketCap": 24655556608.0,
+      "peRatio": 145.93024,
+      "forwardPE": 26.304773,
+      "pbRatio": 1.284956,
+      "dividendYield": 4.88,
+      "week52": {
+        "low": 70.05,
+        "high": 133.0,
+        "current": 125.5
+      },
+      "analystTarget": 94.32991,
+      "recommendation": "none",
+      "returnsYTD": 33.510638,
+      "returns6M": 62.354457,
+      "returns1Y": 69.594595,
+      "alpha": {
+        "threeMonth": 9.693449,
+        "sixMonth": 39.453662,
+        "oneYear": 24.828911
+      },
+      "sharpeRatio": 2.089452,
+      "momentumScore": 86.8,
+      "maxDrawdown": -22.036723,
+      "volatilityPercentile": 37,
+      "correlationToOSEBX": 0.464031,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 720.930233,
+      "liquidityScore": 64120849.05,
+      "earningsYield": 0.685259,
+      "evToEbitda": 34.643403,
+      "meanReversion": {
+        "fiveYearAverage": 118.820698,
+        "distancePercentage": 5.621328
+      },
+      "betaToBrent": 0.228702,
+      "seasonality": [
+        5.273393,
+        4.986393,
+        11.086974,
+        -4.393679,
+        0.685571,
+        -2.642077,
+        -5.276525,
+        -1.125998,
+        -6.19949,
+        2.546707,
+        -0.038872,
+        1.230726
+      ]
+    },
+    {
+      "ticker": "BORR.OL",
+      "companyName": "BORR DRILLING LIMITED",
+      "sector": "Energy",
+      "industry": "Oil & Gas Drilling",
+      "osebxWeight": 0.25,
+      "marketCap": 16396298240.0,
+      "peRatio": 32.839508,
+      "forwardPE": null,
+      "pbRatio": 1.400243,
+      "dividendYield": null,
+      "week52": {
+        "low": 39.1,
+        "high": 64.6,
+        "current": 53.2
+      },
+      "analystTarget": null,
+      "recommendation": "none",
+      "returnsYTD": 30.152907,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": 1.965045,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": -21.49138,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": 0.219583,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": 4098375.493333,
+      "earningsYield": 3.045113,
+      "evToEbitda": 39.714848,
+      "meanReversion": null,
+      "betaToBrent": -0.058424,
+      "seasonality": null
+    },
+    {
+      "ticker": "HAUTO.OL",
+      "companyName": "HOEGH AUTOLINERS ASA",
+      "sector": "Industrials",
+      "industry": "Marine Shipping",
+      "osebxWeight": 0.6,
+      "marketCap": 25429544960.0,
+      "peRatio": 5.200937,
+      "forwardPE": 8.690969,
+      "pbRatio": 2.058868,
+      "dividendYield": 16.73,
+      "week52": {
+        "low": 69.1,
+        "high": 143.5,
+        "current": 133.3
+      },
+      "analystTarget": 123.21033,
+      "recommendation": "hold",
+      "returnsYTD": 36.228927,
+      "returns6M": 40.241977,
+      "returns1Y": 89.696897,
+      "alpha": {
+        "threeMonth": 11.835834,
+        "sixMonth": 17.341182,
+        "oneYear": 44.931213
+      },
+      "sharpeRatio": 2.615703,
+      "momentumScore": 86.9,
+      "maxDrawdown": -27.450984,
+      "volatilityPercentile": 40,
+      "correlationToOSEBX": 0.301524,
+      "dividendConsistency": {
+        "yearsWithDividend": 4,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 87.631682,
+      "liquidityScore": 114661180.87,
+      "earningsYield": 19.227307,
+      "evToEbitda": 43.940983,
+      "meanReversion": null,
+      "betaToBrent": 0.08462,
+      "seasonality": [
+        4.075684,
+        5.436718,
+        -3.770134,
+        8.942975,
+        3.33098,
+        -4.032187,
+        8.883198,
+        12.215325,
+        1.818052,
+        10.790147,
+        1.440672,
+        5.12563
+      ]
     },
     {
       "ticker": "DNB.OL",
-      "companyName": "DNB Bank ASA",
-      "sector": "Financials",
-      "industry": "Banks—Diversified",
+      "companyName": "DNB BANK ASA",
+      "sector": "Financial Services",
+      "industry": "Banks - Regional",
       "osebxWeight": 8.5,
-      "marketCap": 378000000000,
-      "peRatio": 10.2,
-      "forwardPE": 9.8,
-      "pbRatio": 1.54,
-      "dividendYield": 5.12,
+      "marketCap": 453406031872.0,
+      "peRatio": 10.989785,
+      "forwardPE": 11.206228,
+      "pbRatio": 1.677239,
+      "dividendYield": 5.76,
       "week52": {
-        "low": 192.4,
-        "high": 248.3,
-        "current": 238.9
+        "low": 254.4,
+        "high": 313.6,
+        "current": 312.0
       },
-      "analystTarget": 252.0,
-      "recommendation": "buy",
-      "returnsYTD": 9.87,
-      "returns6M": 13.24,
-      "returns1Y": 21.56,
-      "alpha": {
-        "threeMonth": 0.85,
-        "sixMonth": 1.79,
-        "oneYear": 7.35
-      },
-      "sharpeRatio": 1.34,
-      "momentumScore": 68.1,
-      "maxDrawdown": -9.8,
-      "volatilityPercentile": 28,
-      "correlationToOSEBX": 0.85,
-      "dividendConsistency": {
-        "yearsWithDividend": 5,
-        "trend": "growing"
-      },
-      "dividendPayoutRatio": 52.1,
-      "liquidityScore": 645000000,
-      "earningsYield": 9.8,
-      "evToEbitda": null,
-      "meanReversion": {
-        "fiveYearAverage": 198.45,
-        "distancePercentage": 20.38
-      },
-      "betaToBrent": 0.34,
-      "seasonality": [0.9, 1.4, 0.2, 1.1, -0.4, 0.6, -0.8, 0.3, 1.6, 1.2, 0.5, 2.3]
-    },
-    {
-      "ticker": "MOWI.OL",
-      "companyName": "Mowi ASA",
-      "sector": "Consumer Staples",
-      "industry": "Farm Products",
-      "osebxWeight": 3.0,
-      "marketCap": 114000000000,
-      "peRatio": 14.6,
-      "forwardPE": 12.8,
-      "pbRatio": 2.31,
-      "dividendYield": 4.24,
-      "week52": {
-        "low": 168.5,
-        "high": 226.4,
-        "current": 210.8
-      },
-      "analystTarget": 220.0,
+      "analystTarget": 308.25,
       "recommendation": "hold",
-      "returnsYTD": 5.43,
-      "returns6M": 8.12,
-      "returns1Y": 11.34,
+      "returnsYTD": 10.05291,
+      "returns6M": 12.961617,
+      "returns1Y": 30.434784,
       "alpha": {
-        "threeMonth": -1.56,
-        "sixMonth": -3.33,
-        "oneYear": -2.87
+        "threeMonth": -6.9665,
+        "sixMonth": -9.939178,
+        "oneYear": -14.3309
       },
-      "sharpeRatio": 0.62,
-      "momentumScore": 41.7,
-      "maxDrawdown": -18.5,
-      "volatilityPercentile": 55,
-      "correlationToOSEBX": 0.52,
+      "sharpeRatio": 1.438825,
+      "momentumScore": 63.0,
+      "maxDrawdown": -9.560637,
+      "volatilityPercentile": 52,
+      "correlationToOSEBX": 0.403905,
       "dividendConsistency": {
         "yearsWithDividend": 5,
         "trend": "stable"
       },
-      "dividendPayoutRatio": 61.8,
-      "liquidityScore": 312000000,
-      "earningsYield": 6.85,
-      "evToEbitda": 9.4,
+      "dividendPayoutRatio": 63.402607,
+      "liquidityScore": 615880002.4,
+      "earningsYield": 9.099359,
+      "evToEbitda": null,
       "meanReversion": {
-        "fiveYearAverage": 195.6,
-        "distancePercentage": 7.77
+        "fiveYearAverage": 217.95627,
+        "distancePercentage": 43.147981
       },
-      "betaToBrent": 0.15,
-      "seasonality": [-0.5, 0.3, 1.8, 2.4, -1.2, 0.9, -0.7, 1.3, 2.6, -0.4, 0.1, 1.1]
+      "betaToBrent": -0.050184,
+      "seasonality": [
+        -0.137953,
+        5.043928,
+        -0.128443,
+        -3.685137,
+        3.42009,
+        1.33592,
+        1.953889,
+        0.526186,
+        0.27721,
+        0.074402,
+        2.177195,
+        2.242724
+      ]
+    },
+    {
+      "ticker": "MORG.OL",
+      "companyName": "SPAREBANKEN MØRE",
+      "sector": "Financial Services",
+      "industry": "Banks - Regional",
+      "osebxWeight": 0.55,
+      "marketCap": 5759564288.0,
+      "peRatio": 5.934627,
+      "forwardPE": 11.885437,
+      "pbRatio": 0.667831,
+      "dividendYield": 6.0,
+      "week52": {
+        "low": 95.0,
+        "high": 123.66,
+        "current": 116.2
+      },
+      "analystTarget": 118.33333,
+      "recommendation": "none",
+      "returnsYTD": -2.188557,
+      "returns6M": 9.767614,
+      "returns1Y": 17.96954,
+      "alpha": {
+        "threeMonth": -13.765777,
+        "sixMonth": -13.133181,
+        "oneYear": -26.796144
+      },
+      "sharpeRatio": 0.7381,
+      "momentumScore": 59.2,
+      "maxDrawdown": -10.181815,
+      "volatilityPercentile": 95,
+      "correlationToOSEBX": 0.072593,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 35.750766,
+      "liquidityScore": 1978812.406667,
+      "earningsYield": 16.850258,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 86.917714,
+        "distancePercentage": 33.68966
+      },
+      "betaToBrent": -0.036712,
+      "seasonality": [
+        0.431246,
+        -0.132075,
+        1.199988,
+        -2.900164,
+        0.348581,
+        1.180569,
+        0.14517,
+        0.341697,
+        -0.104592,
+        2.326663,
+        0.7097,
+        9.933007
+      ]
+    },
+    {
+      "ticker": "SRBNK.OL",
+      "companyName": "SpareBank 1 SR-Bank",
+      "sector": "Financials",
+      "industry": null,
+      "osebxWeight": 0.7,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "NOFI.OL",
+      "companyName": "SpareBank 1 Østlandet",
+      "sector": "Financials",
+      "industry": null,
+      "osebxWeight": 0.3,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "HELG.OL",
+      "companyName": "SPAREBANK 1 HELGELAND",
+      "sector": "Financial Services",
+      "industry": "Banks - Regional",
+      "osebxWeight": 0.1,
+      "marketCap": 4430676480.0,
+      "peRatio": 11.728765,
+      "forwardPE": 10.907402,
+      "pbRatio": 0.882132,
+      "dividendYield": 4.62,
+      "week52": {
+        "low": 155.0,
+        "high": 189.0,
+        "current": 164.32
+      },
+      "analystTarget": 178.5,
+      "recommendation": "none",
+      "returnsYTD": -10.207646,
+      "returns6M": -7.633495,
+      "returns1Y": 7.398698,
+      "alpha": {
+        "threeMonth": -25.005852,
+        "sixMonth": -30.53429,
+        "oneYear": -37.366986
+      },
+      "sharpeRatio": 0.302559,
+      "momentumScore": 50.5,
+      "maxDrawdown": -14.793654,
+      "volatilityPercentile": 49,
+      "correlationToOSEBX": -0.050182,
+      "dividendConsistency": {
+        "yearsWithDividend": 4,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 54.74661,
+      "liquidityScore": 491700.213333,
+      "earningsYield": 8.526047,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 136.699259,
+        "distancePercentage": 20.205485
+      },
+      "betaToBrent": 0.010401,
+      "seasonality": [
+        3.185201,
+        0.770961,
+        -2.531851,
+        -0.306058,
+        1.751934,
+        -0.159788,
+        2.926738,
+        -0.336035,
+        -0.405872,
+        0.395245,
+        -0.140682,
+        5.075095
+      ]
+    },
+    {
+      "ticker": "NONG.OL",
+      "companyName": "SPAREBANK 1 NORD-NORGE",
+      "sector": "Financial Services",
+      "industry": "Banks - Regional",
+      "osebxWeight": 0.25,
+      "marketCap": 16276526080.0,
+      "peRatio": 10.603008,
+      "forwardPE": 10.784038,
+      "pbRatio": 0.85347,
+      "dividendYield": 5.23,
+      "week52": {
+        "low": 128.28,
+        "high": 163.32,
+        "current": 162.12
+      },
+      "analystTarget": 166.66667,
+      "recommendation": "none",
+      "returnsYTD": 7.15135,
+      "returns6M": 15.387897,
+      "returns1Y": 34.740688,
+      "alpha": {
+        "threeMonth": -8.569268,
+        "sixMonth": -7.512898,
+        "oneYear": -10.024996
+      },
+      "sharpeRatio": 1.762973,
+      "momentumScore": 64.9,
+      "maxDrawdown": -13.228462,
+      "volatilityPercentile": 88,
+      "correlationToOSEBX": 0.403423,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 55.59189,
+      "liquidityScore": 15161656.944,
+      "earningsYield": 9.431285,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 109.216238,
+        "distancePercentage": 48.439461
+      },
+      "betaToBrent": -0.102992,
+      "seasonality": [
+        -0.205484,
+        3.122307,
+        -3.217523,
+        1.882727,
+        -1.07899,
+        0.1587,
+        2.808512,
+        -1.513009,
+        0.553637,
+        3.628025,
+        2.384556,
+        6.633778
+      ]
+    },
+    {
+      "ticker": "SBANK.OL",
+      "companyName": "Sbanken (DNB subsidiary)",
+      "sector": "Financials",
+      "industry": null,
+      "osebxWeight": 0.05,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "GJF.OL",
+      "companyName": "GJENSIDIGE FORSIKRING",
+      "sector": "Financial Services",
+      "industry": "Insurance - Property & Casualty",
+      "osebxWeight": 1.5,
+      "marketCap": 131190587392.0,
+      "peRatio": 20.891718,
+      "forwardPE": 15.16692,
+      "pbRatio": 5.128005,
+      "dividendYield": 3.81,
+      "week52": {
+        "low": 231.4,
+        "high": 303.0,
+        "current": 262.4
+      },
+      "analystTarget": 292.66153,
+      "recommendation": "buy",
+      "returnsYTD": -13.055002,
+      "returns6M": -9.266949,
+      "returns1Y": 15.90106,
+      "alpha": {
+        "threeMonth": -22.874394,
+        "sixMonth": -32.167744,
+        "oneYear": -28.864624
+      },
+      "sharpeRatio": 0.708902,
+      "momentumScore": 52.4,
+      "maxDrawdown": -19.933774,
+      "volatilityPercentile": 86,
+      "correlationToOSEBX": 0.256726,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "cut"
+      },
+      "dividendPayoutRatio": 79.617834,
+      "liquidityScore": 112161751.68,
+      "earningsYield": 4.786585,
+      "evToEbitda": 6.426199,
+      "meanReversion": {
+        "fiveYearAverage": 208.176468,
+        "distancePercentage": 26.046904
+      },
+      "betaToBrent": -0.083022,
+      "seasonality": [
+        -1.802724,
+        -0.027623,
+        -2.857296,
+        2.155037,
+        2.018817,
+        -1.221099,
+        0.854256,
+        1.661875,
+        -1.415434,
+        1.981147,
+        1.814256,
+        3.543711
+      ]
+    },
+    {
+      "ticker": "STB.OL",
+      "companyName": "STOREBRAND",
+      "sector": "Financial Services",
+      "industry": "Financial Conglomerates",
+      "osebxWeight": 1.4,
+      "marketCap": 74086490112.0,
+      "peRatio": 15.021387,
+      "forwardPE": 13.687824,
+      "pbRatio": 2.265631,
+      "dividendYield": 3.07,
+      "week52": {
+        "low": 118.6,
+        "high": 183.3,
+        "current": 175.6
+      },
+      "analystTarget": 175.0,
+      "recommendation": "buy",
+      "returnsYTD": 2.570099,
+      "returns6M": 11.350672,
+      "returns1Y": 48.436181,
+      "alpha": {
+        "threeMonth": -14.158096,
+        "sixMonth": -11.550123,
+        "oneYear": 3.670497
+      },
+      "sharpeRatio": 2.525142,
+      "momentumScore": 66.1,
+      "maxDrawdown": -8.159917,
+      "volatilityPercentile": 70,
+      "correlationToOSEBX": 0.300548,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 46.193328,
+      "liquidityScore": 132756444.72,
+      "earningsYield": 6.657175,
+      "evToEbitda": 2.760941,
+      "meanReversion": {
+        "fiveYearAverage": 105.22577,
+        "distancePercentage": 66.879279
+      },
+      "betaToBrent": -0.059853,
+      "seasonality": [
+        4.163578,
+        -1.895829,
+        1.106067,
+        -1.762077,
+        3.561787,
+        -3.194172,
+        4.419483,
+        1.258632,
+        0.94462,
+        6.658554,
+        -0.403097,
+        1.927592
+      ]
+    },
+    {
+      "ticker": "PROTCT.OL",
+      "companyName": "Protector Forsikring",
+      "sector": "Financials",
+      "industry": null,
+      "osebxWeight": 0.25,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "PARB.OL",
+      "companyName": "PARETO BANK",
+      "sector": "Financial Services",
+      "industry": "Banks - Regional",
+      "osebxWeight": 0.1,
+      "marketCap": 5962155520.0,
+      "peRatio": 9.551045,
+      "forwardPE": 8.854836,
+      "pbRatio": 1.148601,
+      "dividendYield": 10.26,
+      "week52": {
+        "low": 71.1,
+        "high": 97.1,
+        "current": 77.65
+      },
+      "analystTarget": 92.5,
+      "recommendation": "none",
+      "returnsYTD": -14.064235,
+      "returns6M": -14.818881,
+      "returns1Y": 12.626991,
+      "alpha": {
+        "threeMonth": -28.948156,
+        "sixMonth": -37.719676,
+        "oneYear": -32.138693
+      },
+      "sharpeRatio": 0.522092,
+      "momentumScore": 49.9,
+      "maxDrawdown": -19.751809,
+      "volatilityPercentile": 93,
+      "correlationToOSEBX": 0.331217,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 98.400984,
+      "liquidityScore": 9959225.935,
+      "earningsYield": 10.470058,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 62.390794,
+        "distancePercentage": 24.377322
+      },
+      "betaToBrent": -0.078454,
+      "seasonality": [
+        3.813084,
+        2.740234,
+        0.598337,
+        -4.274766,
+        3.725136,
+        -2.869553,
+        9.489288,
+        -3.394603,
+        -1.147274,
+        1.960139,
+        -0.103576,
+        2.630786
+      ]
+    },
+    {
+      "ticker": "ABG.OL",
+      "companyName": "ABG SUNDAL COLLIER HOLDING",
+      "sector": "Financial Services",
+      "industry": "Capital Markets",
+      "osebxWeight": 0.1,
+      "marketCap": 4158960128.0,
+      "peRatio": 12.287878,
+      "forwardPE": null,
+      "pbRatio": 3.944552,
+      "dividendYield": 6.65,
+      "week52": {
+        "low": 6.4,
+        "high": 8.4,
+        "current": 8.11
+      },
+      "analystTarget": null,
+      "recommendation": "none",
+      "returnsYTD": -1.458079,
+      "returns6M": 17.366134,
+      "returns1Y": 22.878784,
+      "alpha": {
+        "threeMonth": -16.835177,
+        "sixMonth": -5.534661,
+        "oneYear": -21.8869
+      },
+      "sharpeRatio": 1.195802,
+      "momentumScore": 60.9,
+      "maxDrawdown": -8.392605,
+      "volatilityPercentile": 11,
+      "correlationToOSEBX": 0.143013,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "cut"
+      },
+      "dividendPayoutRatio": 83.333333,
+      "liquidityScore": 3386568.393333,
+      "earningsYield": 8.138101,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 6.987175,
+        "distancePercentage": 16.069801
+      },
+      "betaToBrent": 0.004428,
+      "seasonality": [
+        -0.295608,
+        -0.125149,
+        -1.369066,
+        -7.230407,
+        2.935851,
+        -1.806466,
+        2.840764,
+        -3.095495,
+        -1.325481,
+        1.176334,
+        5.975704,
+        4.534078
+      ]
+    },
+    {
+      "ticker": "ADE.OL",
+      "companyName": "Adevinta",
+      "sector": "Financials",
+      "industry": null,
+      "osebxWeight": 0.6,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "MOWI.OL",
+      "companyName": "MOWI",
+      "sector": "Consumer Defensive",
+      "industry": "Farm Products",
+      "osebxWeight": 3.0,
+      "marketCap": 111152857088.0,
+      "peRatio": 13.697206,
+      "forwardPE": 11.360488,
+      "pbRatio": 2.267567,
+      "dividendYield": 2.89,
+      "week52": {
+        "low": 182.6,
+        "high": 245.8,
+        "current": 210.8
+      },
+      "analystTarget": 247.78532,
+      "recommendation": "buy",
+      "returnsYTD": -13.677311,
+      "returns6M": -4.615383,
+      "returns1Y": 17.111113,
+      "alpha": {
+        "threeMonth": -23.891124,
+        "sixMonth": -27.516178,
+        "oneYear": -27.654571
+      },
+      "sharpeRatio": 0.767565,
+      "momentumScore": 53.9,
+      "maxDrawdown": -13.677311,
+      "volatilityPercentile": 78,
+      "correlationToOSEBX": 0.253374,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 39.961014,
+      "liquidityScore": 246052674.24,
+      "earningsYield": 7.300759,
+      "evToEbitda": 133.133314,
+      "meanReversion": {
+        "fiveYearAverage": 202.229167,
+        "distancePercentage": 4.23818
+      },
+      "betaToBrent": -0.089954,
+      "seasonality": [
+        5.256411,
+        0.618907,
+        0.15081,
+        1.02274,
+        -2.531672,
+        -4.314348,
+        1.961105,
+        1.911545,
+        -6.56736,
+        4.591288,
+        -0.27728,
+        1.555786
+      ]
+    },
+    {
+      "ticker": "SALM.OL",
+      "companyName": "SALMAR",
+      "sector": "Consumer Defensive",
+      "industry": "Farm Products",
+      "osebxWeight": 1.6,
+      "marketCap": 73393913856.0,
+      "peRatio": 65.956154,
+      "forwardPE": 12.929052,
+      "pbRatio": 4.129647,
+      "dividendYield": 1.83,
+      "week52": {
+        "low": 407.2,
+        "high": 627.0,
+        "current": 541.5
+      },
+      "analystTarget": 599.8,
+      "recommendation": "buy",
+      "returnsYTD": -12.520194,
+      "returns6M": -5.0,
+      "returns1Y": 15.754599,
+      "alpha": {
+        "threeMonth": -22.163879,
+        "sixMonth": -27.900795,
+        "oneYear": -29.011085
+      },
+      "sharpeRatio": 0.592959,
+      "momentumScore": 54.1,
+      "maxDrawdown": -22.339621,
+      "volatilityPercentile": 68,
+      "correlationToOSEBX": 0.280274,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 121.80268,
+      "liquidityScore": 118148820.05,
+      "earningsYield": 1.516159,
+      "evToEbitda": 20.285749,
+      "meanReversion": {
+        "fiveYearAverage": 556.467857,
+        "distancePercentage": -2.689797
+      },
+      "betaToBrent": -0.08291,
+      "seasonality": [
+        5.185111,
+        1.661564,
+        1.821315,
+        1.310315,
+        -4.073926,
+        -6.991491,
+        3.653573,
+        3.26956,
+        -7.195582,
+        2.289273,
+        1.199188,
+        2.419691
+      ]
+    },
+    {
+      "ticker": "LSG.OL",
+      "companyName": "LERØY SEAFOOD GROUP",
+      "sector": "Consumer Defensive",
+      "industry": "Packaged Foods",
+      "osebxWeight": 0.7,
+      "marketCap": 28785305600.0,
+      "peRatio": 79.2459,
+      "forwardPE": 10.147894,
+      "pbRatio": 1.531346,
+      "dividendYield": 5.11,
+      "week52": {
+        "low": 43.1,
+        "high": 52.4,
+        "current": 48.34
+      },
+      "analystTarget": 52.71429,
+      "recommendation": "buy",
+      "returnsYTD": -6.044705,
+      "returns6M": -3.70518,
+      "returns1Y": 11.433838,
+      "alpha": {
+        "threeMonth": -16.074035,
+        "sixMonth": -26.605975,
+        "oneYear": -33.331846
+      },
+      "sharpeRatio": 0.467213,
+      "momentumScore": 54.3,
+      "maxDrawdown": -14.422158,
+      "volatilityPercentile": 31,
+      "correlationToOSEBX": 0.295004,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 409.836066,
+      "liquidityScore": 24661076.392,
+      "earningsYield": 1.261895,
+      "evToEbitda": 17.987117,
+      "meanReversion": {
+        "fiveYearAverage": 55.652325,
+        "distancePercentage": -13.139299
+      },
+      "betaToBrent": -0.055019,
+      "seasonality": [
+        4.493319,
+        0.41656,
+        0.834938,
+        1.760145,
+        -7.580916,
+        -4.343112,
+        5.329534,
+        -0.39424,
+        -8.644374,
+        3.515455,
+        -3.982188,
+        4.989855
+      ]
+    },
+    {
+      "ticker": "AUSS.OL",
+      "companyName": "AUSTEVOLL SEAFOOD",
+      "sector": "Consumer Defensive",
+      "industry": "Farm Products",
+      "osebxWeight": 0.35,
+      "marketCap": 20081496064.0,
+      "peRatio": 45.227272,
+      "forwardPE": 8.602511,
+      "pbRatio": 1.254001,
+      "dividendYield": 6.42,
+      "week52": {
+        "low": 84.3,
+        "high": 105.8,
+        "current": 99.5
+      },
+      "analystTarget": 109.14286,
+      "recommendation": "none",
+      "returnsYTD": 0.506073,
+      "returns6M": 3.761762,
+      "returns1Y": 7.351355,
+      "alpha": {
+        "threeMonth": -12.251471,
+        "sixMonth": -19.139033,
+        "oneYear": -37.414329
+      },
+      "sharpeRatio": 0.294926,
+      "momentumScore": 55.7,
+      "maxDrawdown": -15.445543,
+      "volatilityPercentile": 24,
+      "correlationToOSEBX": 0.250555,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 295.454545,
+      "liquidityScore": 13574668.916667,
+      "earningsYield": 2.211055,
+      "evToEbitda": 14.137696,
+      "meanReversion": {
+        "fiveYearAverage": 96.732103,
+        "distancePercentage": 2.654651
+      },
+      "betaToBrent": -0.031677,
+      "seasonality": [
+        6.576311,
+        0.875657,
+        3.617108,
+        3.212807,
+        -6.891291,
+        -5.005374,
+        3.447615,
+        -1.084242,
+        -7.356989,
+        2.933381,
+        -2.487778,
+        4.853922
+      ]
+    },
+    {
+      "ticker": "BAKKA.OL",
+      "companyName": "BAKKAFROST",
+      "sector": "Consumer Defensive",
+      "industry": "Farm Products",
+      "osebxWeight": 0.6,
+      "marketCap": 27737935872.0,
+      "peRatio": 35.12012,
+      "forwardPE": 11.932515,
+      "pbRatio": 1.684665,
+      "dividendYield": 1.13,
+      "week52": {
+        "low": 388.0,
+        "high": 528.0,
+        "current": 467.8
+      },
+      "analystTarget": 496.9997,
+      "recommendation": "buy",
+      "returnsYTD": -9.603867,
+      "returns6M": -1.640037,
+      "returns1Y": -1.722692,
+      "alpha": {
+        "threeMonth": -17.586705,
+        "sixMonth": -24.540832,
+        "oneYear": -46.488376
+      },
+      "sharpeRatio": -0.00875,
+      "momentumScore": 50.4,
+      "maxDrawdown": -24.784689,
+      "volatilityPercentile": 60,
+      "correlationToOSEBX": 0.257291,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 39.564565,
+      "liquidityScore": 61079445.313333,
+      "earningsYield": 2.847371,
+      "evToEbitda": 22.078124,
+      "meanReversion": {
+        "fiveYearAverage": 588.051667,
+        "distancePercentage": -20.449169
+      },
+      "betaToBrent": -0.059453,
+      "seasonality": [
+        1.537305,
+        1.327217,
+        -1.91945,
+        4.531924,
+        -4.51893,
+        -4.92306,
+        0.158128,
+        -2.89409,
+        -3.711792,
+        6.01133,
+        -3.401307,
+        4.406771
+      ]
+    },
+    {
+      "ticker": "ORK.OL",
+      "companyName": "ORKLA",
+      "sector": "Consumer Defensive",
+      "industry": "Packaged Foods",
+      "osebxWeight": 2.1,
+      "marketCap": 120057389056.0,
+      "peRatio": 19.16928,
+      "forwardPE": 16.721563,
+      "pbRatio": 2.487592,
+      "dividendYield": 3.28,
+      "week52": {
+        "low": 100.6,
+        "high": 131.2,
+        "current": 122.3
+      },
+      "analystTarget": 128.83333,
+      "recommendation": "hold",
+      "returnsYTD": 9.001788,
+      "returns6M": 17.370448,
+      "returns1Y": 8.80783,
+      "alpha": {
+        "threeMonth": -8.523009,
+        "sixMonth": -5.530347,
+        "oneYear": -35.957854
+      },
+      "sharpeRatio": 0.371928,
+      "momentumScore": 59.2,
+      "maxDrawdown": -16.65293,
+      "volatilityPercentile": 77,
+      "correlationToOSEBX": 0.180928,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 62.695925,
+      "liquidityScore": 176915425.39,
+      "earningsYield": 5.21668,
+      "evToEbitda": 14.828782,
+      "meanReversion": {
+        "fiveYearAverage": 89.107325,
+        "distancePercentage": 37.250223
+      },
+      "betaToBrent": -0.062089,
+      "seasonality": [
+        2.819322,
+        0.126779,
+        0.277832,
+        0.28684,
+        2.633006,
+        0.605249,
+        1.362849,
+        0.74711,
+        -1.00558,
+        -2.394766,
+        1.935381,
+        1.495958
+      ]
+    },
+    {
+      "ticker": "GSF.OL",
+      "companyName": "GRIEG SEAFOOD",
+      "sector": "Consumer Defensive",
+      "industry": "Farm Products",
+      "osebxWeight": 0.2,
+      "marketCap": 8014110208.0,
+      "peRatio": null,
+      "forwardPE": 18.575901,
+      "pbRatio": 1.780149,
+      "dividendYield": 49.36,
+      "week52": {
+        "low": 54.5,
+        "high": 81.35,
+        "current": 71.4
+      },
+      "analystTarget": 78.16667,
+      "recommendation": "buy",
+      "returnsYTD": -6.849315,
+      "returns6M": 4.385965,
+      "returns1Y": 32.837212,
+      "alpha": {
+        "threeMonth": -20.055635,
+        "sixMonth": -18.51483,
+        "oneYear": -11.928472
+      },
+      "sharpeRatio": 1.145367,
+      "momentumScore": 60.1,
+      "maxDrawdown": -13.559315,
+      "volatilityPercentile": 38,
+      "correlationToOSEBX": 0.149525,
+      "dividendConsistency": {
+        "yearsWithDividend": 3,
+        "trend": "cut"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": 25535776.84,
+      "earningsYield": -1.540616,
+      "evToEbitda": 10.62627,
+      "meanReversion": {
+        "fiveYearAverage": 79.454365,
+        "distancePercentage": -10.137094
+      },
+      "betaToBrent": -0.066393,
+      "seasonality": [
+        7.28337,
+        -6.530218,
+        7.73478,
+        7.327235,
+        -0.105475,
+        -3.179647,
+        0.639201,
+        -6.297241,
+        -6.29629,
+        4.747214,
+        -6.378102,
+        6.110597
+      ]
+    },
+    {
+      "ticker": "SCHB.OL",
+      "companyName": "Schibsted A",
+      "sector": "Consumer Discretionary",
+      "industry": null,
+      "osebxWeight": 1.4,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "KOG.OL",
+      "companyName": "KONGSBERG GRUPPEN",
+      "sector": "Industrials",
+      "industry": "Aerospace & Defense",
+      "osebxWeight": 4.5,
+      "marketCap": 351315918848.0,
+      "peRatio": 84.084206,
+      "forwardPE": 30.966282,
+      "pbRatio": 15.559018,
+      "dividendYield": 0.55,
+      "week52": {
+        "low": 228.5,
+        "high": 427.0,
+        "current": 399.4
+      },
+      "analystTarget": 417.75,
+      "recommendation": "buy",
+      "returnsYTD": 48.291231,
+      "returns6M": 30.542848,
+      "returns1Y": 34.7738,
+      "alpha": {
+        "threeMonth": 15.42606,
+        "sixMonth": 7.642053,
+        "oneYear": -9.991884
+      },
+      "sharpeRatio": 1.029466,
+      "momentumScore": 73.8,
+      "maxDrawdown": -41.899088,
+      "volatilityPercentile": 77,
+      "correlationToOSEBX": 0.501675,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 46.315789,
+      "liquidityScore": 536467330.14,
+      "earningsYield": 1.189284,
+      "evToEbitda": 59.844964,
+      "meanReversion": {
+        "fiveYearAverage": 155.592699,
+        "distancePercentage": 156.567317
+      },
+      "betaToBrent": 0.08164,
+      "seasonality": [
+        7.498765,
+        13.7638,
+        8.24168,
+        7.678741,
+        0.037376,
+        4.752197,
+        1.99354,
+        -1.77115,
+        -0.681416,
+        4.274071,
+        2.506038,
+        3.352888
+      ]
+    },
+    {
+      "ticker": "WILS.OL",
+      "companyName": "Wilh. Wilhelmsen Hldg",
+      "sector": "Industrials",
+      "industry": null,
+      "osebxWeight": 0.5,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "WWI.OL",
+      "companyName": "WILH. WILHELMSEN HOLDING SER. A",
+      "sector": "Industrials",
+      "industry": "Marine Shipping",
+      "osebxWeight": 1.2,
+      "marketCap": 30292121600.0,
+      "peRatio": 4.873439,
+      "forwardPE": 8.116234,
+      "pbRatio": 0.958414,
+      "dividendYield": 3.85,
+      "week52": {
+        "low": 349.0,
+        "high": 783.0,
+        "current": 722.0
+      },
+      "analystTarget": 954.17346,
+      "recommendation": "none",
+      "returnsYTD": 22.998296,
+      "returns6M": 46.006067,
+      "returns1Y": 106.876791,
+      "alpha": {
+        "threeMonth": -7.101831,
+        "sixMonth": 23.105272,
+        "oneYear": 62.111107
+      },
+      "sharpeRatio": 4.580607,
+      "momentumScore": 89.5,
+      "maxDrawdown": -8.552632,
+      "volatilityPercentile": 25,
+      "correlationToOSEBX": 0.262305,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 18.899764,
+      "liquidityScore": 14226408.333333,
+      "earningsYield": 20.519391,
+      "evToEbitda": 203.773898,
+      "meanReversion": {
+        "fiveYearAverage": 341.815873,
+        "distancePercentage": 111.224831
+      },
+      "betaToBrent": -0.000264,
+      "seasonality": [
+        4.98799,
+        5.782969,
+        -5.760941,
+        1.503093,
+        4.681297,
+        -1.104842,
+        2.366812,
+        4.284557,
+        -1.341792,
+        4.479193,
+        4.261012,
+        6.633964
+      ]
+    },
+    {
+      "ticker": "FLNG.OL",
+      "companyName": "Flex LNG",
+      "sector": "Industrials",
+      "industry": null,
+      "osebxWeight": 0.25,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "COOL.OL",
+      "companyName": "CoolCo",
+      "sector": "Industrials",
+      "industry": null,
+      "osebxWeight": 0.15,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "TOM.OL",
+      "companyName": "TOMRA SYSTEMS",
+      "sector": "Industrials",
+      "industry": "Waste Management",
+      "osebxWeight": 1.4,
+      "marketCap": 36185989120.0,
+      "peRatio": 35.404625,
+      "forwardPE": 16.572758,
+      "pbRatio": 5.530543,
+      "dividendYield": 1.76,
+      "week52": {
+        "low": 106.0,
+        "high": 171.0,
+        "current": 122.5
+      },
+      "analystTarget": 147.91881,
+      "recommendation": "buy",
+      "returnsYTD": -10.25641,
+      "returns6M": -14.275714,
+      "returns1Y": -14.515005,
+      "alpha": {
+        "threeMonth": -25.570539,
+        "sixMonth": -37.176509,
+        "oneYear": -59.280689
+      },
+      "sharpeRatio": -0.285238,
+      "momentumScore": 42.2,
+      "maxDrawdown": -35.064933,
+      "volatilityPercentile": 59,
+      "correlationToOSEBX": 0.273211,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 62.138728,
+      "liquidityScore": 92298110.916667,
+      "earningsYield": 2.82449,
+      "evToEbitda": 182.15306,
+      "meanReversion": {
+        "fiveYearAverage": 172.465381,
+        "distancePercentage": -28.971252
+      },
+      "betaToBrent": -0.129504,
+      "seasonality": [
+        -5.854875,
+        2.700883,
+        4.29588,
+        -2.660056,
+        1.4835,
+        -0.058338,
+        10.834543,
+        -0.708003,
+        -10.791615,
+        -7.40619,
+        9.205955,
+        1.780127
+      ]
+    },
+    {
+      "ticker": "AUTO.OL",
+      "companyName": "AUTOSTORE HOLDINGS LTD.",
+      "sector": "Technology",
+      "industry": "Computer Hardware",
+      "osebxWeight": 0.8,
+      "marketCap": 36354924544.0,
+      "peRatio": 47.0,
+      "forwardPE": 20.151691,
+      "pbRatio": 2.488078,
+      "dividendYield": null,
+      "week52": {
+        "low": 4.6,
+        "high": 13.2,
+        "current": 10.81
+      },
+      "analystTarget": 12.676621,
+      "recommendation": "buy",
+      "returnsYTD": -10.207473,
+      "returns6M": 10.015248,
+      "returns1Y": 45.430102,
+      "alpha": {
+        "threeMonth": -33.907559,
+        "sixMonth": -12.885547,
+        "oneYear": 0.664418
+      },
+      "sharpeRatio": 1.176564,
+      "momentumScore": 60.6,
+      "maxDrawdown": -38.613859,
+      "volatilityPercentile": 46,
+      "correlationToOSEBX": 0.122889,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": 69527435.501667,
+      "earningsYield": 2.12766,
+      "evToEbitda": 211.580455,
+      "meanReversion": null,
+      "betaToBrent": -0.118423,
+      "seasonality": [
+        -3.34406,
+        0.25305,
+        0.819083,
+        -17.280091,
+        3.576434,
+        -9.931172,
+        16.570648,
+        -14.129517,
+        -5.542462,
+        11.301964,
+        21.670959,
+        -2.892174
+      ]
+    },
+    {
+      "ticker": "MPCC.OL",
+      "companyName": "MPC CONTAINER SHIPS",
+      "sector": "Industrials",
+      "industry": "Marine Shipping",
+      "osebxWeight": 0.2,
+      "marketCap": 10209544192.0,
+      "peRatio": 4.547431,
+      "forwardPE": 14.270606,
+      "pbRatio": 1.133542,
+      "dividendYield": 8.310001,
+      "week52": {
+        "low": 13.87,
+        "high": 24.09,
+        "current": 23.01
+      },
+      "analystTarget": 16.309677,
+      "recommendation": "underperform",
+      "returnsYTD": 33.236825,
+      "returns6M": 46.560513,
+      "returns1Y": 66.437617,
+      "alpha": {
+        "threeMonth": 6.478692,
+        "sixMonth": 23.659718,
+        "oneYear": 21.671933
+      },
+      "sharpeRatio": 2.052025,
+      "momentumScore": 82.2,
+      "maxDrawdown": -21.618231,
+      "volatilityPercentile": 47,
+      "correlationToOSEBX": 0.323993,
+      "dividendConsistency": {
+        "yearsWithDividend": 4,
+        "trend": "cut"
+      },
+      "dividendPayoutRatio": 37.944664,
+      "liquidityScore": 53827399.613,
+      "earningsYield": 21.990439,
+      "evToEbitda": 33.903267,
+      "meanReversion": {
+        "fiveYearAverage": 19.630036,
+        "distancePercentage": 17.218331
+      },
+      "betaToBrent": 0.053244,
+      "seasonality": [
+        6.539026,
+        2.407554,
+        -3.821752,
+        13.069827,
+        13.349112,
+        4.789235,
+        5.251705,
+        -2.947341,
+        -6.409236,
+        -5.36656,
+        1.900541,
+        -1.542549
+      ]
+    },
+    {
+      "ticker": "BELCO.OL",
+      "companyName": "Bonheur",
+      "sector": "Industrials",
+      "industry": null,
+      "osebxWeight": 0.2,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "KIT.OL",
+      "companyName": "KITRON",
+      "sector": "Technology",
+      "industry": "Electronic Components",
+      "osebxWeight": 0.25,
+      "marketCap": 22132688896.0,
+      "peRatio": 41.30612,
+      "forwardPE": 21.530914,
+      "pbRatio": 6.220312,
+      "dividendYield": 0.71,
+      "week52": {
+        "low": 47.92,
+        "high": 111.6,
+        "current": 101.2
+      },
+      "analystTarget": 105.62713,
+      "recommendation": "buy",
+      "returnsYTD": 36.296292,
+      "returns6M": 72.54901,
+      "returns1Y": 111.804101,
+      "alpha": {
+        "threeMonth": 11.998231,
+        "sixMonth": 49.648215,
+        "oneYear": 67.038417
+      },
+      "sharpeRatio": 3.236396,
+      "momentumScore": 100.0,
+      "maxDrawdown": -24.015743,
+      "volatilityPercentile": 92,
+      "correlationToOSEBX": 0.271126,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "cut"
+      },
+      "dividendPayoutRatio": 28.571429,
+      "liquidityScore": 79867353.72,
+      "earningsYield": 2.420949,
+      "evToEbitda": 287.432108,
+      "meanReversion": {
+        "fiveYearAverage": 36.775048,
+        "distancePercentage": 175.186583
+      },
+      "betaToBrent": -0.124001,
+      "seasonality": [
+        2.988363,
+        12.797797,
+        -0.182499,
+        -0.096774,
+        11.400554,
+        -4.157216,
+        3.784287,
+        -3.316837,
+        -7.079113,
+        8.874037,
+        0.002573,
+        14.45449
+      ]
+    },
+    {
+      "ticker": "EPR.OL",
+      "companyName": "EUROPRIS",
+      "sector": "Consumer Defensive",
+      "industry": "Discount Stores",
+      "osebxWeight": 0.3,
+      "marketCap": 15235744768.0,
+      "peRatio": 18.884382,
+      "forwardPE": 12.594833,
+      "pbRatio": 3.534817,
+      "dividendYield": 4.04,
+      "week52": {
+        "low": 72.6,
+        "high": 104.6,
+        "current": 93.1
+      },
+      "analystTarget": 101.33333,
+      "recommendation": "none",
+      "returnsYTD": 0.107525,
+      "returns6M": -6.338031,
+      "returns1Y": 13.953491,
+      "alpha": {
+        "threeMonth": -14.684751,
+        "sixMonth": -29.238826,
+        "oneYear": -30.812193
+      },
+      "sharpeRatio": 0.550473,
+      "momentumScore": 53.7,
+      "maxDrawdown": -19.245649,
+      "volatilityPercentile": 33,
+      "correlationToOSEBX": 0.170838,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 76.064909,
+      "liquidityScore": 19818134.933333,
+      "earningsYield": 5.295381,
+      "evToEbitda": 13.523786,
+      "meanReversion": {
+        "fiveYearAverage": 70.290413,
+        "distancePercentage": 32.450493
+      },
+      "betaToBrent": -0.024444,
+      "seasonality": [
+        -0.661769,
+        -1.497734,
+        2.030468,
+        -2.650084,
+        -0.095268,
+        -0.140009,
+        4.80411,
+        1.793841,
+        -2.183127,
+        2.915951,
+        3.124224,
+        9.0136
+      ]
+    },
+    {
+      "ticker": "NHY.OL",
+      "companyName": "NORSK HYDRO",
+      "sector": "Basic Materials",
+      "industry": "Aluminum",
+      "osebxWeight": 3.0,
+      "marketCap": 213625749504.0,
+      "peRatio": 31.876831,
+      "forwardPE": 12.346436,
+      "pbRatio": 2.139637,
+      "dividendYield": 2.79,
+      "week52": {
+        "low": 52.24,
+        "high": 110.5,
+        "current": 108.7
+      },
+      "analystTarget": 94.8125,
+      "recommendation": "hold",
+      "returnsYTD": 36.798387,
+      "returns6M": 58.871675,
+      "returns1Y": 109.683635,
+      "alpha": {
+        "threeMonth": 11.521693,
+        "sixMonth": 35.97088,
+        "oneYear": 64.917951
+      },
+      "sharpeRatio": 4.18826,
+      "momentumScore": 95.2,
+      "maxDrawdown": -11.504244,
+      "volatilityPercentile": 92,
+      "correlationToOSEBX": 0.439813,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 87.97654,
+      "liquidityScore": 581974491.816667,
+      "earningsYield": 3.137075,
+      "evToEbitda": 4.493644,
+      "meanReversion": {
+        "fiveYearAverage": 67.24423,
+        "distancePercentage": 61.649552
+      },
+      "betaToBrent": 0.033971,
+      "seasonality": [
+        3.073189,
+        1.229904,
+        4.432327,
+        0.503803,
+        -2.365315,
+        -6.908631,
+        5.365196,
+        0.125565,
+        5.546462,
+        0.324273,
+        2.052554,
+        5.521905
+      ]
+    },
+    {
+      "ticker": "YAR.OL",
+      "companyName": "YARA INTERNATIONAL",
+      "sector": "Basic Materials",
+      "industry": "Agricultural Inputs",
+      "osebxWeight": 2.5,
+      "marketCap": 139436818432.0,
+      "peRatio": 10.674727,
+      "forwardPE": 11.904649,
+      "pbRatio": 1.649536,
+      "dividendYield": 4.05,
+      "week52": {
+        "low": 306.1,
+        "high": 599.4,
+        "current": 547.4
+      },
+      "analystTarget": 502.64545,
+      "recommendation": "hold",
+      "returnsYTD": 33.463223,
+      "returns6M": 46.211317,
+      "returns1Y": 84.139781,
+      "alpha": {
+        "threeMonth": 12.526981,
+        "sixMonth": 23.310522,
+        "oneYear": 39.374097
+      },
+      "sharpeRatio": 3.105433,
+      "momentumScore": 88.4,
+      "maxDrawdown": -12.945325,
+      "volatilityPercentile": 99,
+      "correlationToOSEBX": 0.482218,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "cut"
+      },
+      "dividendPayoutRatio": 42.901716,
+      "liquidityScore": 436122593.853333,
+      "earningsYield": 9.367921,
+      "evToEbitda": 58.473602,
+      "meanReversion": {
+        "fiveYearAverage": 398.624762,
+        "distancePercentage": 37.472644
+      },
+      "betaToBrent": 0.230822,
+      "seasonality": [
+        4.258099,
+        1.510222,
+        2.114814,
+        -0.529937,
+        2.314441,
+        -5.129694,
+        3.244502,
+        -3.057788,
+        0.508229,
+        2.576269,
+        -1.519459,
+        0.610011
+      ]
+    },
+    {
+      "ticker": "ELMRA.OL",
+      "companyName": "ELMERA GROUP ASA",
+      "sector": "Utilities",
+      "industry": "Utilities - Regulated Electric",
+      "osebxWeight": 0.5,
+      "marketCap": 3816388096.0,
+      "peRatio": 23.90411,
+      "forwardPE": 10.664858,
+      "pbRatio": 2.808401,
+      "dividendYield": 5.71,
+      "week52": {
+        "low": 31.05,
+        "high": 42.55,
+        "current": 34.9
+      },
+      "analystTarget": 32.33333,
+      "recommendation": "none",
+      "returnsYTD": -10.167303,
+      "returns6M": 7.882545,
+      "returns1Y": 4.804812,
+      "alpha": {
+        "threeMonth": -24.015331,
+        "sixMonth": -15.01825,
+        "oneYear": -39.960872
+      },
+      "sharpeRatio": 0.196042,
+      "momentumScore": 53.3,
+      "maxDrawdown": -24.484849,
+      "volatilityPercentile": 39,
+      "correlationToOSEBX": 0.197013,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "cut"
+      },
+      "dividendPayoutRatio": 136.986301,
+      "liquidityScore": 6940274.493333,
+      "earningsYield": 4.183381,
+      "evToEbitda": 12.702826,
+      "meanReversion": {
+        "fiveYearAverage": 32.192452,
+        "distancePercentage": 8.410509
+      },
+      "betaToBrent": -0.012821,
+      "seasonality": [
+        -7.477447,
+        -2.393293,
+        5.07207,
+        -6.63166,
+        1.977088,
+        -4.197369,
+        0.177485,
+        1.468672,
+        -2.076514,
+        -0.463522,
+        5.229238,
+        5.152039
+      ]
+    },
+    {
+      "ticker": "CRAYN.OL",
+      "companyName": "Crayon Group",
+      "sector": "Information Technology",
+      "industry": null,
+      "osebxWeight": 0.6,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "NOD.OL",
+      "companyName": "NORDIC SEMICONDUCTOR",
+      "sector": "Technology",
+      "industry": "Semiconductors",
+      "osebxWeight": 1.2,
+      "marketCap": 34450452480.0,
+      "peRatio": 229.47368,
+      "forwardPE": 34.229637,
+      "pbRatio": 5.252152,
+      "dividendYield": null,
+      "week52": {
+        "low": 102.0,
+        "high": 175.9,
+        "current": 174.4
+      },
+      "analystTarget": 162.86047,
+      "recommendation": "buy",
+      "returnsYTD": 27.021114,
+      "returns6M": 6.018233,
+      "returns1Y": 66.412203,
+      "alpha": {
+        "threeMonth": 13.60009,
+        "sixMonth": -16.882562,
+        "oneYear": 21.646519
+      },
+      "sharpeRatio": 1.783569,
+      "momentumScore": 72.7,
+      "maxDrawdown": -26.079246,
+      "volatilityPercentile": 68,
+      "correlationToOSEBX": 0.25538,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": 180304387.573333,
+      "earningsYield": 0.43578,
+      "evToEbitda": 867.200702,
+      "meanReversion": {
+        "fiveYearAverage": 158.597706,
+        "distancePercentage": 9.963755
+      },
+      "betaToBrent": -0.138452,
+      "seasonality": [
+        -4.1932,
+        0.139941,
+        -0.53563,
+        4.97574,
+        8.12268,
+        0.763225,
+        11.300725,
+        -0.22406,
+        -12.05539,
+        -4.904193,
+        6.876219,
+        3.729753
+      ]
+    },
+    {
+      "ticker": "OPER.OL",
+      "companyName": "Opera Ltd",
+      "sector": "Information Technology",
+      "industry": null,
+      "osebxWeight": 0.25,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "VOLUE.OL",
+      "companyName": "Volue",
+      "sector": "Information Technology",
+      "industry": null,
+      "osebxWeight": 0.15,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "PEXIP.OL",
+      "companyName": "PEXIP HOLDING",
+      "sector": "Technology",
+      "industry": "Software - Application",
+      "osebxWeight": 0.15,
+      "marketCap": 6743091712.0,
+      "peRatio": 32.959183,
+      "forwardPE": 19.755352,
+      "pbRatio": 4.382038,
+      "dividendYield": 6.25,
+      "week52": {
+        "low": 38.1,
+        "high": 79.6,
+        "current": 64.6
+      },
+      "analystTarget": 75.0,
+      "recommendation": "none",
+      "returnsYTD": -13.27078,
+      "returns6M": 8.739491,
+      "returns1Y": 69.150319,
+      "alpha": {
+        "threeMonth": -29.183706,
+        "sixMonth": -14.161304,
+        "oneYear": 24.384635
+      },
+      "sharpeRatio": 2.060425,
+      "momentumScore": 67.5,
+      "maxDrawdown": -24.111679,
+      "volatilityPercentile": 7,
+      "correlationToOSEBX": 0.171371,
+      "dividendConsistency": {
+        "yearsWithDividend": 2,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 204.081633,
+      "liquidityScore": 24334046.953333,
+      "earningsYield": 3.034056,
+      "evToEbitda": 21.759236,
+      "meanReversion": {
+        "fiveYearAverage": 38.310706,
+        "distancePercentage": 68.882287
+      },
+      "betaToBrent": -0.035211,
+      "seasonality": [
+        -1.326745,
+        -1.770244,
+        -1.726197,
+        -6.550849,
+        18.333598,
+        -9.793499,
+        2.552579,
+        -0.62476,
+        -3.356176,
+        -8.175031,
+        14.643958,
+        8.814712
+      ]
+    },
+    {
+      "ticker": "B2H.OL",
+      "companyName": "B2Holding",
+      "sector": "Information Technology",
+      "industry": null,
+      "osebxWeight": 0.1,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "TEL.OL",
+      "companyName": "TELENOR",
+      "sector": "Communication Services",
+      "industry": "Telecom Services",
+      "osebxWeight": 4.5,
+      "marketCap": 222341480448.0,
+      "peRatio": 20.3125,
+      "forwardPE": 15.825944,
+      "pbRatio": 3.154727,
+      "dividendYield": 5.85,
+      "week52": {
+        "low": 141.5,
+        "high": 178.7,
+        "current": 162.5
+      },
+      "analystTarget": 174.41176,
+      "recommendation": "buy",
+      "returnsYTD": 11.454044,
+      "returns6M": -2.285029,
+      "returns1Y": 18.01017,
+      "alpha": {
+        "threeMonth": -4.796208,
+        "sixMonth": -25.185824,
+        "oneYear": -26.755514
+      },
+      "sharpeRatio": 0.861243,
+      "momentumScore": 58.5,
+      "maxDrawdown": -16.960091,
+      "volatilityPercentile": 25,
+      "correlationToOSEBX": 0.244186,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 121.25,
+      "liquidityScore": 226510396.666667,
+      "earningsYield": 4.923077,
+      "evToEbitda": 11.811938,
+      "meanReversion": {
+        "fiveYearAverage": 132.417032,
+        "distancePercentage": 22.718353
+      },
+      "betaToBrent": -0.050803,
+      "seasonality": [
+        7.860949,
+        2.878052,
+        1.235267,
+        2.828699,
+        -4.7093,
+        -0.693084,
+        0.57076,
+        0.843359,
+        -0.772417,
+        -5.914275,
+        -0.731606,
+        -0.409945
+      ]
+    },
+    {
+      "ticker": "ATEA.OL",
+      "companyName": "ATEA",
+      "sector": "Technology",
+      "industry": "Information Technology Services",
+      "osebxWeight": 0.4,
+      "marketCap": 15960018944.0,
+      "peRatio": 18.551098,
+      "forwardPE": 12.746666,
+      "pbRatio": 3.518846,
+      "dividendYield": 5.26,
+      "week52": {
+        "low": 132.0,
+        "high": 163.8,
+        "current": 143.4
+      },
+      "analystTarget": 168.33333,
+      "recommendation": "none",
+      "returnsYTD": -7.115136,
+      "returns6M": -0.13908,
+      "returns1Y": 14.149446,
+      "alpha": {
+        "threeMonth": -28.68886,
+        "sixMonth": -23.039875,
+        "oneYear": -30.616238
+      },
+      "sharpeRatio": 0.633669,
+      "momentumScore": 52.6,
+      "maxDrawdown": -16.216222,
+      "volatilityPercentile": 22,
+      "correlationToOSEBX": 0.325843,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": 97.02458,
+      "liquidityScore": 22463533.52,
+      "earningsYield": 5.390516,
+      "evToEbitda": 10.315331,
+      "meanReversion": {
+        "fiveYearAverage": 137.847143,
+        "distancePercentage": 4.173364
+      },
+      "betaToBrent": -0.017566,
+      "seasonality": [
+        -0.405903,
+        -5.667488,
+        0.849654,
+        5.049574,
+        1.29405,
+        2.936931,
+        -2.311596,
+        -1.57431,
+        -5.60456,
+        4.200119,
+        0.711835,
+        2.56972
+      ]
+    },
+    {
+      "ticker": "SCHA.OL",
+      "companyName": "Scatec",
+      "sector": "Utilities",
+      "industry": null,
+      "osebxWeight": 0.4,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "HEX.OL",
+      "companyName": "HEXAGON COMPOSITES",
+      "sector": "Consumer Cyclical",
+      "industry": "Packaging & Containers",
+      "osebxWeight": 0.2,
+      "marketCap": 2570735104.0,
+      "peRatio": null,
+      "forwardPE": 13.506549,
+      "pbRatio": 0.929344,
+      "dividendYield": null,
+      "week52": {
+        "low": 6.3,
+        "high": 21.1,
+        "current": 10.22
+      },
+      "analystTarget": 18.0,
+      "recommendation": "none",
+      "returnsYTD": 36.448606,
+      "returns6M": -2.851713,
+      "returns1Y": -41.799541,
+      "alpha": {
+        "threeMonth": 5.211128,
+        "sixMonth": -25.752508,
+        "oneYear": -86.565225
+      },
+      "sharpeRatio": -0.575342,
+      "momentumScore": 43.9,
+      "maxDrawdown": -69.714285,
+      "volatilityPercentile": 55,
+      "correlationToOSEBX": 0.24465,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": 13022467.08,
+      "earningsYield": -48.043053,
+      "evToEbitda": 43.459692,
+      "meanReversion": {
+        "fiveYearAverage": 24.182025,
+        "distancePercentage": -57.737202
+      },
+      "betaToBrent": -0.103196,
+      "seasonality": [
+        -5.985213,
+        -3.650873,
+        -1.943782,
+        0.164946,
+        3.715917,
+        -3.249748,
+        11.776594,
+        5.755359,
+        -14.237823,
+        -2.876514,
+        0.095282,
+        3.147082
+      ]
+    },
+    {
+      "ticker": "NEL.OL",
+      "companyName": "NEL",
+      "sector": "Industrials",
+      "industry": "Specialty Industrial Machinery",
+      "osebxWeight": 0.4,
+      "marketCap": 4089638400.0,
+      "peRatio": null,
+      "forwardPE": -10.257237,
+      "pbRatio": 1.03972,
+      "dividendYield": null,
+      "week52": {
+        "low": 1.919,
+        "high": 2.938,
+        "current": 2.225
+      },
+      "analystTarget": 2.13636,
+      "recommendation": "underperform",
+      "returnsYTD": -3.879307,
+      "returns6M": -16.354084,
+      "returns1Y": -3.962102,
+      "alpha": {
+        "threeMonth": -18.570869,
+        "sixMonth": -39.254879,
+        "oneYear": -48.727786
+      },
+      "sharpeRatio": 0.118609,
+      "momentumScore": 46.0,
+      "maxDrawdown": -32.216143,
+      "volatilityPercentile": 29,
+      "correlationToOSEBX": 0.208629,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": 12835771.5725,
+      "earningsYield": -31.460674,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 9.363872,
+        "distancePercentage": -76.185064
+      },
+      "betaToBrent": -0.131178,
+      "seasonality": [
+        -7.119242,
+        1.291179,
+        -1.579349,
+        -0.451188,
+        5.869693,
+        -6.52655,
+        8.481501,
+        -12.713887,
+        -13.638669,
+        3.063593,
+        2.603617,
+        -11.55457
+      ]
+    },
+    {
+      "ticker": "ENTRA.OL",
+      "companyName": "ENTRA",
+      "sector": "Real Estate",
+      "industry": "Real Estate Services",
+      "osebxWeight": 0.6,
+      "marketCap": 19357151232.0,
+      "peRatio": 16.898735,
+      "forwardPE": 15.511983,
+      "pbRatio": 0.78593,
+      "dividendYield": 2.05,
+      "week52": {
+        "low": 101.2,
+        "high": 135.6,
+        "current": 106.8
+      },
+      "analystTarget": 112.66667,
+      "recommendation": "underperform",
+      "returnsYTD": -5.150973,
+      "returns6M": -9.028959,
+      "returns1Y": -2.197797,
+      "alpha": {
+        "threeMonth": -20.940947,
+        "sixMonth": -31.929754,
+        "oneYear": -46.963481
+      },
+      "sharpeRatio": -0.228594,
+      "momentumScore": 48.7,
+      "maxDrawdown": -23.503,
+      "volatilityPercentile": 43,
+      "correlationToOSEBX": 0.153738,
+      "dividendConsistency": {
+        "yearsWithDividend": 4,
+        "trend": "cut"
+      },
+      "dividendPayoutRatio": 34.810127,
+      "liquidityScore": 12854551.24,
+      "earningsYield": 5.917603,
+      "evToEbitda": 18.804171,
+      "meanReversion": {
+        "fiveYearAverage": 131.655714,
+        "distancePercentage": -18.879326
+      },
+      "betaToBrent": -0.075649,
+      "seasonality": [
+        1.702742,
+        -3.065201,
+        -2.862909,
+        -2.205002,
+        -0.611959,
+        -1.021077,
+        5.541616,
+        -1.719507,
+        -6.550049,
+        -3.934285,
+        5.924003,
+        1.674131
+      ]
+    },
+    {
+      "ticker": "OLT.OL",
+      "companyName": "Olav Thon Eiendom",
+      "sector": "Real Estate",
+      "industry": null,
+      "osebxWeight": 0.3,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "SOR.OL",
+      "companyName": "Self Storage Group",
+      "sector": "Real Estate",
+      "industry": null,
+      "osebxWeight": 0.1,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "PHO.OL",
+      "companyName": "PHOTOCURE",
+      "sector": "Healthcare",
+      "industry": "Drug Manufacturers - Specialty & Generic",
+      "osebxWeight": 0.1,
+      "marketCap": 1878430976.0,
+      "peRatio": null,
+      "forwardPE": 47.864407,
+      "pbRatio": 3.879121,
+      "dividendYield": null,
+      "week52": {
+        "low": 48.5,
+        "high": 79.8,
+        "current": 70.6
+      },
+      "analystTarget": 82.5,
+      "recommendation": "none",
+      "returnsYTD": -1.808071,
+      "returns6M": 28.130672,
+      "returns1Y": 45.867761,
+      "alpha": {
+        "threeMonth": -27.963752,
+        "sixMonth": 5.229877,
+        "oneYear": 1.102077
+      },
+      "sharpeRatio": 1.331712,
+      "momentumScore": 66.4,
+      "maxDrawdown": -29.620255,
+      "volatilityPercentile": 89,
+      "correlationToOSEBX": -0.025716,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": 8093664.013333,
+      "earningsYield": -0.084986,
+      "evToEbitda": 69.170207,
+      "meanReversion": {
+        "fiveYearAverage": 76.737063,
+        "distancePercentage": -7.997524
+      },
+      "betaToBrent": -0.000247,
+      "seasonality": [
+        -4.105026,
+        -9.638296,
+        -2.17694,
+        0.241183,
+        2.019062,
+        -4.708859,
+        3.546941,
+        -5.70515,
+        -1.357627,
+        3.419795,
+        -3.682577,
+        17.05308
+      ]
+    },
+    {
+      "ticker": "MEDI.OL",
+      "companyName": "Medistim",
+      "sector": "Health Care",
+      "industry": null,
+      "osebxWeight": 0.1,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": -9.195402,
+      "returns6M": -0.83682,
+      "returns1Y": 45.398773,
+      "alpha": {
+        "threeMonth": -18.99059,
+        "sixMonth": -23.737615,
+        "oneYear": 0.633089
+      },
+      "sharpeRatio": 1.257759,
+      "momentumScore": 60.1,
+      "maxDrawdown": -33.802817,
+      "volatilityPercentile": 23,
+      "correlationToOSEBX": 0.082362,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 236.550397,
+        "distancePercentage": 0.190067
+      },
+      "betaToBrent": -0.030782,
+      "seasonality": [
+        -5.728982,
+        -0.803196,
+        3.322536,
+        -1.125718,
+        6.459044,
+        0.499592,
+        4.718733,
+        2.565698,
+        -8.559258,
+        7.022469,
+        -1.777768,
+        0.418641
+      ]
+    },
+    {
+      "ticker": "AKER.OL",
+      "companyName": "Aker",
+      "sector": "Industrials",
+      "industry": null,
+      "osebxWeight": 1.0,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": 33.504493,
+      "returns6M": 41.112619,
+      "returns1Y": 90.825688,
+      "alpha": {
+        "threeMonth": 11.382032,
+        "sixMonth": 18.211824,
+        "oneYear": 46.060004
+      },
+      "sharpeRatio": 3.587037,
+      "momentumScore": 88.5,
+      "maxDrawdown": -11.27451,
+      "volatilityPercentile": 86,
+      "correlationToOSEBX": 0.412592,
+      "dividendConsistency": {
+        "yearsWithDividend": 5,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 695.483333,
+        "distancePercentage": 49.536294
+      },
+      "betaToBrent": 0.158675,
+      "seasonality": [
+        2.42347,
+        -1.251213,
+        5.956032,
+        -3.293498,
+        2.858686,
+        -1.95234,
+        4.882788,
+        -0.814268,
+        -0.213949,
+        4.540359,
+        2.341212,
+        -2.849873
+      ]
+    },
+    {
+      "ticker": "AKAST.OL",
+      "companyName": "Aker Horizons",
+      "sector": "Industrials",
+      "industry": null,
+      "osebxWeight": 0.15,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": 32.97297,
+      "returns6M": 27.241377,
+      "returns1Y": 40.571431,
+      "alpha": {
+        "threeMonth": 10.57211,
+        "sixMonth": 4.340582,
+        "oneYear": -4.194253
+      },
+      "sharpeRatio": 1.841689,
+      "momentumScore": 73.1,
+      "maxDrawdown": -14.803151,
+      "volatilityPercentile": 42,
+      "correlationToOSEBX": 0.385999,
+      "dividendConsistency": {
+        "yearsWithDividend": 1,
+        "trend": "stable"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 10.521357,
+        "distancePercentage": 40.286087
+      },
+      "betaToBrent": 0.0787,
+      "seasonality": [
+        9.424749,
+        6.741645,
+        3.65004,
+        -0.847887,
+        2.0269,
+        6.681361,
+        -0.186295,
+        -1.63676,
+        -1.517365,
+        -0.056213,
+        -1.236277,
+        -0.273396
+      ]
+    },
+    {
+      "ticker": "FRO.OL",
+      "companyName": "Frontline",
+      "sector": "Energy",
+      "industry": null,
+      "osebxWeight": 1.2,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": 56.567592,
+      "returns6M": 40.35239,
+      "returns1Y": 124.853705,
+      "alpha": {
+        "threeMonth": 4.991261,
+        "sixMonth": 17.451595,
+        "oneYear": 80.088021
+      },
+      "sharpeRatio": 3.457489,
+      "momentumScore": 93.4,
+      "maxDrawdown": -20.533331,
+      "volatilityPercentile": 69,
+      "correlationToOSEBX": 0.294651,
+      "dividendConsistency": {
+        "yearsWithDividend": 4,
+        "trend": "growing"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 170.743635,
+        "distancePercentage": 91.280926
+      },
+      "betaToBrent": 0.061136,
+      "seasonality": [
+        15.255668,
+        21.369507,
+        -7.176908,
+        3.003839,
+        9.108678,
+        -3.275821,
+        3.238889,
+        6.121407,
+        7.847646,
+        5.220341,
+        -9.106069,
+        -7.448861
+      ]
+    },
+    {
+      "ticker": "GOGL.OL",
+      "companyName": "Golden Ocean Group",
+      "sector": "Energy",
+      "industry": null,
+      "osebxWeight": 0.5,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
+    },
+    {
+      "ticker": "KOA.OL",
+      "companyName": "Kongsberg Automotive",
+      "sector": "Consumer Discretionary",
+      "industry": null,
+      "osebxWeight": 0.1,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": -1.225483,
+      "returns6M": 27.04919,
+      "returns1Y": 55.718706,
+      "alpha": {
+        "threeMonth": -29.339567,
+        "sixMonth": 4.148395,
+        "oneYear": 10.953022
+      },
+      "sharpeRatio": 1.755427,
+      "momentumScore": 68.2,
+      "maxDrawdown": -19.663872,
+      "volatilityPercentile": 29,
+      "correlationToOSEBX": 0.198023,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 2.168382,
+        "distancePercentage": -7.073553
+      },
+      "betaToBrent": -0.094898,
+      "seasonality": [
+        -5.260903,
+        -0.592537,
+        -10.70046,
+        4.116393,
+        5.8928,
+        -5.378496,
+        2.658189,
+        -4.585536,
+        -3.082527,
+        6.59762,
+        0.744708,
+        9.636133
+      ]
+    },
+    {
+      "ticker": "PGS.OL",
+      "companyName": "PGS",
+      "sector": "Energy",
+      "industry": null,
+      "osebxWeight": 0.2,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": 29.812958,
+      "returns1Y": 30.564407,
+      "alpha": {
+        "threeMonth": -13.174748,
+        "sixMonth": 6.912163,
+        "oneYear": -14.201277
+      },
+      "sharpeRatio": 0.89607,
+      "momentumScore": 65.9,
+      "maxDrawdown": -39.509802,
+      "volatilityPercentile": 0,
+      "correlationToOSEBX": 0.374113,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 6.993639,
+        "distancePercentage": 29.002948
+      },
+      "betaToBrent": 0.384511,
+      "seasonality": [
+        -17.011361,
+        20.513978,
+        -7.188633,
+        5.613124,
+        7.906904,
+        -0.05581,
+        -0.797647,
+        2.264539,
+        6.224355,
+        -2.497171,
+        11.065898,
+        11.263169
+      ]
+    },
+    {
+      "ticker": "RECSI.OL",
+      "companyName": "REC Silicon",
+      "sector": "Information Technology",
+      "industry": null,
+      "osebxWeight": 0.15,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": -76.556602,
+      "returns6M": -83.344504,
+      "returns1Y": -83.444371,
+      "alpha": {
+        "threeMonth": -94.448702,
+        "sixMonth": -106.245299,
+        "oneYear": -128.210055
+      },
+      "sharpeRatio": -0.660501,
+      "momentumScore": 0.0,
+      "maxDrawdown": -90.693957,
+      "volatilityPercentile": 88,
+      "correlationToOSEBX": 0.054492,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": {
+        "fiveYearAverage": 11.114707,
+        "distancePercentage": -97.764224
+      },
+      "betaToBrent": 0.106415,
+      "seasonality": [
+        -16.028866,
+        -18.397644,
+        0.253404,
+        11.010922,
+        0.171797,
+        -4.147489,
+        6.812937,
+        -3.332317,
+        -7.531078,
+        -2.90578,
+        -6.013627,
+        -12.461681
+      ]
+    },
+    {
+      "ticker": "KAHOT.OL",
+      "companyName": "Kahoot!",
+      "sector": "Information Technology",
+      "industry": null,
+      "osebxWeight": 0.25,
+      "marketCap": null,
+      "peRatio": null,
+      "forwardPE": null,
+      "pbRatio": null,
+      "dividendYield": null,
+      "week52": {
+        "low": null,
+        "high": null,
+        "current": null
+      },
+      "analystTarget": null,
+      "recommendation": null,
+      "returnsYTD": null,
+      "returns6M": null,
+      "returns1Y": null,
+      "alpha": {
+        "threeMonth": null,
+        "sixMonth": null,
+        "oneYear": null
+      },
+      "sharpeRatio": null,
+      "momentumScore": null,
+      "maxDrawdown": null,
+      "volatilityPercentile": null,
+      "correlationToOSEBX": null,
+      "dividendConsistency": {
+        "yearsWithDividend": 0,
+        "trend": "none"
+      },
+      "dividendPayoutRatio": null,
+      "liquidityScore": null,
+      "earningsYield": null,
+      "evToEbitda": null,
+      "meanReversion": null,
+      "betaToBrent": null,
+      "seasonality": null
     }
   ],
   "sectorSummary": [
     {
-      "sector": "Energy",
+      "sector": "Basic Materials",
+      "companyCount": 2,
+      "totalWeight": 5.5,
+      "avgReturnYTD": 35.13,
+      "avgPE": 21.28,
+      "avgEvToEbitda": 31.48,
+      "avgDividendYield": 3.42,
+      "avgSharpe": 3.65
+    },
+    {
+      "sector": "Communication Services",
       "companyCount": 1,
-      "totalWeight": 9.5,
-      "avgReturnYTD": 12.34,
-      "avgPE": 7.8,
-      "avgEvToEbitda": 3.6,
-      "avgDividendYield": 3.85,
-      "avgSharpe": 1.12
+      "totalWeight": 4.5,
+      "avgReturnYTD": 11.45,
+      "avgPE": 20.31,
+      "avgEvToEbitda": 11.81,
+      "avgDividendYield": 5.85,
+      "avgSharpe": 0.86
+    },
+    {
+      "sector": "Consumer Cyclical",
+      "companyCount": 1,
+      "totalWeight": 0.2,
+      "avgReturnYTD": 36.45,
+      "avgPE": null,
+      "avgEvToEbitda": 43.46,
+      "avgDividendYield": null,
+      "avgSharpe": -0.58
+    },
+    {
+      "sector": "Consumer Defensive",
+      "companyCount": 8,
+      "totalWeight": 8.85,
+      "avgReturnYTD": -4.89,
+      "avgPE": 39.61,
+      "avgEvToEbitda": 30.83,
+      "avgDividendYield": 9.26,
+      "avgSharpe": 0.52
+    },
+    {
+      "sector": "Consumer Discretionary",
+      "companyCount": 2,
+      "totalWeight": 1.5,
+      "avgReturnYTD": -1.23,
+      "avgPE": null,
+      "avgEvToEbitda": null,
+      "avgDividendYield": null,
+      "avgSharpe": 1.76
+    },
+    {
+      "sector": "Energy",
+      "companyCount": 11,
+      "totalWeight": 19.25,
+      "avgReturnYTD": 39.06,
+      "avgPE": 53.64,
+      "avgEvToEbitda": 33.67,
+      "avgDividendYield": 6.83,
+      "avgSharpe": 2.52
+    },
+    {
+      "sector": "Financial Services",
+      "companyCount": 8,
+      "totalWeight": 12.5,
+      "avgReturnYTD": -2.65,
+      "avgPE": 12.13,
+      "avgEvToEbitda": 4.59,
+      "avgDividendYield": 5.67,
+      "avgSharpe": 1.15
     },
     {
       "sector": "Financials",
-      "companyCount": 1,
-      "totalWeight": 8.5,
-      "avgReturnYTD": 9.87,
-      "avgPE": 10.2,
+      "companyCount": 5,
+      "totalWeight": 1.9,
+      "avgReturnYTD": null,
+      "avgPE": null,
       "avgEvToEbitda": null,
-      "avgDividendYield": 5.12,
-      "avgSharpe": 1.34
+      "avgDividendYield": null,
+      "avgSharpe": null
     },
     {
-      "sector": "Consumer Staples",
+      "sector": "Health Care",
       "companyCount": 1,
-      "totalWeight": 3.0,
-      "avgReturnYTD": 5.43,
-      "avgPE": 14.6,
-      "avgEvToEbitda": 9.4,
-      "avgDividendYield": 4.24,
-      "avgSharpe": 0.62
+      "totalWeight": 0.1,
+      "avgReturnYTD": -9.2,
+      "avgPE": null,
+      "avgEvToEbitda": null,
+      "avgDividendYield": null,
+      "avgSharpe": 1.26
+    },
+    {
+      "sector": "Healthcare",
+      "companyCount": 1,
+      "totalWeight": 0.1,
+      "avgReturnYTD": -1.81,
+      "avgPE": null,
+      "avgEvToEbitda": 69.17,
+      "avgDividendYield": null,
+      "avgSharpe": 1.33
+    },
+    {
+      "sector": "Industrials",
+      "companyCount": 13,
+      "totalWeight": 10.9,
+      "avgReturnYTD": 25.01,
+      "avgPE": 24.19,
+      "avgEvToEbitda": 97.44,
+      "avgDividendYield": 6.63,
+      "avgSharpe": 1.99
+    },
+    {
+      "sector": "Information Technology",
+      "companyCount": 6,
+      "totalWeight": 1.5,
+      "avgReturnYTD": -76.56,
+      "avgPE": null,
+      "avgEvToEbitda": null,
+      "avgDividendYield": null,
+      "avgSharpe": -0.66
+    },
+    {
+      "sector": "Real Estate",
+      "companyCount": 3,
+      "totalWeight": 1.0,
+      "avgReturnYTD": -5.15,
+      "avgPE": 16.9,
+      "avgEvToEbitda": 18.8,
+      "avgDividendYield": 2.05,
+      "avgSharpe": -0.23
+    },
+    {
+      "sector": "Technology",
+      "companyCount": 5,
+      "totalWeight": 2.8,
+      "avgReturnYTD": 6.54,
+      "avgPE": 73.86,
+      "avgEvToEbitda": 279.66,
+      "avgDividendYield": 4.07,
+      "avgSharpe": 1.78
+    },
+    {
+      "sector": "Utilities",
+      "companyCount": 2,
+      "totalWeight": 0.9,
+      "avgReturnYTD": -10.17,
+      "avgPE": 23.9,
+      "avgEvToEbitda": 12.7,
+      "avgDividendYield": 5.71,
+      "avgSharpe": 0.2
     }
   ]
 }
