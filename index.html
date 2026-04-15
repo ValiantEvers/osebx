@@ -1,572 +1,1624 @@
 <!DOCTYPE html>
-<html lang="nb">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OSEBX Company Heatmap</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            /* Theme Colors */
-            --bg: #0a0c10;
-            --bg-elevated: #12151c;
-            --border: #1f242e;
-            --text-primary: #f0f2f5;
-            --text-secondary: #94a3b8;
-            --accent: #3b82f6;
-            
-            /* Performance Colors */
-            --gain: #10b981;
-            --loss: #ef4444;
-            --neutral: #64748b;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSEBX Company Heatmap</title>
+<meta name="description" content="Interactive heatmap of all OSEBX index constituents with real-time fundamentals, momentum, risk, and valuation metrics.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #0a0c10;
+  --bg-elevated: #12151c;
+  --bg-surface: #1a1e28;
+  --bg-hover: #1e2330;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.12);
+  --text-primary: #e8ecf4;
+  --text-secondary: rgba(232,236,244,0.55);
+  --text-muted: rgba(232,236,244,0.35);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.15);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.15);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.15);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.15);
 
-            /* GICS Sector Colors (Muted) */
-            --sector-energy: #f59e0b;
-            --sector-financials: #3b82f6;
-            --sector-staples: #14b8a6;
-            --sector-industrials: #64748b;
-            --sector-materials: #f97316;
-            --sector-it: #8b5cf6;
-            --sector-telecom: #6366f1;
-            --sector-utilities: #22c55e;
-            --sector-realestate: #f43f5e;
-            --sector-healthcare: #10b981;
-            --sector-discretionary: #ec4899;
-        }
+  /* GICS Sector Colours */
+  --sector-energy: #d97706;
+  --sector-financials: #3b82f6;
+  --sector-consumer-staples: #14b8a6;
+  --sector-industrials: #64748b;
+  --sector-materials: #ea580c;
+  --sector-it: #8b5cf6;
+  --sector-communication: #6366f1;
+  --sector-utilities: #22c55e;
+  --sector-real-estate: #f43f5e;
+  --sector-health-care: #10b981;
+  --sector-consumer-discretionary: #ec4899;
+  --sector-unknown: #6b7280;
 
-        * { box-sizing: border-box; }
-        body {
-            background-color: var(--bg);
-            color: var(--text-primary);
-            font-family: 'DM Sans', sans-serif;
-            margin: 0;
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-        }
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
 
-        /* Layout */
-        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-        
-        /* Header & Benchmarks */
-        header { margin-bottom: 2rem; }
-        .title-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
-        .benchmarks { display: flex; gap: 0.75rem; margin-top: 1rem; }
-        .benchmark-pill {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            padding: 0.4rem 0.8rem;
-            border-radius: 2rem;
-            font-size: 0.85rem;
-        }
+  --transition: 0.2s ease;
+}
 
-        .disclaimer-banner {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
+/* ===== Reset ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.55;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+a { color: var(--blue); text-decoration: none; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
 
-        /* Controls */
-        .controls-bar {
-            display: flex; flex-direction: column; gap: 1.5rem;
-            margin-bottom: 2rem; position: sticky; top: 0;
-            background: var(--bg); z-index: 10; padding: 1rem 0;
-        }
+/* ===== Layout ===== */
+.container { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .container { padding: 0 14px; } }
 
-        .tabs-row { 
-            display: flex; gap: 0.5rem; overflow-x: auto; 
-            padding-bottom: 0.5rem; scrollbar-width: none; 
-        }
-        .tabs-row::-webkit-scrollbar { display: none; }
-        
-        .tab {
-            white-space: nowrap; padding: 0.5rem 1rem;
-            background: var(--bg-elevated); border: 1px solid var(--border);
-            border-radius: 0.5rem; cursor: pointer; font-size: 0.85rem;
-            transition: all 0.2s ease;
-        }
-        .tab.active { background: var(--text-primary); color: var(--bg); font-weight: 700; border-color: var(--text-primary); }
+/* ===== Header ===== */
+.site-header {
+  padding: 40px 0 0;
+  text-align: center;
+}
+.site-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--text-primary), rgba(232,236,244,0.6));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.site-header .subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
 
-        .search-sort-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .search-container { position: relative; flex-grow: 1; max-width: 400px; }
-        input[type="text"] {
-            width: 100%; background: var(--bg-elevated); border: 1px solid var(--border);
-            color: white; padding: 0.75rem 1rem; border-radius: 0.5rem; outline: none;
-        }
-        
-        .sort-container { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 5px; }
-        .sort-btn {
-            background: var(--bg-elevated); border: 1px solid var(--border);
-            color: var(--text-secondary); padding: 0.5rem 0.75rem; border-radius: 0.4rem;
-            cursor: pointer; font-size: 0.8rem; white-space: nowrap;
-        }
-        .sort-btn.active { border-color: var(--accent); color: white; }
+/* Benchmark Pills */
+.benchmark-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.bench-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  transition: border-color var(--transition);
+}
+.bench-pill:hover { border-color: var(--border-hover); }
+.bench-pill .bench-name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
 
-        /* Legend */
-        .legend-container { display: flex; align-items: center; gap: 1rem; font-size: 0.75rem; color: var(--text-secondary); }
-        .legend-bar { width: 120px; height: 8px; border-radius: 4px; background: linear-gradient(to right, var(--loss), #333, var(--gain)); }
+/* ===== Disclaimer ===== */
+.disclaimer-banner {
+  margin: 20px auto 0;
+  max-width: 900px;
+  padding: 12px 18px;
+  background: rgba(245,158,11,0.06);
+  border: 1px solid rgba(245,158,11,0.15);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  color: rgba(232,236,244,0.6);
+  text-align: center;
+  line-height: 1.5;
+}
+.disclaimer-banner strong { color: var(--amber); }
+.last-updated {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
 
-        /* Grid & Cards */
-        .grid {
-            display: grid; gap: 1.25rem;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        }
+/* ===== Controls ===== */
+.controls-bar {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
-        .card {
-            background: var(--bg-elevated); border: 1px solid var(--border);
-            border-radius: 0.75rem; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease;
-            cursor: pointer; position: relative; height: min-content;
-        }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+/* Sector Tabs */
+.sector-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-surface) transparent;
+}
+.sector-tabs::-webkit-scrollbar { height: 4px; }
+.sector-tabs::-webkit-scrollbar-track { background: transparent; }
+.sector-tabs::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 4px; }
+.sector-tab {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.sector-tab:hover { border-color: var(--border-hover); color: var(--text-primary); }
+.sector-tab.active {
+  background: var(--bg-surface);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+.sector-tab .tab-ytd {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  margin-left: 5px;
+  font-weight: 500;
+}
 
-        /* Performance Heatmap Coloring */
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--color-indicator);
-        }
+/* Sort & Search Row */
+.sort-search-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.sort-group {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  flex: 1;
+  padding-bottom: 2px;
+  -webkit-overflow-scrolling: touch;
+}
+.sort-btn {
+  flex-shrink: 0;
+  padding: 5px 11px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.sort-btn:hover { color: var(--text-secondary); border-color: var(--border-hover); }
+.sort-btn.active { background: var(--bg-surface); border-color: var(--border-hover); color: var(--text-primary); }
+.sort-btn .arrow { font-size: 0.65rem; margin-left: 3px; opacity: 0; transition: opacity var(--transition); }
+.sort-btn.active .arrow { opacity: 1; }
 
-        .card-inner { padding: 1.25rem; }
-        
-        /* Card Collapsed View */
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
-        .company-name { font-size: 1.1rem; font-weight: 700; margin: 0; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .ticker-badge { font-size: 0.7rem; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; color: var(--text-secondary); }
-        
-        .sector-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--sector-color); margin-bottom: 1rem; display: block; }
-        
-        .main-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-        .metric-group { display: flex; flex-direction: column; }
-        .metric-val { font-size: 1.25rem; font-weight: 800; }
-        .metric-label { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; }
+.search-box {
+  position: relative;
+  min-width: 200px;
+}
+.search-box input {
+  width: 100%;
+  padding: 7px 12px 7px 34px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.search-box input::placeholder { color: var(--text-muted); }
+.search-box input:focus { border-color: var(--blue); }
+.search-box .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
 
-        .sub-metrics { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem; }
-        .mini-metric { display: flex; flex-direction: column; align-items: center; }
-        .mini-val { font-size: 0.85rem; font-weight: 700; }
-        
-        /* Expanded Content */
-        .expanded-area { 
-            display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; 
-            border-top: 1px solid var(--border);
-        }
-        .card.expanded .expanded-area { grid-template-rows: 1fr; }
-        .expanded-inner { overflow: hidden; }
-        
-        .expanded-tabs { display: flex; border-bottom: 1px solid var(--border); }
-        .expanded-tab { 
-            flex: 1; text-align: center; padding: 0.75rem; font-size: 0.7rem; 
-            text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary);
-            cursor: pointer;
-        }
-        .expanded-tab.active { color: white; background: rgba(255,255,255,0.03); border-bottom: 2px solid var(--accent); }
-        
-        .tab-panel { padding: 1.25rem; display: none; }
-        .tab-panel.active { display: block; }
+/* Legend & Count */
+.legend-count-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.gradient-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.gradient-bar {
+  width: 120px;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--red), #333, var(--green));
+}
+.company-count {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.guide-btn {
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.guide-btn:hover { border-color: var(--blue); color: var(--blue); }
 
-        /* Gauges & Bars */
-        .gauge-container { margin-bottom: 1rem; }
-        .gauge-bar { height: 6px; background: #222; border-radius: 3px; position: relative; margin: 8px 0; }
-        .gauge-marker { position: absolute; height: 12px; width: 4px; background: white; top: -3px; border-radius: 2px; }
-        
-        .season-grid { display: flex; gap: 2px; height: 30px; align-items: flex-end; margin-top: 10px; }
-        .season-bar { flex: 1; border-radius: 1px; min-height: 2px; }
+/* ===== Main Layout ===== */
+.main-layout {
+  display: flex;
+  gap: 28px;
+  margin-top: 24px;
+  padding-bottom: 60px;
+  align-items: flex-start;
+}
+.grid-area { flex: 1; min-width: 0; }
 
-        /* Modal */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-            display: none; justify-content: center; align-items: center; z-index: 1000;
-            padding: 2rem; backdrop-filter: blur(4px);
-        }
-        .modal {
-            background: var(--bg-elevated); border: 1px solid var(--border);
-            width: 100%; max-width: 800px; max-height: 90vh; border-radius: 1rem;
-            display: flex; flex-direction: column; overflow: hidden;
-        }
-        .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .modal-body { padding: 2rem; overflow-y: auto; }
-        .strategy-entry { margin-bottom: 2rem; }
-        .strategy-entry h4 { font-family: 'DM Sans', sans-serif; margin: 0 0 0.5rem 0; color: var(--gain); }
-        .strategy-calc { font-size: 0.8rem; color: var(--text-secondary); font-style: italic; margin-top: 0.5rem; border-left: 2px solid var(--border); padding-left: 0.5rem; }
+/* Explainer Sidebar (desktop) */
+.explainer-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 20px;
+}
+@media (max-width: 1024px) {
+  .main-layout { flex-direction: column; }
+  .explainer-sidebar { width: 100%; position: static; }
+}
 
-        /* Skeleton */
-        .skeleton { animation: pulse 1.5s infinite ease-in-out; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 0.75rem; height: 250px; }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+.explainer-panel {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.explainer-toggle {
+  width: 100%;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: transparent;
+  cursor: pointer;
+}
+.explainer-toggle .chevron { transition: transform 0.3s ease; font-size: 0.75rem; }
+.explainer-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+.explainer-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.explainer-body.open { max-height: 2000px; }
+.explainer-content {
+  padding: 0 18px 18px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+.explainer-content p { margin-bottom: 10px; }
+.explainer-content strong { color: var(--text-primary); }
 
-        /* Show More */
-        .load-more-container { text-align: center; margin-top: 3rem; }
-        .load-more-btn {
-            background: transparent; border: 1px solid var(--border); color: white;
-            padding: 0.75rem 2rem; border-radius: 0.5rem; cursor: pointer;
-        }
+/* ===== Grid ===== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+@media (max-width: 420px) {
+  .cards-grid { grid-template-columns: 1fr; gap: 10px; }
+}
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .search-sort-row { flex-direction: column; align-items: stretch; }
-            .search-container { max-width: 100%; }
-        }
-    </style>
+/* Show More */
+.show-more-wrap {
+  text-align: center;
+  margin-top: 20px;
+}
+.show-more-btn {
+  padding: 10px 32px;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.show-more-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+/* ===== Company Card ===== */
+.company-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  opacity: 0;
+  transform: translateY(16px);
+}
+.company-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.company-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  transform: translateY(-2px);
+}
+.company-card.visible:hover { transform: translateY(-2px); }
+
+/* Collapsed */
+.card-header {
+  padding: 14px 16px 12px;
+  cursor: pointer;
+  position: relative;
+}
+.card-header:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.card-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.25;
+  flex: 1;
+}
+.rec-badge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.rec-badge.buy, .rec-badge.strong_buy { background: var(--green-dim); color: var(--green); }
+.rec-badge.hold { background: var(--amber-dim); color: var(--amber); }
+.rec-badge.sell, .rec-badge.strong_sell, .rec-badge.underperform { background: var(--red-dim); color: var(--red); }
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.ticker-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.weight-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.04);
+  color: var(--text-muted);
+}
+.sector-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 100px;
+  color: #fff;
+  opacity: 0.85;
+}
+
+/* Returns row */
+.returns-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.return-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.return-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.return-val {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* Fundamentals row */
+.fundamentals-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.fund-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.fund-label {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.fund-val {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* ===== Expanded Area ===== */
+.card-expanded {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+.company-card[aria-expanded="true"] .card-expanded {
+  grid-template-rows: 1fr;
+}
+.card-expanded-inner {
+  overflow: hidden;
+}
+.card-expanded-content {
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+/* Tabs inside expanded */
+.detail-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 10px 0 12px;
+}
+.detail-tab {
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+.detail-tab:hover { color: var(--text-secondary); border-color: var(--border-hover); }
+.detail-tab.active { background: var(--bg-surface); border-color: var(--border-hover); color: var(--text-primary); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Metric rows in expanded */
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+}
+.metric-row:last-child { border-bottom: none; }
+.metric-label { color: var(--text-secondary); font-weight: 500; flex: 1; }
+.metric-val {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-align: right;
+}
+.metric-sub {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+/* Alpha row */
+.alpha-row {
+  display: flex;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+.alpha-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.alpha-period {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.alpha-val {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Momentum bar */
+.momentum-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.momentum-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+  max-width: 80px;
+}
+.momentum-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+
+/* Volatility gauge */
+.vol-gauge {
+  width: 100%;
+  max-width: 120px;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  position: relative;
+}
+.vol-marker {
+  position: absolute;
+  top: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  border: 2px solid var(--bg-elevated);
+}
+
+/* 52-week range */
+.range-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--bg);
+  border-radius: 2px;
+  position: relative;
+  margin: 8px 0 4px;
+}
+.range-marker {
+  position: absolute;
+  top: -4px;
+  width: 3px;
+  height: 12px;
+  background: var(--blue);
+  border-radius: 2px;
+  transform: translateX(-50%);
+}
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+/* Mean reversion gauge */
+.mr-gauge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.mr-gauge {
+  flex: 1;
+  max-width: 100px;
+  height: 6px;
+  background: linear-gradient(90deg, var(--red), var(--bg-surface), var(--green));
+  border-radius: 3px;
+  position: relative;
+}
+.mr-marker {
+  position: absolute;
+  top: -3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--bg-elevated);
+  transform: translateX(-50%);
+}
+
+/* Dividend dots */
+.div-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.div-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-muted);
+}
+.div-dot.filled { background: var(--green); border-color: var(--green); }
+.div-trend { font-size: 0.72rem; margin-left: 6px; }
+
+/* Seasonality sparkline */
+.seasonality-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 32px;
+  margin-top: 4px;
+}
+.season-bar {
+  flex: 1;
+  min-width: 0;
+  border-radius: 2px 2px 0 0;
+  transition: opacity var(--transition);
+  position: relative;
+}
+.season-bar.current { outline: 1px solid var(--text-primary); outline-offset: 1px; }
+.season-labels {
+  display: flex;
+  gap: 2px;
+  margin-top: 2px;
+}
+.season-label {
+  flex: 1;
+  text-align: center;
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Info footer in expanded */
+.card-info-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* ===== Skeleton Loader ===== */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+.skeleton-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  height: 160px;
+}
+.skeleton-line {
+  height: 12px;
+  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-hover) 50%, var(--bg-surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.skeleton-line.w60 { width: 60%; }
+.skeleton-line.w40 { width: 40%; }
+.skeleton-line.w80 { width: 80%; }
+.skeleton-line.w30 { width: 30%; height: 8px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* ===== Error State ===== */
+.error-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+.error-state .error-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.error-state h3 { font-size: 1.1rem; margin-bottom: 6px; color: var(--text-primary); }
+.error-state p { font-size: 0.85rem; }
+
+/* ===== Modal ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.modal-overlay.open { display: flex; opacity: 1; }
+.modal-overlay.closing { opacity: 0; }
+.modal {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  max-width: 720px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+}
+.modal::-webkit-scrollbar { width: 6px; }
+.modal::-webkit-scrollbar-track { background: transparent; }
+.modal::-webkit-scrollbar-thumb { background: var(--bg-surface); border-radius: 3px; }
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.modal-close:hover { background: var(--bg-hover); color: var(--text-primary); }
+.modal h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.modal .modal-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+.modal-category {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 24px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-category:first-of-type { margin-top: 0; }
+.metric-entry { margin-bottom: 18px; }
+.metric-entry h4 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.metric-entry .what-it-tells {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 4px;
+}
+.metric-entry .how-calc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.5;
+}
+.tier-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--amber-dim);
+  color: var(--amber);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ===== Footer ===== */
+.site-footer {
+  text-align: center;
+  padding: 24px 0 40px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+
+/* ===== Utility ===== */
+.clr-green { color: var(--green); }
+.clr-red { color: var(--red); }
+.clr-amber { color: var(--amber); }
+.clr-blue { color: var(--blue); }
+.clr-muted { color: var(--text-muted); }
+.hidden { display: none !important; }
+</style>
 </head>
 <body>
 
+<!-- ===== Header ===== -->
+<header class="site-header">
+  <div class="container">
+    <h1>OSEBX Company Heatmap</h1>
+    <p class="subtitle">All constituents of the Oslo Børs Benchmark Index — fundamentals, momentum, risk & valuation</p>
+    <div class="benchmark-row" id="benchmarkRow"></div>
+  </div>
+</header>
+
+<!-- Disclaimer -->
 <div class="container">
-    <header>
-        <div class="title-row">
-            <div>
-                <h1>OSEBX Company Heatmap</h1>
-                <div class="mono" style="color: var(--text-secondary); font-size: 0.8rem;" id="lastUpdated">Laster markedsdata...</div>
-            </div>
-            <button class="tab active" style="font-weight: 500;" onclick="toggleModal(true)">Strategy Guide</button>
-        </div>
-        <div class="benchmarks mono" id="benchmarkContainer"></div>
-    </header>
-
-    <div class="disclaimer-banner">
-        Markedsdata er forsinket og oppdateres ukentlig via Yahoo Finance. Dette dashbordet er kun til informasjonsformål og skal ikke brukes til finansielle beslutninger.
-    </div>
-
-    <div class="controls-bar">
-        <div class="tabs-row" id="sectorTabs">
-            <div class="tab active" data-sector="All">All Sectors</div>
-        </div>
-        
-        <div class="search-sort-row">
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Søk etter selskap eller ticker...">
-            </div>
-            <div class="legend-container">
-                <span>Loss</span>
-                <div class="legend-bar"></div>
-                <span>Gain</span>
-            </div>
-        </div>
-
-        <div class="sort-container" id="sortContainer">
-            </div>
-    </div>
-
-    <div class="mono" id="countIndicator" style="margin-bottom: 1rem; font-size: 0.8rem; color: var(--text-secondary);"></div>
-
-    <div class="grid" id="heatmapGrid">
-        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
-    </div>
-
-    <div class="load-more-container" id="loadMoreContainer" style="display: none;">
-        <button class="load-more-btn" id="loadMoreBtn">Show more</button>
-    </div>
+  <div class="disclaimer-banner">
+    <strong>⚠</strong> Market data is delayed and updated weekly via Yahoo Finance. This dashboard is for informational and educational purposes only — not to be used for financial analysis or investment decisions.
+    <span class="last-updated" id="lastUpdated"></span>
+  </div>
 </div>
 
-<div class="modal-overlay" id="strategyModal" onclick="if(event.target === this) toggleModal(false)">
-    <div class="modal">
-        <div class="modal-header">
-            <h3>Strategy Guide & Metrics</h3>
-            <button onclick="toggleModal(false)" style="background:transparent; border:none; color:white; cursor:pointer; font-size:1.5rem;">&times;</button>
-        </div>
-        <div class="modal-body" id="strategyContent">
-            </div>
+<!-- ===== Controls ===== -->
+<div class="container">
+  <div class="controls-bar">
+    <div class="sector-tabs" id="sectorTabs"></div>
+    <div class="sort-search-row">
+      <div class="sort-group" id="sortGroup"></div>
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="searchInput" placeholder="Search company or ticker…" autocomplete="off">
+      </div>
     </div>
+    <div class="legend-count-row">
+      <div class="gradient-legend">
+        <span>Loss</span>
+        <div class="gradient-bar"></div>
+        <span>Gain</span>
+      </div>
+      <span class="company-count" id="companyCount"></span>
+      <button class="guide-btn" id="openGuide">Strategy Guide</button>
+    </div>
+  </div>
 </div>
+
+<!-- ===== Main ===== -->
+<div class="container">
+  <div class="main-layout">
+    <div class="grid-area">
+      <!-- Skeleton -->
+      <div class="skeleton-grid" id="skeleton">
+        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
+        <div class="skeleton-card"><div class="skeleton-line w60"></div><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w30"></div></div>
+      </div>
+      <!-- Error -->
+      <div class="error-state hidden" id="errorState">
+        <div class="error-icon">⚠</div>
+        <h3>Unable to load market data</h3>
+        <p>Please try refreshing the page. If the issue persists, the data feed may be temporarily unavailable.</p>
+      </div>
+      <!-- Grid -->
+      <div class="cards-grid hidden" id="cardsGrid"></div>
+      <div class="show-more-wrap hidden" id="showMoreWrap">
+        <button class="show-more-btn" id="showMoreBtn"></button>
+      </div>
+    </div>
+
+    <!-- Explainer Sidebar -->
+    <aside class="explainer-sidebar">
+      <div class="explainer-panel">
+        <button class="explainer-toggle" aria-expanded="false" id="explainerToggle">
+          <span>About Oslo Børs & OSEBX</span>
+          <span class="chevron">▼</span>
+        </button>
+        <div class="explainer-body" id="explainerBody">
+          <div class="explainer-content">
+            <p><strong>The Oslo Stock Exchange (Oslo Børs)</strong> is one of the oldest stock exchanges in the world, founded in 1819. Today it is owned by Euronext and serves as the primary marketplace for Norwegian equities.</p>
+            <p><strong>OSEBX</strong> (Oslo Børs Benchmark Index) is the main benchmark — a free-float-adjusted, semi-annually rebalanced index of roughly 69 of the most traded companies on the exchange.</p>
+            <p>The index is <strong>heavily concentrated in energy and seafood</strong>. Equinor alone typically accounts for ~9–10% of the index weight, while the combined salmon farming sector (Mowi, SalMar, Lerøy, etc.) represents another ~6%. Financials (led by DNB) and defence/industrials (Kongsberg Gruppen) round out the top holdings.</p>
+            <p>Norway's unique position as a major petroleum exporter means OSEBX has a <strong>structurally higher correlation to oil prices</strong> than most developed-market indices. The Government Pension Fund Global (the "Oil Fund"), the world's largest sovereign wealth fund, does not invest in Norwegian equities — creating a somewhat distinct domestic investor base.</p>
+            <p>This dashboard shows <strong>delayed data updated weekly</strong> via Yahoo Finance. It is for informational and educational purposes only — not to be used for financial analysis or investment decisions.</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ===== Strategy Guide Modal ===== -->
+<div class="modal-overlay" id="guideModal" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+  <div class="modal" role="document">
+    <button class="modal-close" id="closeGuide" aria-label="Close">✕</button>
+    <h2 id="guideTitle">Strategy Guide</h2>
+    <p class="modal-subtitle">What each metric tells you, why it matters, and how it was calculated.</p>
+
+    <h3 class="modal-category">Fundamentals (Collapsed Card)</h3>
+
+    <div class="metric-entry"><h4>Year to Date (YTD)</h4><p class="what-it-tells">How the stock has performed since January 1st this year — a quick snapshot of current-year momentum.</p><p class="how-calc">How it's calculated: (Current price − price on first trading day of the year) ÷ price on first trading day × 100.</p></div>
+
+    <div class="metric-entry"><h4>Market Capitalisation</h4><p class="what-it-tells">The total market value of a company. Larger companies tend to be more stable; smaller ones can be more volatile but offer higher growth potential.</p><p class="how-calc">How it's calculated: Share price × total shares outstanding.</p></div>
+
+    <div class="metric-entry"><h4>Price-to-Earnings (P/E) Ratio</h4><p class="what-it-tells">How much investors are paying for each krone of the company's earnings. A high P/E suggests investors expect future growth; a low P/E may signal undervaluation or declining earnings.</p><p class="how-calc">How it's calculated: Current share price ÷ trailing 12-month earnings per share.</p></div>
+
+    <div class="metric-entry"><h4>Forward P/E</h4><p class="what-it-tells">Like trailing P/E, but forward-looking. If the forward P/E is significantly lower than trailing P/E, analysts expect earnings to grow.</p><p class="how-calc">How it's calculated: Current share price ÷ estimated next-12-month earnings per share (analyst consensus).</p></div>
+
+    <div class="metric-entry"><h4>Price-to-Book (P/B) Ratio</h4><p class="what-it-tells">Whether a stock is trading above or below the accounting value of its assets. Particularly important for asset-heavy Norwegian sectors like banking (DNB), energy (Equinor), and shipping. A P/B below 1.0 means the market values the company below its book value.</p><p class="how-calc">How it's calculated: Market capitalisation ÷ (total assets − total liabilities).</p></div>
+
+    <div class="metric-entry"><h4>Dividend Yield</h4><p class="what-it-tells">The annual income return you receive from holding the stock, as a percentage of its price. Norwegian companies, especially in energy and financials, are known for generous dividend policies.</p><p class="how-calc">How it's calculated: Annual dividend per share ÷ current share price × 100.</p></div>
+
+    <div class="metric-entry"><h4>Analyst Recommendation</h4><p class="what-it-tells">The consensus view of professional sell-side analysts covering this stock. Ranges from Strong Buy to Sell. Useful as a sentiment gauge, but remember analysts have their own biases.</p><p class="how-calc">Source: Aggregated from Yahoo Finance's analyst consensus data.</p></div>
+
+    <h3 class="modal-category">Performance & Momentum (Tab 1)</h3>
+
+    <div class="metric-entry"><h4>Relative Strength vs OSEBX (Alpha)</h4><p class="what-it-tells">Whether a stock is outperforming or underperforming the Norwegian market as a whole. A stock up +4% sounds decent — but if OSEBX is up +12%, the stock is actually lagging by 8 percentage points. Alpha strips away the market tide and shows you the stock-specific signal.</p><p class="how-calc">How it's calculated: Stock return over period − OSEBX return over the same period. Shown for 3-month, 6-month, and 1-year timeframes.</p></div>
+
+    <div class="metric-entry"><h4>Risk-Adjusted Return (Sharpe Ratio)</h4><p class="what-it-tells">Not just how much the stock returned, but how much return you got per unit of risk (volatility). A stock that returned 15% with low volatility is fundamentally more attractive than one that returned 15% with wild swings. A Sharpe above 1.0 is generally considered good.</p><p class="how-calc">How it's calculated: (Annualised 1-year return − risk-free rate) ÷ annualised volatility. The risk-free rate uses the Norwegian 3-month government bill yield (~3.5%).</p></div>
+
+    <div class="metric-entry"><h4>Maximum Drawdown (Trailing 1Y)</h4><p class="what-it-tells">The worst peak-to-trough decline over the past year — the deepest hole an investor would have experienced. A stock might be up +10% YTD, but if it had a -30% drawdown in March, someone who bought at the peak is still underwater. This is the risk metric that P/E and Sharpe don't capture.</p><p class="how-calc">How it's calculated: For each day in the last 252 trading days, compute the decline from the highest price seen up to that point. The largest such decline is the maximum drawdown.</p></div>
+
+    <div class="metric-entry"><h4>Momentum Score (Multi-Timeframe)</h4><p class="what-it-tells">A composite measure of whether a stock has been consistently trending upward across multiple timeframes. Based on the academic momentum factor — stocks with strong recent momentum tend to continue outperforming in the near term.</p><p class="how-calc">How it's calculated: Weighted average of 1-month, 3-month, 6-month, and 12-month returns (with the most recent 1-month subtracted from the 12-month return to reduce short-term reversal noise). Normalised to a 0–100 score across all OSEBX constituents.</p></div>
+
+    <div class="metric-entry"><h4>Monthly Seasonality <span class="tier-badge">Tier 3</span></h4><p class="what-it-tells">The stock's historical average return for each calendar month, based on the last 5 years. Norwegian markets have documented seasonal patterns — dividend season in spring, salmon price cycles in Q3/Q4, and year-end effects.</p><p class="how-calc">How it's calculated: For each of the 12 calendar months, compute the average return across the last 5 years of data. Displayed as a 12-bar sparkline.</p></div>
+
+    <div class="metric-entry"><h4>Beta to Brent Crude <span class="tier-badge">Tier 3</span></h4><p class="what-it-tells">How sensitive a stock is to oil price movements. For an index where Energy is 30%+ of weight, this is critical. A beta of 1.2 means the stock tends to move 1.2% for every 1% move in oil. Even non-energy stocks (like DNB) can have meaningful oil betas due to Norway's petroleum-dependent economy.</p><p class="how-calc">How it's calculated: Slope of a linear regression of the stock's daily returns against Brent crude (BZ=F) daily returns, using 1 year of data. Returns are aligned by date (inner join) to handle different trading calendars.</p></div>
+
+    <h3 class="modal-category">Risk Profile (Tab 2)</h3>
+
+    <div class="metric-entry"><h4>Volatility Percentile</h4><p class="what-it-tells">Not "is this stock volatile" but "is this stock more volatile than usual for itself right now." A stock at the 90th percentile of its own 5-year volatility history is in an unusual regime — something is happening (earnings, sector rotation, macro shock). A stock at the 10th percentile is unusually calm.</p><p class="how-calc">How it's calculated: Compute the trailing 30-day realised volatility (annualised standard deviation of daily returns). Rank this value as a percentile against all 30-day rolling volatility readings from the past 5 years.</p></div>
+
+    <div class="metric-entry"><h4>Correlation to OSEBX</h4><p class="what-it-tells">How closely this stock moves with the broader Norwegian market. Most Norwegian investors are already heavily exposed to OSEBX through pension funds. A stock with 0.9 correlation adds almost no diversification value. A stock with 0.3 correlation is genuinely different exposure.</p><p class="how-calc">How it's calculated: Pearson correlation coefficient between the stock's daily returns and OSEBX daily returns, trailing 1 year (252 trading days).</p></div>
+
+    <h3 class="modal-category">Valuation & Dividends (Tab 3)</h3>
+
+    <div class="metric-entry"><h4>Earnings Yield</h4><p class="what-it-tells">The inverse of P/E, expressed as a percentage — making it directly comparable to bond yields. If a stock's earnings yield is 12% and Norwegian 10-year government bonds yield 3.5%, the equity risk premium is 8.5 percentage points. This is how institutional investors actually assess whether equities are cheap relative to fixed income.</p><p class="how-calc">How it's calculated: (Trailing 12-month earnings per share ÷ current share price) × 100. Displayed alongside the Norwegian 10-year bond yield (~3.5%) as a reference line.</p></div>
+
+    <div class="metric-entry"><h4>EV/EBITDA</h4><p class="what-it-tells">The professional alternative to P/E. By using enterprise value (which includes debt) and EBITDA (earnings before interest, taxes, depreciation, and amortisation), it strips out differences in capital structure and accounting policies. The standard valuation metric for comparing Norwegian industrials, shipping, and energy companies that carry very different debt loads.</p><p class="how-calc">How it's calculated: Enterprise value (market cap + total debt − cash) ÷ trailing 12-month EBITDA.</p></div>
+
+    <div class="metric-entry"><h4>Dividend Consistency Score</h4><p class="what-it-tells">Not "what's the yield today" but "can you count on this company to keep paying?" A 6% yield is meaningless if the company cut its dividend two years ago and just restored it. This metric shows the track record.</p><p class="how-calc">How it's calculated: Count the number of years out of the last 5 with at least one dividend payment. Classify the trend as "growing," "stable," or "cut." Displayed as a row of 5 filled/empty dots with a trend arrow.</p></div>
+
+    <div class="metric-entry"><h4>Dividend Payout Ratio</h4><p class="what-it-tells">What percentage of earnings the company is distributing as dividends. Below 60% is generally sustainable; 60–80% is moderate; above 80% is stretched and may not be maintainable, especially for cyclical Norwegian companies whose earnings can drop sharply with commodity prices.</p><p class="how-calc">How it's calculated: Annual dividends per share ÷ trailing earnings per share × 100.</p></div>
+
+    <div class="metric-entry"><h4>Liquidity Score</h4><p class="what-it-tells">How easily you can buy or sell this stock without moving the price. Small-cap OSEBX constituents with under 10M NOK daily turnover are effectively difficult to trade for anyone managing meaningful capital.</p><p class="how-calc">How it's calculated: Average daily traded value (price × volume) over the last 30 trading days, expressed in NOK. Flagged with a warning indicator if below 10M NOK/day.</p></div>
+
+    <div class="metric-entry"><h4>% from 5Y Mean (Mean Reversion)</h4><p class="what-it-tells">Whether the stock is trading above or below its long-term average price level. Based on the theory that prices tend to revert to their mean over time — a stock trading 20% below its 5-year average may be compressed and due for recovery, while one 30% above may be overextended. Especially relevant for cyclical Norwegian sectors (energy, materials, shipping).</p><p class="how-calc">How it's calculated: (Current price − 5-year simple moving average) ÷ 5-year SMA × 100. The SMA uses 1,260 trading days of closing prices.</p></div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="container">
+    Data sourced from Yahoo Finance via yahooquery. Not financial advice. Built with vanilla HTML, CSS & JS.
+  </div>
+</footer>
 
 <script>
-    // --- State & Config ---
-    let appData = null;
-    let filteredCompanies = [];
-    let visibleCount = 20;
-    let currentSector = 'All';
-    let currentSort = { key: 'returnsYTD', dir: -1 };
+/* =====================================================================
+   OSEBX Company Heatmap — Frontend Logic
+   ===================================================================== */
+(function () {
+  'use strict';
 
-    const formatters = {
-        currency: new Intl.NumberFormat('nb-NO', { style: 'currency', currency: 'NOK', notation: 'compact' }),
-        percent: new Intl.NumberFormat('nb-NO', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }),
-        decimal: new Intl.NumberFormat('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-    };
+  // ---- State ----
+  let DATA = null;
+  let filteredCompanies = [];
+  let currentSector = 'All';
+  let previousSector = 'All';
+  let currentSort = { key: 'returnsYTD', dir: 'desc' };
+  let searchQuery = '';
+  let visibleCount = 0;
+  const PAGE_SIZE = 20;
+  const MOBILE_BP = 768;
 
-    const sectorColors = {
-        "Energy": "var(--sector-energy)",
-        "Financial Services": "var(--sector-financials)",
-        "Consumer Defensive": "var(--sector-staples)",
-        "Industrials": "var(--sector-industrials)",
-        "Basic Materials": "var(--sector-materials)",
-        "Technology": "var(--sector-it)",
-        "Communication Services": "var(--sector-telecom)",
-        "Utilities": "var(--sector-utilities)",
-        "Real Estate": "var(--sector-realestate)",
-        "Healthcare": "var(--sector-healthcare)",
-        "Consumer Cyclical": "var(--sector-discretionary)"
-    };
+  // ---- Sector colour map ----
+  const SECTOR_COLORS = {
+    'Energy': 'var(--sector-energy)',
+    'Financials': 'var(--sector-financials)',
+    'Consumer Staples': 'var(--sector-consumer-staples)',
+    'Industrials': 'var(--sector-industrials)',
+    'Materials': 'var(--sector-materials)',
+    'Information Technology': 'var(--sector-it)',
+    'Communication Services': 'var(--sector-communication)',
+    'Utilities': 'var(--sector-utilities)',
+    'Real Estate': 'var(--sector-real-estate)',
+    'Health Care': 'var(--sector-health-care)',
+    'Consumer Discretionary': 'var(--sector-consumer-discretionary)',
+  };
+  function sectorColor(s) { return SECTOR_COLORS[s] || 'var(--sector-unknown)'; }
 
-    const sortMetrics = [
-        { label: 'YTD', key: 'returnsYTD', def: -1 },
-        { label: 'Market Cap', key: 'marketCap', def: -1 },
-        { label: 'P/E', key: 'peRatio', def: 1 },
-        { label: 'P/B', key: 'pbRatio', def: 1 },
-        { label: 'Div Yield', key: 'dividendYield', def: -1 },
-        { label: '5Y Mean Dist', key: 'meanReversion.distancePercentage', def: 1 },
-        { label: 'Alpha (1Y)', key: 'alpha.oneYear', def: -1 },
-        { label: 'Sharpe', key: 'sharpeRatio', def: -1 },
-        { label: 'Momentum', key: 'momentumScore', def: -1 },
-        { label: 'EV/EBITDA', key: 'evToEbitda', def: 1 }
-    ];
+  // ---- Norwegian formatting ----
+  const fmtPct = (v) => {
+    if (v == null) return '—';
+    return new Intl.NumberFormat('nb-NO', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v) + ' %';
+  };
+  const fmtNum = (v, d = 1) => {
+    if (v == null) return '—';
+    return new Intl.NumberFormat('nb-NO', { minimumFractionDigits: d, maximumFractionDigits: d }).format(v);
+  };
+  const fmtRatio = (v) => {
+    if (v == null) return '—';
+    return new Intl.NumberFormat('nb-NO', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v) + '×';
+  };
+  const fmtMcap = (v) => {
+    if (v == null) return '—';
+    if (v >= 1e12) return fmtNum(v / 1e12, 1) + ' bill. NOK';
+    if (v >= 1e9) return fmtNum(v / 1e9, 1) + ' mrd. NOK';
+    if (v >= 1e6) return fmtNum(v / 1e6, 0) + ' mill. NOK';
+    return fmtNum(v, 0) + ' NOK';
+  };
+  const fmtLiquidity = (v) => {
+    if (v == null) return '—';
+    if (v >= 1e9) return fmtNum(v / 1e9, 1) + ' mrd./dag';
+    if (v >= 1e6) return fmtNum(v / 1e6, 1) + ' mill./dag';
+    return fmtNum(v, 0) + ' NOK/dag';
+  };
+  const fmtPrice = (v) => {
+    if (v == null) return '—';
+    return new Intl.NumberFormat('nb-NO', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v);
+  };
+  function clrPct(v) { return v == null ? '' : v >= 0 ? 'clr-green' : 'clr-red'; }
+  function clrSharpe(v) { if (v == null) return ''; return v >= 1.0 ? 'clr-green' : v >= 0.5 ? 'clr-amber' : 'clr-red'; }
+  function clrPayoutRatio(v) { if (v == null) return ''; return v < 60 ? 'clr-green' : v < 80 ? 'clr-amber' : 'clr-red'; }
 
-    // --- Initialization ---
-    async function init() {
-        try {
-            const response = await fetch('./data.json');
-            appData = await response.json();
-            
-            renderBenchmarks();
-            renderSectorTabs();
-            renderSortButtons();
-            renderStrategyGuide();
-            
-            document.getElementById('lastUpdated').textContent = `Sist oppdatert: ${new Date(appData.lastUpdated).toLocaleString('nb-NO')}`;
-            
-            updateFilters();
-            
-            // Events
-            document.getElementById('searchInput').addEventListener('input', () => updateFilters());
-            document.getElementById('loadMoreBtn').addEventListener('click', () => {
-                visibleCount += 20;
-                renderGrid();
-            });
+  // ---- Heat colour for YTD ----
+  function heatBg(ytd) {
+    if (ytd == null) return 'var(--bg-elevated)';
+    const clamped = Math.max(-30, Math.min(30, ytd));
+    const t = (clamped + 30) / 60; // 0..1
+    if (t < 0.5) {
+      const a = 0.06 + (0.5 - t) * 0.16;
+      return `rgba(239,68,68,${a.toFixed(3)})`;
+    } else {
+      const a = 0.06 + (t - 0.5) * 0.16;
+      return `rgba(34,197,94,${a.toFixed(3)})`;
+    }
+  }
 
-        } catch (err) {
-            document.getElementById('heatmapGrid').innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--loss);">Kunne ikke laste data. Vennligst sjekk om data.json eksisterer.</p>`;
-            console.error(err);
+  // ---- Sort config ----
+  const SORTS = [
+    { key: 'returnsYTD', label: 'YTD', defaultDir: 'desc' },
+    { key: 'marketCap', label: 'Mkt Cap', defaultDir: 'desc' },
+    { key: 'peRatio', label: 'P/E', defaultDir: 'asc' },
+    { key: 'pbRatio', label: 'P/B', defaultDir: 'asc' },
+    { key: 'dividendYield', label: 'Div Yield', defaultDir: 'desc' },
+    { key: 'meanRevDist', label: '% from 5Y', defaultDir: 'asc' },
+    { key: 'alpha1Y', label: 'Alpha 1Y', defaultDir: 'desc' },
+    { key: 'sharpeRatio', label: 'Sharpe', defaultDir: 'desc' },
+    { key: 'maxDrawdown', label: 'Max DD', defaultDir: 'asc' },
+    { key: 'momentumScore', label: 'Momentum', defaultDir: 'desc' },
+    { key: 'evToEbitda', label: 'EV/EBITDA', defaultDir: 'asc' },
+    { key: 'earningsYield', label: 'Earn Yield', defaultDir: 'desc' },
+  ];
+
+  function getSortValue(c, key) {
+    switch (key) {
+      case 'meanRevDist': return c.meanReversion?.distancePercentage ?? null;
+      case 'alpha1Y': return c.alpha?.oneYear ?? null;
+      default: return c[key] ?? null;
+    }
+  }
+
+  // ---- DOM refs ----
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => document.querySelectorAll(sel);
+
+  // ---- Init ----
+  async function init() {
+    try {
+      const res = await fetch('./data.json');
+      if (!res.ok) throw new Error(res.status);
+      DATA = await res.json();
+    } catch (e) {
+      $('#skeleton').classList.add('hidden');
+      $('#errorState').classList.remove('hidden');
+      return;
+    }
+
+    $('#skeleton').classList.add('hidden');
+    $('#cardsGrid').classList.remove('hidden');
+
+    renderBenchmarks();
+    renderLastUpdated();
+    renderSectorTabs();
+    renderSortButtons();
+    applyFiltersAndRender();
+
+    // Event listeners
+    $('#searchInput').addEventListener('input', onSearch);
+    $('#openGuide').addEventListener('click', openModal);
+    $('#closeGuide').addEventListener('click', closeModal);
+    $('#guideModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#guideModal').classList.contains('open')) closeModal(); });
+    $('#showMoreBtn').addEventListener('click', showMore);
+    $('#explainerToggle').addEventListener('click', toggleExplainer);
+  }
+
+  // ---- Benchmarks ----
+  function renderBenchmarks() {
+    const row = $('#benchmarkRow');
+    row.innerHTML = (DATA.benchmarks || []).map(b =>
+      `<div class="bench-pill">
+        <span class="bench-name">${b.name}</span>
+        <span class="${clrPct(b.returnsYTD)}">${fmtPct(b.returnsYTD)}</span>
+      </div>`
+    ).join('');
+  }
+
+  function renderLastUpdated() {
+    if (!DATA.lastUpdated) return;
+    try {
+      const d = new Date(DATA.lastUpdated);
+      const formatted = new Intl.DateTimeFormat('nb-NO', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Europe/Oslo' }).format(d);
+      $('#lastUpdated').textContent = `Sist oppdatert: ${formatted}`;
+    } catch (e) {
+      $('#lastUpdated').textContent = DATA.lastUpdated;
+    }
+  }
+
+  // ---- Sector Tabs ----
+  function renderSectorTabs() {
+    const container = $('#sectorTabs');
+    const sectors = (DATA.sectorSummary || []).sort((a, b) => (b.totalWeight || 0) - (a.totalWeight || 0));
+
+    let html = `<button class="sector-tab active" data-sector="All">All</button>`;
+    sectors.forEach(s => {
+      const ytdStr = s.avgReturnYTD != null ? fmtPct(s.avgReturnYTD) : '';
+      const ytdCls = clrPct(s.avgReturnYTD);
+      html += `<button class="sector-tab" data-sector="${s.sector}">
+        ${s.sector}<span class="tab-ytd ${ytdCls}">${ytdStr}</span>
+      </button>`;
+    });
+    container.innerHTML = html;
+
+    container.addEventListener('click', (e) => {
+      const tab = e.target.closest('.sector-tab');
+      if (!tab) return;
+      $$('.sector-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentSector = tab.dataset.sector;
+      previousSector = currentSector;
+      applyFiltersAndRender();
+    });
+  }
+
+  // ---- Sort Buttons ----
+  function renderSortButtons() {
+    const container = $('#sortGroup');
+    container.innerHTML = SORTS.map(s => {
+      const isActive = currentSort.key === s.key;
+      const arrow = isActive ? (currentSort.dir === 'desc' ? '↓' : '↑') : '↓';
+      return `<button class="sort-btn${isActive ? ' active' : ''}" data-sort="${s.key}" data-default="${s.defaultDir}">
+        ${s.label}<span class="arrow">${arrow}</span>
+      </button>`;
+    }).join('');
+
+    container.addEventListener('click', (e) => {
+      const btn = e.target.closest('.sort-btn');
+      if (!btn) return;
+      const key = btn.dataset.sort;
+      if (currentSort.key === key) {
+        currentSort.dir = currentSort.dir === 'desc' ? 'asc' : 'desc';
+      } else {
+        currentSort = { key, dir: btn.dataset.default };
+      }
+      // Update active states
+      $$('.sort-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.sort === currentSort.key);
+        if (b.dataset.sort === currentSort.key) {
+          b.querySelector('.arrow').textContent = currentSort.dir === 'desc' ? '↓' : '↑';
         }
+      });
+      applyFiltersAndRender();
+    });
+  }
+
+  // ---- Search ----
+  function onSearch(e) {
+    searchQuery = e.target.value.trim().toLowerCase();
+    if (searchQuery) {
+      // Override sector to All while searching
+      $$('.sector-tab').forEach(t => t.classList.toggle('active', t.dataset.sector === 'All'));
+      currentSector = 'All';
+    } else {
+      // Restore previous sector
+      currentSector = previousSector;
+      $$('.sector-tab').forEach(t => t.classList.toggle('active', t.dataset.sector === currentSector));
+    }
+    applyFiltersAndRender();
+  }
+
+  // ---- Filter + Sort + Render ----
+  function applyFiltersAndRender() {
+    let companies = DATA.companies || [];
+
+    // Sector filter
+    if (currentSector !== 'All') {
+      companies = companies.filter(c => c.sector === currentSector);
     }
 
-    // --- Core Logic ---
-    function updateFilters() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        
-        filteredCompanies = appData.companies.filter(c => {
-            const matchesSearch = c.companyName?.toLowerCase().includes(searchTerm) || c.ticker.toLowerCase().includes(searchTerm);
-            const matchesSector = currentSector === 'All' || c.sector === currentSector;
-            return matchesSearch && matchesSector;
+    // Search filter
+    if (searchQuery) {
+      companies = companies.filter(c => {
+        const name = (c.companyName || '').toLowerCase();
+        const ticker = (c.ticker || '').toLowerCase();
+        return name.includes(searchQuery) || ticker.includes(searchQuery);
+      });
+    }
+
+    // Sort
+    companies = [...companies].sort((a, b) => {
+      const av = getSortValue(a, currentSort.key);
+      const bv = getSortValue(b, currentSort.key);
+      if (av == null && bv == null) return 0;
+      if (av == null) return 1;
+      if (bv == null) return -1;
+      return currentSort.dir === 'desc' ? bv - av : av - bv;
+    });
+
+    filteredCompanies = companies;
+    visibleCount = 0;
+    $('#cardsGrid').innerHTML = '';
+    showMore();
+    updateCount();
+  }
+
+  function showMore() {
+    const grid = $('#cardsGrid');
+    const isMobile = window.innerWidth < MOBILE_BP;
+    const pageSize = isMobile ? PAGE_SIZE : filteredCompanies.length; // Show all on desktop
+    const end = Math.min(visibleCount + pageSize, filteredCompanies.length);
+
+    for (let i = visibleCount; i < end; i++) {
+      grid.appendChild(createCard(filteredCompanies[i], i));
+    }
+    visibleCount = end;
+
+    // Observe new cards for animation
+    observeCards();
+
+    // Show/hide button
+    const remaining = filteredCompanies.length - visibleCount;
+    const wrap = $('#showMoreWrap');
+    if (remaining > 0 && isMobile) {
+      wrap.classList.remove('hidden');
+      $('#showMoreBtn').textContent = `Show more (${remaining} remaining)`;
+    } else {
+      wrap.classList.add('hidden');
+    }
+  }
+
+  function updateCount() {
+    const total = DATA.companies.length;
+    const shown = filteredCompanies.length;
+    $('#companyCount').textContent = `Showing ${shown} of ${total} companies`;
+  }
+
+  // ---- Intersection Observer for fade-in ----
+  let observer;
+  function observeCards() {
+    if (!observer) {
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, idx) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add('visible'), idx * 40);
+            observer.unobserve(entry.target);
+          }
         });
-
-        sortData();
-        visibleCount = 20;
-        renderGrid();
+      }, { threshold: 0.05 });
     }
+    $$('.company-card:not(.visible)').forEach(c => observer.observe(c));
+  }
 
-    function sortData() {
-        const { key, dir } = currentSort;
-        filteredCompanies.sort((a, b) => {
-            const valA = getNestedValue(a, key);
-            const valB = getNestedValue(b, key);
-            
-            if (valA === null) return 1;
-            if (valB === null) return -1;
-            return (valA - valB) * dir;
-        });
+  // ---- Card Creation ----
+  function createCard(c, idx) {
+    const el = document.createElement('div');
+    el.className = 'company-card';
+    el.setAttribute('aria-expanded', 'false');
+    el.style.setProperty('--heat', heatBg(c.returnsYTD));
+    el.style.background = heatBg(c.returnsYTD);
+
+    const recClass = (c.recommendation || '').replace(/\s+/g, '_').toLowerCase();
+    const recLabel = (c.recommendation || '').replace(/_/g, ' ');
+
+    el.innerHTML = `
+      <div class="card-header" tabindex="0" role="button" aria-label="Expand ${c.companyName || c.ticker}">
+        <div class="card-top-row">
+          <span class="card-name">${c.companyName || c.ticker}</span>
+          ${recLabel ? `<span class="rec-badge ${recClass}">${recLabel}</span>` : ''}
+        </div>
+        <div class="card-meta">
+          <span class="ticker-tag">${c.ticker.replace('.OL', '')}</span>
+          ${c.osebxWeight != null ? `<span class="weight-badge">${fmtNum(c.osebxWeight, 1)} %</span>` : ''}
+          <span class="sector-badge" style="background:${sectorColor(c.sector)}">${c.sector || '—'}</span>
+        </div>
+        <div class="returns-row">
+          <div class="return-item"><span class="return-label">YTD</span><span class="return-val ${clrPct(c.returnsYTD)}">${fmtPct(c.returnsYTD)}</span></div>
+          <div class="return-item"><span class="return-label">6M</span><span class="return-val ${clrPct(c.returns6M)}">${fmtPct(c.returns6M)}</span></div>
+          <div class="return-item"><span class="return-label">1Y</span><span class="return-val ${clrPct(c.returns1Y)}">${fmtPct(c.returns1Y)}</span></div>
+        </div>
+        <div class="fundamentals-row">
+          <div class="fund-item"><span class="fund-label">P/E</span><span class="fund-val">${fmtNum(c.peRatio)}</span></div>
+          <div class="fund-item"><span class="fund-label">P/B</span><span class="fund-val">${fmtNum(c.pbRatio)}</span></div>
+          <div class="fund-item"><span class="fund-label">Div</span><span class="fund-val">${c.dividendYield != null ? fmtNum(c.dividendYield) + ' %' : '—'}</span></div>
+        </div>
+      </div>
+      <div class="card-expanded"><div class="card-expanded-inner">${buildExpandedContent(c)}</div></div>
+    `;
+
+    // Toggle expand
+    const header = el.querySelector('.card-header');
+    const toggle = () => {
+      const expanded = el.getAttribute('aria-expanded') === 'true';
+      el.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    };
+    header.addEventListener('click', toggle);
+    header.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+
+    // Tab switching inside expanded
+    el.addEventListener('click', (e) => {
+      const tab = e.target.closest('.detail-tab');
+      if (!tab) return;
+      const panel = tab.dataset.panel;
+      el.querySelectorAll('.detail-tab').forEach(t => t.classList.toggle('active', t.dataset.panel === panel));
+      el.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === panel));
+    });
+
+    return el;
+  }
+
+  function buildExpandedContent(c) {
+    const sectorAvg = (DATA.sectorSummary || []).find(s => s.sector === c.sector);
+    const refBond = DATA.referenceRates?.bondYield10Y ? (DATA.referenceRates.bondYield10Y * 100) : 3.5;
+
+    return `<div class="card-expanded-content">
+      <div class="detail-tabs">
+        <button class="detail-tab active" data-panel="perf">Performance</button>
+        <button class="detail-tab" data-panel="risk">Risk</button>
+        <button class="detail-tab" data-panel="val">Valuation</button>
+      </div>
+
+      <!-- Tab 1: Performance & Momentum -->
+      <div class="tab-panel active" data-panel="perf">
+        <div class="metric-row"><span class="metric-label">Alpha vs OSEBX</span></div>
+        <div class="alpha-row">
+          <div class="alpha-item"><span class="alpha-period">3M</span><span class="alpha-val ${clrPct(c.alpha?.threeMonth)}">${fmtPct(c.alpha?.threeMonth)}</span></div>
+          <div class="alpha-item"><span class="alpha-period">6M</span><span class="alpha-val ${clrPct(c.alpha?.sixMonth)}">${fmtPct(c.alpha?.sixMonth)}</span></div>
+          <div class="alpha-item"><span class="alpha-period">1Y</span><span class="alpha-val ${clrPct(c.alpha?.oneYear)}">${fmtPct(c.alpha?.oneYear)}</span></div>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Sharpe Ratio</span>
+          <span class="metric-val ${clrSharpe(c.sharpeRatio)}">${fmtNum(c.sharpeRatio, 2)}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Momentum Score</span>
+          <div class="momentum-bar-wrap">
+            <span class="metric-val">${c.momentumScore != null ? fmtNum(c.momentumScore, 0) : '—'}</span>
+            ${c.momentumScore != null ? `<div class="momentum-bar"><div class="momentum-bar-fill" style="width:${c.momentumScore}%;background:${c.momentumScore > 60 ? 'var(--green)' : c.momentumScore > 30 ? 'var(--amber)' : 'var(--red)'}"></div></div>` : ''}
+          </div>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Max Drawdown (1Y)</span>
+          <span class="metric-val clr-red">${fmtPct(c.maxDrawdown)}</span>
+        </div>
+        ${buildSeasonality(c)}
+        ${c.betaToBrent != null ? `<div class="metric-row"><span class="metric-label">Beta to Brent</span><span class="metric-val">${fmtNum(c.betaToBrent, 2)}<span class="metric-sub">${c.betaToBrent < 1 ? '< 1 less sensitive' : '≥ 1 more sensitive'}</span></span></div>` : ''}
+      </div>
+
+      <!-- Tab 2: Risk Profile -->
+      <div class="tab-panel" data-panel="risk">
+        <div class="metric-row">
+          <span class="metric-label">Max Drawdown (1Y)</span>
+          <span class="metric-val clr-red">${fmtPct(c.maxDrawdown)}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Volatility Percentile</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="metric-val">${c.volatilityPercentile != null ? c.volatilityPercentile + 'th' : '—'}</span>
+            ${c.volatilityPercentile != null ? `<div class="vol-gauge"><div class="vol-marker" style="left:${c.volatilityPercentile}%;background:${c.volatilityPercentile > 70 ? 'var(--red)' : c.volatilityPercentile > 40 ? 'var(--amber)' : 'var(--green)'}"></div></div>` : ''}
+          </div>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Correlation to OSEBX</span>
+          <span class="metric-val" style="color:${c.correlationToOSEBX != null ? (c.correlationToOSEBX > 0.7 ? 'var(--amber)' : 'var(--green)') : ''}">${fmtNum(c.correlationToOSEBX, 2)}<span class="metric-sub">${c.correlationToOSEBX != null ? (c.correlationToOSEBX < 0.5 ? 'good diversifier' : '') : ''}</span></span>
+        </div>
+      </div>
+
+      <!-- Tab 3: Valuation & Dividends -->
+      <div class="tab-panel" data-panel="val">
+        <div class="metric-row">
+          <span class="metric-label">Market Cap</span>
+          <span class="metric-val">${fmtMcap(c.marketCap)}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Forward P/E</span>
+          <span class="metric-val">${fmtNum(c.forwardPE)}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Analyst Target</span>
+          <span class="metric-val">${c.analystTarget != null ? fmtPrice(c.analystTarget) + ' NOK' : '—'}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Earnings Yield</span>
+          <span class="metric-val">${fmtPct(c.earningsYield)}<span class="metric-sub">vs bond ${fmtNum(refBond, 1)} %</span></span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">EV/EBITDA</span>
+          <span class="metric-val">${fmtRatio(c.evToEbitda)}${sectorAvg?.avgEvToEbitda != null ? `<span class="metric-sub">vs sector ${fmtRatio(sectorAvg.avgEvToEbitda)}</span>` : ''}</span>
+        </div>
+        ${buildDividendConsistency(c)}
+        <div class="metric-row">
+          <span class="metric-label">Payout Ratio</span>
+          <span class="metric-val ${clrPayoutRatio(c.dividendPayoutRatio)}">${fmtPct(c.dividendPayoutRatio)}</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Liquidity</span>
+          <span class="metric-val">${fmtLiquidity(c.liquidityScore)}${c.liquidityScore != null && c.liquidityScore < 10e6 ? '<span class="metric-sub clr-amber">⚠ low</span>' : ''}</span>
+        </div>
+      </div>
+
+      <!-- Always-visible footer -->
+      <div class="card-info-footer">
+        <div class="metric-row">
+          <span class="metric-label">Industry</span>
+          <span class="metric-val" style="font-family:var(--font-body);font-size:0.75rem;color:var(--text-secondary)">${c.industry || '—'}</span>
+        </div>
+        ${build52WeekRange(c)}
+        ${buildMeanReversion(c)}
+      </div>
+    </div>`;
+  }
+
+  function buildSeasonality(c) {
+    if (!c.seasonality || !Array.isArray(c.seasonality)) return '';
+    const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+    const currentMonth = new Date().getMonth();
+    const maxAbs = Math.max(...c.seasonality.filter(v => v != null).map(Math.abs), 0.01);
+    let bars = '';
+    let labels = '';
+    c.seasonality.forEach((v, i) => {
+      const h = v != null ? Math.round(Math.abs(v) / maxAbs * 24) : 0;
+      const color = v != null ? (v >= 0 ? 'var(--green)' : 'var(--red)') : 'var(--bg-surface)';
+      const isCurrent = i === currentMonth;
+      bars += `<div class="season-bar${isCurrent ? ' current' : ''}" style="height:${Math.max(h, 2)}px;background:${color}"></div>`;
+      labels += `<span class="season-label">${months[i]}</span>`;
+    });
+    return `<div class="metric-row" style="flex-direction:column;align-items:stretch">
+      <span class="metric-label" style="margin-bottom:4px">Seasonality (5Y avg monthly return)</span>
+      <div class="seasonality-bars">${bars}</div>
+      <div class="season-labels">${labels}</div>
+    </div>`;
+  }
+
+  function buildDividendConsistency(c) {
+    const dc = c.dividendConsistency;
+    if (!dc) return '<div class="metric-row"><span class="metric-label">Div. Consistency</span><span class="metric-val">—</span></div>';
+    const years = dc.yearsWithDividend || 0;
+    let dots = '';
+    for (let i = 0; i < 5; i++) {
+      dots += `<span class="div-dot${i < years ? ' filled' : ''}"></span>`;
     }
+    const trendIcon = dc.trend === 'growing' ? '↑' : dc.trend === 'cut' ? '↓' : '→';
+    const trendColor = dc.trend === 'growing' ? 'clr-green' : dc.trend === 'cut' ? 'clr-red' : 'clr-muted';
+    return `<div class="metric-row">
+      <span class="metric-label">Div. Consistency</span>
+      <div class="div-dots">${dots}<span class="div-trend ${trendColor}">${years}/5 ${dc.trend || ''} ${trendIcon}</span></div>
+    </div>`;
+  }
 
-    function getNestedValue(obj, path) {
-        return path.split('.').reduce((prev, curr) => prev ? prev[curr] : null, obj);
-    }
+  function build52WeekRange(c) {
+    const w = c.week52;
+    if (!w || w.low == null || w.high == null) return '';
+    const range = w.high - w.low;
+    const pos = range > 0 && w.current != null ? ((w.current - w.low) / range * 100) : 50;
+    return `<div style="margin-top:6px">
+      <span class="metric-label">52-week range</span>
+      <div class="range-bar"><div class="range-marker" style="left:${pos}%"></div></div>
+      <div class="range-labels"><span>${fmtPrice(w.low)}</span><span style="color:var(--blue)">${fmtPrice(w.current)}</span><span>${fmtPrice(w.high)}</span></div>
+    </div>`;
+  }
 
-    // --- Rendering ---
-    function renderGrid() {
-        const grid = document.getElementById('heatmapGrid');
-        const show = filteredCompanies.slice(0, visibleCount);
-        
-        grid.innerHTML = show.map(c => createCardHTML(c)).join('');
-        
-        const remaining = filteredCompanies.length - visibleCount;
-        const loader = document.getElementById('loadMoreContainer');
-        loader.style.display = remaining > 0 ? 'block' : 'none';
-        document.getElementById('loadMoreBtn').textContent = `Show more (${remaining} remaining)`;
-        
-        document.getElementById('countIndicator').textContent = `Viser ${show.length} av ${filteredCompanies.length} selskaper`;
-    }
+  function buildMeanReversion(c) {
+    const mr = c.meanReversion;
+    if (!mr || mr.distancePercentage == null) return '';
+    // Clamp to -50..+50 for gauge
+    const clamped = Math.max(-50, Math.min(50, mr.distancePercentage));
+    const pos = (clamped + 50) / 100 * 100;
+    return `<div style="margin-top:6px">
+      <span class="metric-label">% from 5Y SMA</span>
+      <div class="mr-gauge-wrap">
+        <span class="metric-val ${clrPct(mr.distancePercentage)}" style="min-width:50px">${fmtPct(mr.distancePercentage)}</span>
+        <div class="mr-gauge"><div class="mr-marker" style="left:${pos}%"></div></div>
+        <span style="font-size:0.65rem;color:var(--text-muted)">SMA: ${fmtPrice(mr.fiveYearAverage)}</span>
+      </div>
+    </div>`;
+  }
 
-    function createCardHTML(c) {
-        const color = getHeatColor(c.returnsYTD);
-        const sColor = sectorColors[c.sector] || "#666";
-        
-        return `
-            <div class="card" id="card-${c.ticker}" onclick="toggleExpand('${c.ticker}')" style="--color-indicator: ${color}; --sector-color: ${sColor}">
-                <div class="card-inner">
-                    <div class="card-header">
-                        <h3 class="company-name">${c.companyName || c.ticker}</h3>
-                        <div class="mono ticker-badge">${c.ticker.split('.')[0]} • ${c.osebxWeight}%</div>
-                    </div>
-                    <span class="sector-label">${c.sector || 'N/A'}</span>
-                    
-                    <div class="main-metrics">
-                        <div class="metric-group">
-                            <span class="metric-label">YTD Return</span>
-                            <span class="metric-val mono" style="color: ${color}">${formatPercent(c.returnsYTD)}</span>
-                        </div>
-                        <div class="metric-group">
-                            <span class="metric-label">Div Yield</span>
-                            <span class="metric-val mono">${c.dividendYield ? formatPercent(c.dividendYield / 100) : '—'}</span>
-                        </div>
-                    </div>
+  // ---- Modal ----
+  let lastFocused;
+  function openModal() {
+    lastFocused = document.activeElement;
+    const modal = $('#guideModal');
+    modal.classList.add('open');
+    modal.querySelector('.modal-close').focus();
+    trapFocus(modal);
+  }
+  function closeModal() {
+    $('#guideModal').classList.remove('open');
+    if (lastFocused) lastFocused.focus();
+  }
+  function trapFocus(el) {
+    const focusable = el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    el.addEventListener('keydown', function handler(e) {
+      if (e.key !== 'Tab') return;
+      if (!el.classList.contains('open')) { el.removeEventListener('keydown', handler); return; }
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  }
 
-                    <div class="sub-metrics">
-                        <div class="mini-metric"><span class="metric-label">P/E</span><span class="mini-val mono">${c.peRatio || '—'}</span></div>
-                        <div class="mini-metric"><span class="metric-label">P/B</span><span class="mini-val mono">${c.pbRatio || '—'}</span></div>
-                        <div class="mini-metric"><span class="metric-label">1Y Alpha</span><span class="mini-val mono" style="color: ${getHeatColor(c.alpha?.oneYear)}">${c.alpha?.oneYear ? (c.alpha.oneYear > 0 ? '+' : '') + formatPercent(c.alpha.oneYear) : '—'}</span></div>
-                    </div>
-                </div>
+  // ---- Explainer ----
+  function toggleExplainer() {
+    const toggle = $('#explainerToggle');
+    const body = $('#explainerBody');
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', !expanded);
+    body.classList.toggle('open', !expanded);
+  }
 
-                <div class="expanded-area">
-                    <div class="expanded-inner">
-                        <div class="expanded-tabs">
-                            <div class="expanded-tab active" onclick="event.stopPropagation(); switchTab('${c.ticker}', 1)">Perf</div>
-                            <div class="expanded-tab" onclick="event.stopPropagation(); switchTab('${c.ticker}', 2)">Risk</div>
-                            <div class="expanded-tab" onclick="event.stopPropagation(); switchTab('${c.ticker}', 3)">Value</div>
-                        </div>
-
-                        <div class="tab-panel active" data-tab="1">
-                            <div class="main-metrics">
-                                <div class="metric-group"><span class="metric-label">Sharpe Ratio</span><span class="mini-val mono">${c.sharpeRatio || '—'}</span></div>
-                                <div class="metric-group"><span class="metric-label">Momentum Score</span><span class="mini-val mono">${c.momentumScore || '—'}/100</span></div>
-                            </div>
-                            <div class="metric-label">Historical Seasonality</div>
-                            <div class="season-grid">${(c.seasonality || []).map(s => `<div class="season-bar" style="height: ${Math.abs(s || 0) * 200}px; background: ${s > 0 ? 'var(--gain)' : 'var(--loss)'}"></div>`).join('')}</div>
-                        </div>
-
-                        <div class="tab-panel" data-tab="2">
-                            <div class="metric-label">Max Drawdown (1Y)</div>
-                            <div class="gauge-container"><div class="gauge-bar"><div class="gauge-marker" style="left: ${Math.abs(c.maxDrawdown || 0) * 100}%"></div></div><div class="mono" style="font-size: 0.7rem">${formatPercent(c.maxDrawdown)}</div></div>
-                            <div class="sub-metrics">
-                                <div class="mini-metric"><span class="metric-label">Correlation</span><span class="mini-val mono">${c.correlationToOSEBX || '—'}</span></div>
-                                <div class="mini-metric"><span class="metric-label">Vol Pctl</span><span class="mini-val mono">${c.volatilityPercentile || '—'}%</span></div>
-                            </div>
-                        </div>
-
-                        <div class="tab-panel" data-tab="3">
-                            <div class="metric-group"><span class="metric-label">Market Cap</span><span class="mini-val mono">${c.marketCap ? formatters.currency.format(c.marketCap) : '—'}</span></div>
-                            <div class="sub-metrics" style="margin-top: 10px;">
-                                <div class="mini-metric"><span class="metric-label">EV/EBITDA</span><span class="mini-val mono">${c.evToEbitda || '—'}</span></div>
-                                <div class="mini-metric"><span class="metric-label">Earnings Yield</span><span class="mini-val mono">${c.earningsYield ? formatters.decimal.format(c.earningsYield) + '%' : '—'}</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    // --- Helpers ---
-    function getHeatColor(val) {
-        if (val === null || val === undefined) return 'var(--neutral)';
-        if (val > 0) return `rgba(16, 185, 129, ${Math.min(0.2 + val * 2, 1)})`;
-        if (val < 0) return `rgba(239, 68, 68, ${Math.min(0.2 + Math.abs(val) * 2, 1)})`;
-        return 'var(--neutral)';
-    }
-
-    function formatPercent(val) {
-        if (val === null) return '—';
-        return (val * 100).toFixed(1) + '%';
-    }
-
-    function toggleExpand(ticker) {
-        const card = document.getElementById(`card-${ticker}`);
-        card.classList.toggle('expanded');
-    }
-
-    function switchTab(ticker, tabIdx) {
-        const card = document.getElementById(`card-${ticker}`);
-        const tabs = card.querySelectorAll('.expanded-tab');
-        const panels = card.querySelectorAll('.tab-panel');
-        
-        tabs.forEach((t, i) => t.classList.toggle('active', i === tabIdx - 1));
-        panels.forEach((p, i) => p.classList.toggle('active', i === tabIdx - 1));
-    }
-
-    function renderBenchmarks() {
-        const container = document.getElementById('benchmarkContainer');
-        container.innerHTML = Object.entries(appData.benchmarks).map(([key, val]) => `
-            <div class="benchmark-pill">
-                ${key}: <span style="color: ${val > 0 ? 'var(--gain)' : 'var(--loss)'}">${formatPercent(val)}</span>
-            </div>
-        `).join('');
-    }
-
-    function renderSectorTabs() {
-        const container = document.getElementById('sectorTabs');
-        const sectors = Object.keys(appData.sectorSummary);
-        
-        container.innerHTML = `<div class="tab active" data-sector="All">All Sectors</div>` + 
-            sectors.map(s => {
-                const data = appData.sectorSummary[s];
-                const color = getHeatColor(data.averageYTD);
-                return `<div class="tab" data-sector="${s}">${s} <span class="mono" style="font-size: 0.7rem; color: ${color}">${formatPercent(data.averageYTD)}</span></div>`;
-            }).join('');
-
-        container.querySelectorAll('.tab').forEach(t => {
-            t.addEventListener('click', () => {
-                container.querySelector('.active').classList.remove('active');
-                t.classList.add('active');
-                currentSector = t.dataset.sector;
-                updateFilters();
-            });
-        });
-    }
-
-    function renderSortButtons() {
-        const container = document.getElementById('sortContainer');
-        container.innerHTML = sortMetrics.map(m => `
-            <button class="sort-btn ${currentSort.key === m.key ? 'active' : ''}" data-key="${m.key}" data-def="${m.def}">
-                ${m.label} ${currentSort.key === m.key ? (currentSort.dir === 1 ? '↑' : '↓') : ''}
-            </button>
-        `).join('');
-
-        container.querySelectorAll('.sort-btn').forEach(b => {
-            b.addEventListener('click', () => {
-                const key = b.dataset.key;
-                const def = parseInt(b.dataset.def);
-                
-                if (currentSort.key === key) {
-                    currentSort.dir *= -1;
-                } else {
-                    currentSort.key = key;
-                    currentSort.dir = def;
-                }
-                
-                renderSortButtons();
-                updateFilters();
-            });
-        });
-    }
-
-    function toggleModal(show) {
-        document.getElementById('strategyModal').style.display = show ? 'flex' : 'none';
-    }
-
-    function renderStrategyGuide() {
-        // This is where the long definitions from the prompt go
-        const content = document.getElementById('strategyContent');
-        const definitions = [
-            { t: "YTD Return", d: "Avkastning siden 1. januar i år.", c: "(Dagens pris - Pris 1. jan) / Pris 1. jan" },
-            { t: "Alpha (Relative Strength)", d: "Viser om en aksje slår indeksen (OSEBX). Positiv alpha betyr meravkastning.", c: "Aksjeavkastning - Indeksavkastning" },
-            { t: "Sharpe Ratio", d: "Mål på risikojustert avkastning. Høyere er bedre.", c: "(Avkastning - Risikofri rente) / Volatilitet" },
-            { t: "Mean Reversion", d: "Avstand fra 5-års glidende gjennomsnitt. Indikerer om aksjen er strukket eller presset.", c: "(Pris - 5Y SMA) / 5Y SMA" }
-        ];
-        
-        content.innerHTML = definitions.map(item => `
-            <div class="strategy-entry">
-                <h4>${item.t}</h4>
-                <p>${item.d}</p>
-                <div class="strategy-calc">${item.c}</div>
-            </div>
-        `).join('');
-    }
-
-    init();
+  // ---- Kick off ----
+  document.addEventListener('DOMContentLoaded', init);
+})();
 </script>
 </body>
 </html>
