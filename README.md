@@ -1,86 +1,162 @@
-# OSEBX Sector Heatmap
+# OSEBX Company Heatmap
 
-A dark-themed, responsive heatmap dashboard for the Oslo Børs Benchmark Index (OSEBX), showing sector performance, fundamentals, and market structure.
+A dark-themed, responsive dashboard displaying all ~69 constituents of the **OSEBX (Oslo Børs Benchmark Index)** with real fundamental data, computed analytical metrics, and interactive filtering.
 
-Data updates weekly via GitHub Actions using [yfinance](https://github.com/ranaroussi/yfinance) — **zero API costs**.
+**[Live Demo →](https://your-username.github.io/osebx-heatmap/)**
 
-## Quick Start
+![Screenshot](screenshot.png)
 
-### 1. Create the Repository
+---
 
-Create a new public repository on GitHub (e.g., `osebx-heatmap` or add to your existing GitHub Pages repo).
+## Features
 
-### 2. Add All Files
+- **Real data** — fundamentals (P/E, P/B, dividend yield, market cap) and analyst recommendations fetched from Yahoo Finance via `yahooquery`
+- **Computed analytics** — alpha vs OSEBX, Sharpe ratio, momentum score, max drawdown, volatility percentile, correlation, mean reversion, earnings yield, EV/EBITDA, dividend consistency, and more
+- **Zero API cost** — uses the free `yahooquery` library; data updated weekly via GitHub Actions
+- **Pydantic-validated pipeline** — every record passes through typed models before hitting the JSON
+- **Interactive UI** — sector filter tabs, multi-metric sorting with toggle direction, real-time search, expandable cards with tabbed detail views
+- **Norwegian locale formatting** — all numbers use `nb-NO` formatting (comma decimals, space thousands)
+- **Fully accessible** — keyboard navigation, ARIA attributes, focus trapping in modals, WCAG AA contrast ratios
+- **Progressive loading** — 20 cards at a time on mobile; all at once on desktop
+- **Strategy Guide** — built-in modal explaining every metric in plain language
 
-Upload or push these files to the repository:
+---
+
+## Architecture
 
 ```
+osebx-heatmap/
+├── index.html                          # Single-page dashboard (HTML + CSS + JS)
+├── data.json                           # Market data (auto-generated weekly)
+├── scripts/
+│   └── update_data.py                  # Python data pipeline
+├── requirements.txt                    # Python dependencies
 ├── .github/
 │   └── workflows/
-│       └── update-data.yml      ← GitHub Actions workflow
-├── scripts/
-│   └── update_data.py           ← Python data pipeline
-├── data.json                     ← Seed data (works immediately)
-├── index.html                    ← The heatmap dashboard
-├── requirements.txt              ← Python dependencies
+│       └── update-data.yml             # Weekly GitHub Actions workflow
 └── README.md
 ```
 
-### 3. Enable GitHub Pages
+### Data flow
 
-1. Go to **Settings → Pages**
-2. Under **Source**, select **Deploy from a branch**
-3. Choose the `main` branch and `/ (root)` folder
-4. Click **Save**
+1. **GitHub Actions** runs `scripts/update_data.py` every Sunday at 20:00 UTC
+2. The script fetches fundamentals and 10-year price history for all OSEBX constituents via `yahooquery`
+3. Analytical metrics (alpha, Sharpe, momentum, drawdown, etc.) are computed in Python
+4. Every record is validated through **Pydantic models** — corrupted fields become `null`, not crashes
+5. Output is written to `data.json` and committed to the repository
+6. The frontend (`index.html`) fetches `data.json` and renders everything dynamically — no data is hardcoded in the HTML
 
-Your site will be live at `https://<your-username>.github.io/<repo-name>/` within a few minutes.
+---
 
-### 4. Enable the Actions Workflow
+## Metrics Computed
 
-1. Go to the **Actions** tab in your repository
-2. You should see the "Update OSEBX Data" workflow
-3. Click **Enable** if prompted
-4. To run it immediately: click the workflow → **Run workflow** → **Run workflow**
+### Tier 1 (Core — always present)
+| Metric | Description |
+|--------|-------------|
+| YTD / 6M / 1Y returns | Simple price returns over each period |
+| Market Cap | Total market value from Yahoo Finance |
+| P/E, Forward P/E, P/B | Standard valuation ratios |
+| Dividend Yield | Annual dividend as % of price |
+| Alpha (3M, 6M, 1Y) | Stock return minus OSEBX return |
+| Sharpe Ratio | Risk-adjusted return (annualised) |
+| Max Drawdown | Worst peak-to-trough decline in trailing 1Y |
+| Mean Reversion | % distance from 5-year SMA |
+| EV/EBITDA | Enterprise value to EBITDA |
+| Earnings Yield | Inverse of P/E, comparable to bond yields |
+| Analyst Recommendation | Consensus buy/hold/sell |
 
-The workflow runs automatically every **Sunday at 20:00 UTC**. You can also trigger it manually at any time.
+### Tier 2 (High value)
+| Metric | Description |
+|--------|-------------|
+| Momentum Score | Multi-timeframe composite, normalised 0–100 |
+| Volatility Percentile | Current vol ranked against own 5Y history |
+| Correlation to OSEBX | Pearson correlation of daily returns |
+| Dividend Consistency | Years paid (out of 5) and trend direction |
+| Dividend Payout Ratio | % of earnings distributed as dividends |
+| Liquidity Score | Average daily traded value in NOK |
 
-## How It Works
+### Tier 3 (Included when data permits)
+| Metric | Description |
+|--------|-------------|
+| Beta to Brent Crude | OLS regression slope vs BZ=F daily returns |
+| Monthly Seasonality | 12-month sparkline of average returns |
 
-### Data Pipeline
+---
 
-The GitHub Actions workflow runs `scripts/update_data.py` weekly:
+## Setup
 
-1. Fetches historical price data for OSEBX sector indices via Yahoo Finance (using `yfinance`)
-2. Computes YTD, 6M, and 1Y returns from price history
-3. Computes 52-week high/low and 5-year mean reversion metrics
-4. Writes everything to `data.json` with a timestamp
-5. Commits and pushes the updated file
+### Prerequisites
 
-**Note:** Fundamental metrics (P/E, P/B, dividend yield, analyst consensus, top holdings, market cap breakdown) are realistic placeholders hardcoded in the Python script. These can be enriched in the future by fetching individual stock data.
+- Python 3.10+
+- A GitHub repository with Actions enabled
 
-### Frontend
+### Local development
 
-The `index.html` page fetches `data.json` on load and dynamically renders:
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-- Market benchmark pills (OSEBX, OBX, OSEFX)
-- A sortable, colour-coded sector heatmap grid
-- Expandable cards with detailed metrics
-- A metrics dictionary modal
-- A collapsible beginner explainer
+# Run the data pipeline
+python scripts/update_data.py
 
-No build step, no framework, no dependencies — just static HTML/CSS/JS.
+# Serve locally
+python -m http.server 8000
+# Open http://localhost:8000
+```
+
+### Deploy to GitHub Pages
+
+1. Push the repository to GitHub
+2. Go to **Settings → Pages → Source** and select `main` branch, root `/`
+3. The site will be live at `https://<username>.github.io/<repo-name>/`
+4. Enable the GitHub Actions workflow for automatic weekly updates
+
+### Manual data update
+
+Go to **Actions → Update OSEBX Heatmap Data → Run workflow** to trigger a manual refresh.
+
+---
+
+## Updating the Constituent List
+
+The OSEBX index rebalances **twice per year** (June and December). When this happens:
+
+1. Open `scripts/update_data.py`
+2. Update the `CONSTITUENTS` list — add new tickers, remove delisted ones, update sector classifications and approximate weights
+3. Commit and push
+4. Run the workflow manually to regenerate `data.json`
+
+The `osebxWeight` values are approximate and manually maintained — Yahoo Finance does not expose index weights.
+
+---
+
+## Reference Rates
+
+The script uses hardcoded Norwegian reference rates for Sharpe ratio and earnings yield comparison:
+
+- **Risk-free rate:** 3.5% (Norwegian 3-month government bill yield)
+- **10Y bond yield:** 3.5% (Norwegian government bond)
+
+Update these in `scripts/update_data.py` when rates change significantly.
+
+---
 
 ## Disclaimer
 
-Market data is delayed and updated weekly. Certain fundamental metrics are illustrative placeholders. This dashboard is for informational and educational purposes only — not to be used for financial analysis or investment decisions.
+Market data is delayed and updated weekly via Yahoo Finance. This dashboard is for **informational and educational purposes only** — not to be used for financial analysis or investment decisions.
+
+---
 
 ## Tech Stack
 
-- **Frontend:** Vanilla HTML, CSS, JavaScript
-- **Data:** Python + yfinance + GitHub Actions
+- **Frontend:** Vanilla HTML, CSS, JavaScript (no frameworks, no build step)
+- **Data pipeline:** Python, yahooquery, pandas, Pydantic
 - **Hosting:** GitHub Pages (free)
+- **CI/CD:** GitHub Actions (free)
 - **Fonts:** Playfair Display, DM Sans, JetBrains Mono (Google Fonts)
+
+---
 
 ## License
 
-Personal use. Data sourced from Yahoo Finance via yfinance (intended for personal/educational use per Yahoo's terms of service).
+MIT
