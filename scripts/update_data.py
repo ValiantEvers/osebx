@@ -25,6 +25,12 @@ import pandas as pd
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 from yahooquery import Ticker
 
+import random
+from yahooquery import utils
+
+# Override the default yahooquery User-Agent to pretend to be a real Chrome browser
+utils.USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
@@ -150,6 +156,7 @@ CONSTITUENTS = [
     ("RECSI.OL", "REC Silicon",          "Information Technology",   0.15),
     ("KAHOT.OL", "Kahoot!",              "Information Technology",   0.25),
 ]
+
 
 # ---------------------------------------------------------------------------
 # Pydantic Models (data validation)
