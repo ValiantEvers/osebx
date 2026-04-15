@@ -1,10 +1,9 @@
-name: Update OSEBX Data
+name: Update Heatmap Data
 
 on:
   schedule:
-    # Every Sunday at 20:00 UTC
-    - cron: '0 20 * * 0'
-  workflow_dispatch: # Allow manual triggers
+    - cron: '0 20 * * 0' # Runs every Sunday at 20:00 UTC
+  workflow_dispatch: # Allows manual trigger from GitHub UI
 
 permissions:
   contents: write
@@ -20,19 +19,21 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
+          cache: 'pip'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run data update script
+      - name: Fetch Market Data and Generate JSON
         run: python scripts/update_data.py
 
-      - name: Commit and push data.json
+      - name: Commit and push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add data.json
-          # Only commit if there are changes
-          git diff --cached --quiet || git commit -m "chore: update OSEBX data [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
-          git push
+          # Only commit if there are changes to avoid workflow errors
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update market data" && git push)
