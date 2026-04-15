@@ -7,6 +7,12 @@ from yahooquery import Ticker
 from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional, Dict, Any
 
+import random
+from yahooquery import utils
+
+# Override the default yahooquery User-Agent to pretend to be a real Chrome browser
+utils.USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+
 # ==========================================
 # PYDANTIC MODELS (Validation Layer)
 # ==========================================
@@ -142,6 +148,11 @@ def compute_seasonality(returns: pd.Series) -> List[Optional[float]]:
 # ==========================================
 def main():
     print("Starting OSEBX data pipeline...")
+    
+    # Sleep for a random amount of time between 5 and 20 seconds to avoid GitHub Actions IP clustering
+    sleep_time = random.randint(5, 20)
+    print(f"Jitter delay: sleeping for {sleep_time} seconds to avoid rate limits...")
+    time.sleep(sleep_time)
     
     # 1. Fetch Benchmarks & Oil
     print("Fetching benchmark histories...")
