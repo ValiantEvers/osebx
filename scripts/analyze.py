@@ -124,6 +124,7 @@ class Brief(BaseModel):
     risks: list[Candidate]
     opportunities: list[Candidate]
     watchlist: list[WatchlistItem]  # populated only when opportunities is empty
+    graduation: dict = Field(default_factory=dict)  # tracks watchlist transitions vs prior run
 
     # Thresholds used this run — written for audit/debug & narrate.py reference
     thresholds_used: dict[str, float]
@@ -485,6 +486,41 @@ def build_brief(data: dict) -> Brief:
         watchlist = select_watchlist(companies, ey_gem_cut, mr_gem_cut, sharpe_gem_cut)
         log.info(f"Opportunities empty — watchlist surfaced {len(watchlist)} near-misses")
 
+    # Watchlist graduation tracking — compare this week's output to last week's
+    # prior_watchlist.json was written by the previous run. First run: file doesn't
+    # exist yet, all transitions are empty. Graduation logic:
+    #   - "graduated": was on last week's watchlist, now an opportunity
+    #   - "fell_to_risk": was on watchlist, now shows up as a risk
+    #   - "resolved": was on watchlist, no longer surfaces anywhere
+    graduation = {"graduated": [], "fell_to_risk": [], "resolved": []}
+    prior_path = Path("prior_watchlist.json")
+    if prior_path.exists():
+        try:
+            prior = json.loads(prior_path.read_text())
+            prior_tickers = {w["ticker"] for w in prior.get("watchlist", [])}
+            this_opps = {o.ticker for o in opps}
+            this_risks = {r.ticker for r in risks}
+            this_watch = {w.ticker for w in watchlist}
+
+            for t in prior_tickers:
+                if t in this_opps:
+                    graduation["graduated"].append(t)
+                elif t in this_risks:
+                    graduation["fell_to_risk"].append(t)
+                elif t not in this_watch:
+                    graduation["resolved"].append(t)
+            log.info(f"Graduation: {len(graduation['graduated'])} graduated, "
+                     f"{len(graduation['fell_to_risk'])} fell to risk, "
+                     f"{len(graduation['resolved'])} resolved")
+        except Exception as e:
+            log.warning(f"Could not read prior_watchlist.json: {e}")
+
+    # Write this week's watchlist for next week's comparison
+    prior_path.write_text(json.dumps({
+        "as_of": data.get("lastUpdated"),
+        "watchlist": [w.model_dump() for w in watchlist],
+    }, indent=2))
+
     return Brief(
         as_of=data.get("lastUpdated", datetime.now(timezone.utc).isoformat()),
         data_coverage=round(coverage, 2),
@@ -499,6 +535,7 @@ def build_brief(data: dict) -> Brief:
         risks=risks,
         opportunities=opps,
         watchlist=watchlist,
+        graduation=graduation,
         thresholds_used={
             "sharpe_floor_p66": round(sharpe_floor, 2),
             "overextension_mr_p75": round(mr_overext_cut, 1),
