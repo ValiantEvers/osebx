@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-04-16T19:01:27+00:00",
-  "data_coverage": 0.78,
+  "as_of": "2026-04-16T19:08:46+00:00",
+  "data_coverage": 0.77,
   "thin_data": false,
   "regime": "rotation",
   "breadth": 0.64,
@@ -22,8 +22,8 @@
     },
     {
       "sector": "Industrials",
-      "avg_return_ytd": 21.12,
-      "avg_sharpe": 1.78,
+      "avg_return_ytd": 20.29,
+      "avg_sharpe": 1.71,
       "weight": 10.75
     }
   ],
@@ -174,9 +174,9 @@
   ],
   "thresholds_used": {
     "sharpe_floor_p66": 1.94,
-    "overextension_mr_p75": 56.5,
+    "overextension_mr_p75": 55.0,
     "gem_ey_p75": 8.68,
     "gem_mr_p25": 2.04,
-    "gem_sharpe_p50": 1.24
+    "gem_sharpe_p50": 1.22
   }
 }
