@@ -30,7 +30,7 @@
   position: absolute;
   inset: 0;
   background: url('borsen-hero.jpeg') center top / cover no-repeat;
-  opacity: 0.10;
+  opacity: 0.50;
   filter: grayscale(40%) brightness(0.8);
   z-index: 0;
   pointer-events: none;
