@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-16T19:08:46+00:00",
+  "lastUpdated": "2026-04-16T19:25:38+00:00",
   "referenceRates": {
     "riskFreeRate": 0.035,
     "bondYield10Y": 0.035
@@ -49,7 +49,7 @@
         "high": 422.3,
         "current": 356.6
       },
-      "analystTarget": 337.88953,
+      "analystTarget": 337.85886,
       "recommendation": "hold",
       "returnsYTD": 47.599337,
       "returns6M": 50.273916,
@@ -76,7 +76,7 @@
         "fiveYearAverage": 284.419619,
         "distancePercentage": 25.378132
       },
-      "betaToBrent": 0.455462,
+      "betaToBrent": 0.455586,
       "seasonality": [
         -0.814819,
         1.780484,
@@ -137,7 +137,7 @@
         "fiveYearAverage": 278.24627,
         "distancePercentage": 23.236151
       },
-      "betaToBrent": 0.413635,
+      "betaToBrent": 0.413745,
       "seasonality": [
         4.783741,
         -5.328745,
@@ -171,7 +171,7 @@
         "high": 50.7,
         "current": 44.5
       },
-      "analystTarget": 47.092228,
+      "analystTarget": 47.087955,
       "recommendation": "buy",
       "returnsYTD": 33.233527,
       "returns6M": 34.889354,
@@ -195,7 +195,7 @@
       "earningsYield": 6.58427,
       "evToEbitda": 17.977579,
       "meanReversion": null,
-      "betaToBrent": 0.438294,
+      "betaToBrent": 0.438466,
       "seasonality": [
         -2.637342,
         -0.841547,
@@ -229,7 +229,7 @@
         "high": 321.0,
         "current": 303.0
       },
-      "analystTarget": 271.74677,
+      "analystTarget": 271.7221,
       "recommendation": "buy",
       "returnsYTD": 45.673077,
       "returns6M": 50.297614,
@@ -256,7 +256,7 @@
         "fiveYearAverage": 141.463691,
         "distancePercentage": 114.189237
       },
-      "betaToBrent": 0.070252,
+      "betaToBrent": 0.070341,
       "seasonality": [
         7.178256,
         2.477357,
@@ -317,7 +317,7 @@
         "fiveYearAverage": 34.207309,
         "distancePercentage": 38.859211
       },
-      "betaToBrent": 0.169504,
+      "betaToBrent": 0.169541,
       "seasonality": [
         2.818875,
         8.107161,
@@ -351,7 +351,7 @@
         "high": 62.0,
         "current": 55.5
       },
-      "analystTarget": 70.67893,
+      "analystTarget": 70.67252,
       "recommendation": "strong_buy",
       "returnsYTD": 14.551082,
       "returns6M": 17.460317,
@@ -378,7 +378,7 @@
         "fiveYearAverage": 29.326064,
         "distancePercentage": 89.251449
       },
-      "betaToBrent": 0.407103,
+      "betaToBrent": 0.407295,
       "seasonality": [
         7.426544,
         3.795573,
@@ -412,7 +412,7 @@
         "high": 185.0,
         "current": 168.7
       },
-      "analystTarget": 163.07343,
+      "analystTarget": 163.05792,
       "recommendation": "none",
       "returnsYTD": 32.1065,
       "returns6M": 30.572756,
@@ -439,7 +439,7 @@
         "fiveYearAverage": 108.828357,
         "distancePercentage": 55.014742
       },
-      "betaToBrent": 0.170589,
+      "betaToBrent": 0.170717,
       "seasonality": [
         3.836134,
         3.729021,
@@ -473,7 +473,7 @@
         "high": 133.0,
         "current": 129.0
       },
-      "analystTarget": 103.58906,
+      "analystTarget": 103.579216,
       "recommendation": "hold",
       "returnsYTD": 37.234043,
       "returns6M": 68.627451,
@@ -500,7 +500,7 @@
         "fiveYearAverage": 118.817048,
         "distancePercentage": 8.570279
       },
-      "betaToBrent": 0.230813,
+      "betaToBrent": 0.230804,
       "seasonality": [
         5.273393,
         4.986393,
@@ -558,7 +558,7 @@
       "earningsYield": 3.096154,
       "evToEbitda": 38.142936,
       "meanReversion": null,
-      "betaToBrent": -0.059166,
+      "betaToBrent": -0.059092,
       "seasonality": null
     },
     {
@@ -579,7 +579,7 @@
         "high": 143.5,
         "current": 134.9
       },
-      "analystTarget": 122.24436,
+      "analystTarget": 122.23275,
       "recommendation": "hold",
       "returnsYTD": 37.864074,
       "returns6M": 46.153835,
@@ -603,7 +603,7 @@
       "earningsYield": 18.843588,
       "evToEbitda": 44.036853,
       "meanReversion": null,
-      "betaToBrent": 0.084495,
+      "betaToBrent": 0.084527,
       "seasonality": [
         4.075684,
         5.436718,
@@ -637,7 +637,7 @@
         "high": 388.6,
         "current": 329.5
       },
-      "analystTarget": 311.58182,
+      "analystTarget": 311.55222,
       "recommendation": "none",
       "returnsYTD": 57.957809,
       "returns6M": 41.23446,
@@ -664,7 +664,7 @@
         "fiveYearAverage": 170.96619,
         "distancePercentage": 92.728164
       },
-      "betaToBrent": 0.057341,
+      "betaToBrent": 0.057477,
       "seasonality": [
         15.255668,
         21.369507,
@@ -831,7 +831,7 @@
         "fiveYearAverage": 218.054087,
         "distancePercentage": 40.423881
       },
-      "betaToBrent": -0.052461,
+      "betaToBrent": -0.052412,
       "seasonality": [
         -0.137953,
         5.043928,
@@ -892,7 +892,7 @@
         "fiveYearAverage": 86.957714,
         "distancePercentage": 32.800183
       },
-      "betaToBrent": -0.040348,
+      "betaToBrent": -0.040252,
       "seasonality": [
         0.431246,
         -0.132075,
@@ -1043,7 +1043,7 @@
         "fiveYearAverage": 136.749931,
         "distancePercentage": 22.851982
       },
-      "betaToBrent": 0.013006,
+      "betaToBrent": 0.012968,
       "seasonality": [
         3.185201,
         0.770961,
@@ -1104,7 +1104,7 @@
         "fiveYearAverage": 109.277127,
         "distancePercentage": 46.92919
       },
-      "betaToBrent": -0.103299,
+      "betaToBrent": -0.103303,
       "seasonality": [
         -0.205484,
         3.122307,
@@ -1210,7 +1210,7 @@
         "fiveYearAverage": 208.227341,
         "distancePercentage": 27.168693
       },
-      "betaToBrent": -0.081541,
+      "betaToBrent": -0.081599,
       "seasonality": [
         -1.802724,
         -0.027623,
@@ -1271,7 +1271,7 @@
         "fiveYearAverage": 105.296754,
         "distancePercentage": 65.627132
       },
-      "betaToBrent": -0.059482,
+      "betaToBrent": -0.059505,
       "seasonality": [
         4.163578,
         -1.895829,
@@ -1377,7 +1377,7 @@
         "fiveYearAverage": 62.412976,
         "distancePercentage": 24.012675
       },
-      "betaToBrent": -0.077444,
+      "betaToBrent": -0.077481,
       "seasonality": [
         3.813084,
         2.740234,
@@ -1438,7 +1438,7 @@
         "fiveYearAverage": 6.986056,
         "distancePercentage": 14.370687
       },
-      "betaToBrent": 0.004,
+      "betaToBrent": 0.004029,
       "seasonality": [
         -0.295608,
         -0.125149,
@@ -1517,7 +1517,7 @@
         "high": 245.8,
         "current": 212.4
       },
-      "analystTarget": 245.72316,
+      "analystTarget": 245.72272,
       "recommendation": "buy",
       "returnsYTD": -13.022114,
       "returns6M": -4.838711,
@@ -1544,7 +1544,7 @@
         "fiveYearAverage": 202.235119,
         "distancePercentage": 5.026266
       },
-      "betaToBrent": -0.088433,
+      "betaToBrent": -0.088495,
       "seasonality": [
         5.256411,
         0.618907,
@@ -1605,7 +1605,7 @@
         "fiveYearAverage": 556.449048,
         "distancePercentage": -0.170554
       },
-      "betaToBrent": -0.078277,
+      "betaToBrent": -0.078419,
       "seasonality": [
         5.185111,
         1.661564,
@@ -1666,7 +1666,7 @@
         "fiveYearAverage": 55.631341,
         "distancePercentage": -13.645798
       },
-      "betaToBrent": -0.055712,
+      "betaToBrent": -0.055709,
       "seasonality": [
         4.493319,
         0.41656,
@@ -1727,7 +1727,7 @@
         "fiveYearAverage": 96.725833,
         "distancePercentage": 2.040989
       },
-      "betaToBrent": -0.031902,
+      "betaToBrent": -0.031888,
       "seasonality": [
         6.576311,
         0.875657,
@@ -1761,7 +1761,7 @@
         "high": 528.0,
         "current": 475.8
       },
-      "analystTarget": 492.66147,
+      "analystTarget": 492.64478,
       "recommendation": "buy",
       "returnsYTD": -8.057973,
       "returns6M": -0.54348,
@@ -1788,7 +1788,7 @@
         "fiveYearAverage": 587.913413,
         "distancePercentage": -19.069717
       },
-      "betaToBrent": -0.055372,
+      "betaToBrent": -0.055504,
       "seasonality": [
         1.537305,
         1.327217,
@@ -1849,7 +1849,7 @@
         "fiveYearAverage": 89.135341,
         "distancePercentage": 36.197382
       },
-      "betaToBrent": -0.062228,
+      "betaToBrent": -0.062238,
       "seasonality": [
         2.819322,
         0.126779,
@@ -1910,7 +1910,7 @@
         "fiveYearAverage": 79.442738,
         "distancePercentage": -10.186884
       },
-      "betaToBrent": -0.064663,
+      "betaToBrent": -0.064721,
       "seasonality": [
         7.28337,
         -6.530218,
@@ -2016,7 +2016,7 @@
         "fiveYearAverage": 70.32073,
         "distancePercentage": 30.686927
       },
-      "betaToBrent": -0.025544,
+      "betaToBrent": -0.025513,
       "seasonality": [
         -0.661769,
         -1.497734,
@@ -2077,7 +2077,7 @@
         "fiveYearAverage": 155.856032,
         "distancePercentage": 141.312448
       },
-      "betaToBrent": 0.071325,
+      "betaToBrent": 0.071632,
       "seasonality": [
         7.498765,
         13.7638,
@@ -2156,7 +2156,7 @@
         "high": 783.0,
         "current": 712.0
       },
-      "analystTarget": 946.70276,
+      "analystTarget": 946.6017,
       "recommendation": "none",
       "returnsYTD": 21.294719,
       "returns6M": 42.971888,
@@ -2183,7 +2183,7 @@
         "fiveYearAverage": 342.236905,
         "distancePercentage": 108.043022
       },
-      "betaToBrent": -0.002561,
+      "betaToBrent": -0.002498,
       "seasonality": [
         4.98799,
         5.782969,
@@ -2307,7 +2307,7 @@
         "high": 171.0,
         "current": 122.2
       },
-      "analystTarget": 147.38487,
+      "analystTarget": 147.38594,
       "recommendation": "buy",
       "returnsYTD": -10.476193,
       "returns6M": -13.639578,
@@ -2334,7 +2334,7 @@
         "fiveYearAverage": 172.40423,
         "distancePercentage": -29.12007
       },
-      "betaToBrent": -0.127003,
+      "betaToBrent": -0.127098,
       "seasonality": [
         -5.854875,
         2.700883,
@@ -2368,7 +2368,7 @@
         "high": 24.09,
         "current": 22.78
       },
-      "analystTarget": 16.180231,
+      "analystTarget": 16.178505,
       "recommendation": "none",
       "returnsYTD": 31.905038,
       "returns6M": 43.541278,
@@ -2395,7 +2395,7 @@
         "fiveYearAverage": 19.638988,
         "distancePercentage": 15.99376
       },
-      "betaToBrent": 0.050667,
+      "betaToBrent": 0.050743,
       "seasonality": [
         6.539026,
         2.407554,
@@ -2501,7 +2501,7 @@
         "fiveYearAverage": 9.346308,
         "distancePercentage": -76.568287
       },
-      "betaToBrent": -0.145802,
+      "betaToBrent": -0.145443,
       "seasonality": [
         -7.119242,
         1.291179,
@@ -2562,7 +2562,7 @@
         "fiveYearAverage": 695.831746,
         "distancePercentage": 54.922509
       },
-      "betaToBrent": 0.163059,
+      "betaToBrent": 0.162975,
       "seasonality": [
         2.42347,
         -1.251213,
@@ -2623,7 +2623,7 @@
         "fiveYearAverage": 10.527667,
         "distancePercentage": 35.072668
       },
-      "betaToBrent": 0.073983,
+      "betaToBrent": 0.074122,
       "seasonality": [
         9.424749,
         6.741645,
@@ -2657,7 +2657,7 @@
         "high": 13.2,
         "current": 10.67
       },
-      "analystTarget": 12.59558,
+      "analystTarget": 12.594235,
       "recommendation": "buy",
       "returnsYTD": -11.452283,
       "returns6M": 10.113525,
@@ -2681,7 +2681,7 @@
       "earningsYield": 2.155576,
       "evToEbitda": 214.989441,
       "meanReversion": null,
-      "betaToBrent": -0.119579,
+      "betaToBrent": -0.11962,
       "seasonality": [
         -3.34406,
         0.25305,
@@ -2715,7 +2715,7 @@
         "high": 111.6,
         "current": 100.9
       },
-      "analystTarget": 104.74523,
+      "analystTarget": 104.74504,
       "recommendation": "buy",
       "returnsYTD": 35.892258,
       "returns6M": 74.416602,
@@ -2742,7 +2742,7 @@
         "fiveYearAverage": 36.836238,
         "distancePercentage": 173.915054
       },
-      "betaToBrent": -0.122318,
+      "betaToBrent": -0.122396,
       "seasonality": [
         2.988363,
         12.797797,
@@ -2848,7 +2848,7 @@
         "fiveYearAverage": 158.61231,
         "distancePercentage": 12.538554
       },
-      "betaToBrent": -0.134439,
+      "betaToBrent": -0.134597,
       "seasonality": [
         -4.1932,
         0.139941,
@@ -2999,7 +2999,7 @@
         "fiveYearAverage": 38.296738,
         "distancePercentage": 77.560814
       },
-      "betaToBrent": -0.02843,
+      "betaToBrent": -0.028642,
       "seasonality": [
         -1.326745,
         -1.770244,
@@ -3105,7 +3105,7 @@
         "fiveYearAverage": 11.101798,
         "distancePercentage": -97.811165
       },
-      "betaToBrent": 0.110411,
+      "betaToBrent": 0.110372,
       "seasonality": [
         -16.028866,
         -18.397644,
@@ -3211,7 +3211,7 @@
         "fiveYearAverage": 67.287913,
         "distancePercentage": 61.321698
       },
-      "betaToBrent": 0.033891,
+      "betaToBrent": 0.033889,
       "seasonality": [
         3.073189,
         1.229904,
@@ -3272,7 +3272,7 @@
         "fiveYearAverage": 398.730714,
         "distancePercentage": 39.693277
       },
-      "betaToBrent": 0.23063,
+      "betaToBrent": 0.230676,
       "seasonality": [
         4.258099,
         1.510222,
@@ -3333,7 +3333,7 @@
         "fiveYearAverage": 132.422706,
         "distancePercentage": 22.184486
       },
-      "betaToBrent": -0.048463,
+      "betaToBrent": -0.048517,
       "seasonality": [
         7.860949,
         2.878052,
@@ -3394,7 +3394,7 @@
         "fiveYearAverage": 137.842222,
         "distancePercentage": 4.467265
       },
-      "betaToBrent": -0.016617,
+      "betaToBrent": -0.01665,
       "seasonality": [
         -0.405903,
         -5.667488,
@@ -3500,7 +3500,7 @@
         "fiveYearAverage": 32.164833,
         "distancePercentage": 9.591738
       },
-      "betaToBrent": -0.009817,
+      "betaToBrent": -0.009909,
       "seasonality": [
         -7.477447,
         -2.393293,
@@ -3561,7 +3561,7 @@
         "fiveYearAverage": 24.16243,
         "distancePercentage": -57.827091
       },
-      "betaToBrent": -0.103131,
+      "betaToBrent": -0.103175,
       "seasonality": [
         -5.985213,
         -3.650873,
@@ -3622,7 +3622,7 @@
         "fiveYearAverage": 2.167774,
         "distancePercentage": -7.27815
       },
-      "betaToBrent": -0.095006,
+      "betaToBrent": -0.09502,
       "seasonality": [
         -5.260903,
         -0.592537,
@@ -3683,7 +3683,7 @@
         "fiveYearAverage": 131.58754,
         "distancePercentage": -18.077347
       },
-      "betaToBrent": -0.073464,
+      "betaToBrent": -0.073543,
       "seasonality": [
         1.702742,
         -3.065201,
@@ -3834,7 +3834,7 @@
         "fiveYearAverage": 76.688651,
         "distancePercentage": -7.809048
       },
-      "betaToBrent": -0.00509,
+      "betaToBrent": -0.004983,
       "seasonality": [
         -4.105026,
         -9.638296,
@@ -3895,7 +3895,7 @@
         "fiveYearAverage": 236.530556,
         "distancePercentage": -1.069864
       },
-      "betaToBrent": -0.029055,
+      "betaToBrent": -0.029102,
       "seasonality": [
         -5.728982,
         -0.803196,
@@ -3956,7 +3956,7 @@
         "fiveYearAverage": 12.02234,
         "distancePercentage": 56.957808
       },
-      "betaToBrent": 0.386051,
+      "betaToBrent": 0.386077,
       "seasonality": [
         9.460035,
         -4.907486,
@@ -4017,7 +4017,7 @@
         "fiveYearAverage": 27.297373,
         "distancePercentage": 43.603565
       },
-      "betaToBrent": 0.349601,
+      "betaToBrent": 0.349767,
       "seasonality": [
         1.358698,
         1.502341,
@@ -4078,7 +4078,7 @@
         "fiveYearAverage": 416.747619,
         "distancePercentage": 30.054732
       },
-      "betaToBrent": 0.285009,
+      "betaToBrent": 0.285146,
       "seasonality": [
         2.484819,
         6.23663,
@@ -4112,7 +4112,7 @@
         "high": 35.9,
         "current": 31.55
       },
-      "analystTarget": 39.73087,
+      "analystTarget": 39.72667,
       "recommendation": "buy",
       "returnsYTD": 55.036848,
       "returns6M": 44.393587,
@@ -4139,7 +4139,7 @@
         "fiveYearAverage": 26.574249,
         "distancePercentage": 18.723953
       },
-      "betaToBrent": 0.355954,
+      "betaToBrent": 0.35608,
       "seasonality": [
         5.833945,
         4.038873,
@@ -4197,7 +4197,7 @@
       "earningsYield": 13.249258,
       "evToEbitda": 51.943709,
       "meanReversion": null,
-      "betaToBrent": 0.124847,
+      "betaToBrent": 0.1249,
       "seasonality": [
         10.694285,
         7.209115,
@@ -4231,7 +4231,7 @@
         "high": 112.0,
         "current": 102.4
       },
-      "analystTarget": 114.1909,
+      "analystTarget": 114.17883,
       "recommendation": "none",
       "returnsYTD": 14.927052,
       "returns6M": 31.619534,
@@ -4258,7 +4258,7 @@
         "fiveYearAverage": 42.85381,
         "distancePercentage": 138.951917
       },
-      "betaToBrent": 0.118845,
+      "betaToBrent": 0.118912,
       "seasonality": [
         6.774004,
         5.997079,
@@ -4319,7 +4319,7 @@
         "fiveYearAverage": 30.631171,
         "distancePercentage": 119.057898
       },
-      "betaToBrent": 0.167021,
+      "betaToBrent": 0.167046,
       "seasonality": [
         12.185604,
         20.418136,
@@ -4377,7 +4377,7 @@
       "earningsYield": 15.104167,
       "evToEbitda": 52.337182,
       "meanReversion": null,
-      "betaToBrent": 0.12261,
+      "betaToBrent": 0.122707,
       "seasonality": null
     },
     {
@@ -4398,7 +4398,7 @@
         "high": 36.35,
         "current": 29.95
       },
-      "analystTarget": 34.040485,
+      "analystTarget": 34.037106,
       "recommendation": "none",
       "returnsYTD": 29.094827,
       "returns6M": 47.174448,
@@ -4422,7 +4422,7 @@
       "earningsYield": 23.338898,
       "evToEbitda": 33.763377,
       "meanReversion": null,
-      "betaToBrent": 0.18716,
+      "betaToBrent": 0.187217,
       "seasonality": null
     },
     {
@@ -4443,7 +4443,7 @@
         "high": 52.0,
         "current": 47.55
       },
-      "analystTarget": 53.06903,
+      "analystTarget": 53.063763,
       "recommendation": "none",
       "returnsYTD": 6.950068,
       "returns6M": 21.923075,
@@ -4467,7 +4467,7 @@
       "earningsYield": 9.148265,
       "evToEbitda": 85.369696,
       "meanReversion": null,
-      "betaToBrent": 0.058186,
+      "betaToBrent": 0.058267,
       "seasonality": null
     },
     {
@@ -4549,15 +4549,15 @@
       "volatilityPercentile": null,
       "correlationToOSEBX": 0.188818,
       "dividendConsistency": {
-        "yearsWithDividend": 1,
-        "trend": "stable"
+        "yearsWithDividend": 0,
+        "trend": "none"
       },
       "dividendPayoutRatio": 213.157895,
       "liquidityScore": 23741731.813667,
       "earningsYield": 4.434072,
       "evToEbitda": 61.590702,
       "meanReversion": null,
-      "betaToBrent": 0.037597,
+      "betaToBrent": 0.037606,
       "seasonality": null
     },
     {
@@ -4578,7 +4578,7 @@
         "high": 148.0,
         "current": 146.0
       },
-      "analystTarget": 175.48453,
+      "analystTarget": 175.4671,
       "recommendation": "strong_buy",
       "returnsYTD": 22.689076,
       "returns6M": 40.384615,
@@ -4602,7 +4602,7 @@
       "earningsYield": -10.541096,
       "evToEbitda": 51.280573,
       "meanReversion": null,
-      "betaToBrent": 0.070543,
+      "betaToBrent": 0.070619,
       "seasonality": null
     },
     {
@@ -4695,7 +4695,7 @@
         "fiveYearAverage": 138.629484,
         "distancePercentage": 56.532358
       },
-      "betaToBrent": -0.067092,
+      "betaToBrent": -0.067065,
       "seasonality": [
         0.482047,
         3.807119,
@@ -4753,7 +4753,7 @@
       "earningsYield": 8.014337,
       "evToEbitda": null,
       "meanReversion": null,
-      "betaToBrent": -0.10356,
+      "betaToBrent": -0.103601,
       "seasonality": null
     },
     {
@@ -4846,7 +4846,7 @@
         "fiveYearAverage": 333.827143,
         "distancePercentage": 33.032923
       },
-      "betaToBrent": -0.016332,
+      "betaToBrent": -0.016347,
       "seasonality": [
         2.366338,
         5.436211,
@@ -4907,7 +4907,7 @@
         "fiveYearAverage": 355.277064,
         "distancePercentage": 27.50612
       },
-      "betaToBrent": -0.046709,
+      "betaToBrent": -0.046723,
       "seasonality": [
         1.840524,
         2.273387,
@@ -4965,7 +4965,7 @@
       "earningsYield": 8.216117,
       "evToEbitda": null,
       "meanReversion": null,
-      "betaToBrent": -0.063062,
+      "betaToBrent": -0.063022,
       "seasonality": null
     },
     {
@@ -5013,7 +5013,7 @@
         "fiveYearAverage": 10.359845,
         "distancePercentage": 133.111587
       },
-      "betaToBrent": -0.098193,
+      "betaToBrent": -0.098141,
       "seasonality": [
         2.138032,
         4.98288,
@@ -5074,7 +5074,7 @@
         "fiveYearAverage": 115.479127,
         "distancePercentage": 13.613603
       },
-      "betaToBrent": 0.00352,
+      "betaToBrent": 0.003549,
       "seasonality": [
         3.227973,
         0.587234,
@@ -5108,7 +5108,7 @@
         "high": 118.0,
         "current": 103.8
       },
-      "analystTarget": 123.210464,
+      "analystTarget": 123.187035,
       "recommendation": "buy",
       "returnsYTD": 6.79013,
       "returns6M": 20.97902,
@@ -5135,7 +5135,7 @@
         "fiveYearAverage": 59.313056,
         "distancePercentage": 75.003635
       },
-      "betaToBrent": -0.131272,
+      "betaToBrent": -0.131302,
       "seasonality": [
         -4.734325,
         6.295617,
@@ -5196,7 +5196,7 @@
         "fiveYearAverage": 73.751508,
         "distancePercentage": 77.623487
       },
-      "betaToBrent": -0.063121,
+      "betaToBrent": -0.062886,
       "seasonality": [
         2.263261,
         -0.881012,
@@ -5257,7 +5257,7 @@
         "fiveYearAverage": 124.682222,
         "distancePercentage": 53.510252
       },
-      "betaToBrent": -0.085868,
+      "betaToBrent": -0.085896,
       "seasonality": [
         0.332673,
         8.245553,
@@ -5318,7 +5318,7 @@
         "fiveYearAverage": 156.721032,
         "distancePercentage": 14.853762
       },
-      "betaToBrent": -0.082738,
+      "betaToBrent": -0.082818,
       "seasonality": [
         -0.528757,
         4.069745,
@@ -5379,7 +5379,7 @@
         "fiveYearAverage": 159.744445,
         "distancePercentage": 4.667175
       },
-      "betaToBrent": 0.015693,
+      "betaToBrent": 0.015622,
       "seasonality": [
         -2.850997,
         2.022102,
@@ -5440,7 +5440,7 @@
         "fiveYearAverage": 64.459643,
         "distancePercentage": -18.398557
       },
-      "betaToBrent": -0.046412,
+      "betaToBrent": -0.046557,
       "seasonality": [
         -2.024619,
         -5.608837,
@@ -5501,7 +5501,7 @@
         "fiveYearAverage": 52.599417,
         "distancePercentage": 106.466165
       },
-      "betaToBrent": -0.072324,
+      "betaToBrent": -0.072269,
       "seasonality": [
         -3.097217,
         10.135102,
@@ -5559,7 +5559,7 @@
       "earningsYield": 5.13253,
       "evToEbitda": 14.161874,
       "meanReversion": null,
-      "betaToBrent": -0.005921,
+      "betaToBrent": -0.006019,
       "seasonality": [
         1.022152,
         -3.695904,
@@ -5593,7 +5593,7 @@
         "high": 96.5,
         "current": 91.6
       },
-      "analystTarget": 96.464615,
+      "analystTarget": 96.45503,
       "recommendation": "none",
       "returnsYTD": 15.075377,
       "returns6M": 25.824168,
@@ -5620,7 +5620,7 @@
         "fiveYearAverage": 71.03627,
         "distancePercentage": 28.94821
       },
-      "betaToBrent": 0.046533,
+      "betaToBrent": 0.046638,
       "seasonality": [
         7.568515,
         -0.94065,
@@ -5654,7 +5654,7 @@
         "high": 56.0,
         "current": 35.65
       },
-      "analystTarget": 47.513103,
+      "analystTarget": 47.51556,
       "recommendation": "none",
       "returnsYTD": -32.735846,
       "returns6M": -20.424102,
@@ -5678,7 +5678,7 @@
       "earningsYield": 7.180926,
       "evToEbitda": 67.290322,
       "meanReversion": null,
-      "betaToBrent": 0.033284,
+      "betaToBrent": 0.033339,
       "seasonality": [
         -7.846111,
         0.884541,
@@ -5705,14 +5705,14 @@
       "marketCap": 23119206400.0,
       "peRatio": 6.822324,
       "forwardPE": 4.276143,
-      "pbRatio": 1.251022,
+      "pbRatio": 1.254169,
       "dividendYield": null,
       "week52": {
         "low": 39.64,
         "high": 64.15,
         "current": 59.9
       },
-      "analystTarget": 66.52275,
+      "analystTarget": 66.52619,
       "recommendation": "none",
       "returnsYTD": 24.532232,
       "returns6M": 13.446974,
@@ -5739,7 +5739,7 @@
         "fiveYearAverage": 45.741179,
         "distancePercentage": 30.954216
       },
-      "betaToBrent": -0.047617,
+      "betaToBrent": -0.047417,
       "seasonality": [
         3.277079,
         0.240427,
@@ -5800,7 +5800,7 @@
         "fiveYearAverage": 51.652619,
         "distancePercentage": 47.81438
       },
-      "betaToBrent": 0.119398,
+      "betaToBrent": 0.119548,
       "seasonality": [
         2.781554,
         10.611462,
@@ -5834,7 +5834,7 @@
         "high": 140.4,
         "current": 117.0
       },
-      "analystTarget": 123.57672,
+      "analystTarget": 123.56339,
       "recommendation": "none",
       "returnsYTD": -6.549518,
       "returns6M": 3.174602,
@@ -5861,7 +5861,7 @@
         "fiveYearAverage": 93.529603,
         "distancePercentage": 25.094084
       },
-      "betaToBrent": 0.121402,
+      "betaToBrent": 0.121528,
       "seasonality": [
         6.503713,
         -3.407444,
@@ -5895,7 +5895,7 @@
         "high": 144.0,
         "current": 129.2
       },
-      "analystTarget": 122.21719,
+      "analystTarget": 122.20401,
       "recommendation": "hold",
       "returnsYTD": 45.495487,
       "returns6M": 52.179028,
@@ -5919,7 +5919,7 @@
       "earningsYield": 2.778638,
       "evToEbitda": 70.772588,
       "meanReversion": null,
-      "betaToBrent": -0.033383,
+      "betaToBrent": -0.033214,
       "seasonality": [
         4.177816,
         19.186512,
@@ -5980,7 +5980,7 @@
         "fiveYearAverage": 29.236623,
         "distancePercentage": 69.308198
       },
-      "betaToBrent": 0.209342,
+      "betaToBrent": 0.209488,
       "seasonality": [
         5.337066,
         3.829166,
@@ -6014,7 +6014,7 @@
         "high": 358.5,
         "current": 303.5
       },
-      "analystTarget": 317.9651,
+      "analystTarget": 317.9308,
       "recommendation": "hold",
       "returnsYTD": -4.559748,
       "returns6M": -4.709576,
@@ -6041,7 +6041,7 @@
         "fiveYearAverage": 272.00373,
         "distancePercentage": 11.579352
       },
-      "betaToBrent": 0.126363,
+      "betaToBrent": 0.12641,
       "seasonality": [
         7.121325,
         4.591182,
@@ -6102,7 +6102,7 @@
         "fiveYearAverage": 21.197627,
         "distancePercentage": 106.626899
       },
-      "betaToBrent": -0.065533,
+      "betaToBrent": -0.065573,
       "seasonality": [
         2.527932,
         1.42312,
@@ -6163,7 +6163,7 @@
         "fiveYearAverage": 12.174297,
         "distancePercentage": 14.626737
       },
-      "betaToBrent": -0.224415,
+      "betaToBrent": -0.224404,
       "seasonality": [
         10.681907,
         10.597738,
@@ -6221,7 +6221,7 @@
       "earningsYield": null,
       "evToEbitda": null,
       "meanReversion": null,
-      "betaToBrent": 0.013784,
+      "betaToBrent": 0.013991,
       "seasonality": null
     },
     {
@@ -6269,7 +6269,7 @@
         "fiveYearAverage": 242.020556,
         "distancePercentage": -14.883263
       },
-      "betaToBrent": -0.090164,
+      "betaToBrent": -0.090305,
       "seasonality": [
         2.067503,
         0.324865,
@@ -6330,7 +6330,7 @@
         "fiveYearAverage": 20.373825,
         "distancePercentage": 18.190862
       },
-      "betaToBrent": -0.082159,
+      "betaToBrent": -0.082323,
       "seasonality": [
         -1.725475,
         -1.754946,
@@ -6388,7 +6388,7 @@
       "earningsYield": null,
       "evToEbitda": null,
       "meanReversion": null,
-      "betaToBrent": -0.147629,
+      "betaToBrent": -0.147625,
       "seasonality": [
         2.655308,
         15.79242,
@@ -6449,7 +6449,7 @@
         "fiveYearAverage": 19.173333,
         "distancePercentage": 73.157167
       },
-      "betaToBrent": -0.24846,
+      "betaToBrent": -0.248372,
       "seasonality": [
         0.339645,
         -2.566084,
@@ -6510,7 +6510,7 @@
         "fiveYearAverage": 78.47377,
         "distancePercentage": 191.562395
       },
-      "betaToBrent": -0.130767,
+      "betaToBrent": -0.130733,
       "seasonality": [
         3.804361,
         8.7638,
@@ -6568,7 +6568,7 @@
       "earningsYield": null,
       "evToEbitda": null,
       "meanReversion": null,
-      "betaToBrent": -0.034782,
+      "betaToBrent": -0.034781,
       "seasonality": null
     },
     {
@@ -6613,7 +6613,7 @@
       "earningsYield": null,
       "evToEbitda": null,
       "meanReversion": null,
-      "betaToBrent": 0.002593,
+      "betaToBrent": 0.002199,
       "seasonality": null
     },
     {
@@ -6661,7 +6661,7 @@
         "fiveYearAverage": 27.595413,
         "distancePercentage": 4.292699
       },
-      "betaToBrent": -0.095784,
+      "betaToBrent": -0.095822,
       "seasonality": [
         6.516173,
         3.842112,
@@ -6722,7 +6722,7 @@
         "fiveYearAverage": 182.319524,
         "distancePercentage": -4.45346
       },
-      "betaToBrent": -0.044095,
+      "betaToBrent": -0.044112,
       "seasonality": [
         1.579843,
         -1.222787,
@@ -6783,7 +6783,7 @@
         "fiveYearAverage": 36.072143,
         "distancePercentage": -60.412666
       },
-      "betaToBrent": -0.018813,
+      "betaToBrent": -0.018955,
       "seasonality": [
         -1.985859,
         -3.972061,
@@ -6841,7 +6841,7 @@
       "earningsYield": 7.470998,
       "evToEbitda": null,
       "meanReversion": null,
-      "betaToBrent": -0.061708,
+      "betaToBrent": -0.061754,
       "seasonality": null
     },
     {
@@ -6889,7 +6889,7 @@
         "fiveYearAverage": 38.778492,
         "distancePercentage": -10.259535
       },
-      "betaToBrent": -0.001435,
+      "betaToBrent": -0.001371,
       "seasonality": [
         -1.849187,
         1.533254,
@@ -6950,7 +6950,7 @@
         "fiveYearAverage": 12.946099,
         "distancePercentage": 0.107374
       },
-      "betaToBrent": 0.026449,
+      "betaToBrent": 0.026445,
       "seasonality": [
         -6.806075,
         -2.167437,
@@ -7011,7 +7011,7 @@
         "fiveYearAverage": 217.735274,
         "distancePercentage": -14.115891
       },
-      "betaToBrent": -0.033703,
+      "betaToBrent": -0.034017,
       "seasonality": [
         -0.049885,
         -0.604182,
@@ -7045,7 +7045,7 @@
         "high": 96.0,
         "current": 55.9
       },
-      "analystTarget": 78.35154,
+      "analystTarget": 78.34934,
       "recommendation": "strong_buy",
       "returnsYTD": -12.382442,
       "returns6M": -20.142855,
@@ -7072,7 +7072,7 @@
         "fiveYearAverage": 44.584778,
         "distancePercentage": 25.379119
       },
-      "betaToBrent": -0.036152,
+      "betaToBrent": -0.036131,
       "seasonality": [
         3.145194,
         1.223051,
@@ -7133,7 +7133,7 @@
         "fiveYearAverage": 272.295397,
         "distancePercentage": -3.413718
       },
-      "betaToBrent": -0.042506,
+      "betaToBrent": -0.04265,
       "seasonality": [
         -0.908683,
         -5.251662,
@@ -7194,7 +7194,7 @@
         "fiveYearAverage": 36.704405,
         "distancePercentage": -26.166899
       },
-      "betaToBrent": -0.049748,
+      "betaToBrent": -0.049332,
       "seasonality": [
         2.065829,
         1.478224,
@@ -7252,7 +7252,7 @@
       "earningsYield": 0.177165,
       "evToEbitda": null,
       "meanReversion": null,
-      "betaToBrent": -0.026213,
+      "betaToBrent": -0.026156,
       "seasonality": null
     },
     {
@@ -7273,32 +7273,48 @@
         "high": 541.0,
         "current": 468.5
       },
-      "analystTarget": 458.47537,
+      "analystTarget": 458.39944,
       "recommendation": "buy",
-      "returnsYTD": null,
-      "returns6M": null,
-      "returns1Y": null,
+      "returnsYTD": 44.375963,
+      "returns6M": 55.647841,
+      "returns1Y": 122.565321,
       "alpha": {
-        "threeMonth": null,
-        "sixMonth": null,
-        "oneYear": null
+        "threeMonth": 3.15384,
+        "sixMonth": 32.530214,
+        "oneYear": 74.533996
       },
-      "sharpeRatio": null,
-      "momentumScore": null,
-      "maxDrawdown": null,
-      "volatilityPercentile": null,
-      "correlationToOSEBX": null,
+      "sharpeRatio": 3.518005,
+      "momentumScore": 74.3,
+      "maxDrawdown": -17.324841,
+      "volatilityPercentile": 75,
+      "correlationToOSEBX": 0.310534,
       "dividendConsistency": {
         "yearsWithDividend": 5,
         "trend": "growing"
       },
       "dividendPayoutRatio": 167.172143,
-      "liquidityScore": null,
+      "liquidityScore": 50605246.133333,
       "earningsYield": 7.600854,
       "evToEbitda": 443.985358,
-      "meanReversion": null,
-      "betaToBrent": null,
-      "seasonality": null
+      "meanReversion": {
+        "fiveYearAverage": 227.748175,
+        "distancePercentage": 105.709662
+      },
+      "betaToBrent": 0.096852,
+      "seasonality": [
+        11.506622,
+        16.936649,
+        -1.141364,
+        3.91285,
+        4.363114,
+        -3.417971,
+        4.853559,
+        4.032806,
+        8.11259,
+        7.295265,
+        -6.942117,
+        -5.096054
+      ]
     }
   ],
   "sectorSummary": [
@@ -7366,11 +7382,11 @@
       "sector": "Industrials",
       "companyCount": 33,
       "totalWeight": 10.75,
-      "avgReturnYTD": 20.29,
+      "avgReturnYTD": 21.12,
       "avgPE": 40.85,
       "avgEvToEbitda": 192.88,
       "avgDividendYield": 5.79,
-      "avgSharpe": 1.71
+      "avgSharpe": 1.78
     },
     {
       "sector": "Information Technology",
