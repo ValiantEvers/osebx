@@ -1,0 +1,182 @@
+{
+  "as_of": "2026-04-16T19:01:27+00:00",
+  "data_coverage": 0.78,
+  "thin_data": false,
+  "regime": "rotation",
+  "breadth": 0.64,
+  "benchmarks": {
+    "OSEBX": 18.885654,
+    "OBX": 22.320185,
+    "OSEFX": null
+  },
+  "benchmark_spreads": {
+    "OBX_minus_OSEBX": 3.43,
+    "OSEFX_minus_OSEBX": null
+  },
+  "sector_leaders": [
+    {
+      "sector": "Energy",
+      "avg_return_ytd": 29.75,
+      "avg_sharpe": 2.24,
+      "weight": 19.4
+    },
+    {
+      "sector": "Industrials",
+      "avg_return_ytd": 21.12,
+      "avg_sharpe": 1.78,
+      "weight": 10.75
+    }
+  ],
+  "sector_laggards": [
+    {
+      "sector": "Health Care",
+      "avg_return_ytd": -6.01,
+      "avg_sharpe": 1.13,
+      "weight": 0.2
+    },
+    {
+      "sector": "Real Estate",
+      "avg_return_ytd": -5.25,
+      "avg_sharpe": 0.12,
+      "weight": 1.0
+    }
+  ],
+  "drivers": [
+    {
+      "ticker": "$OKEA",
+      "company_name": "OKEA",
+      "sector": "Energy",
+      "rationale_tag": "quality_leader",
+      "metrics": {
+        "sharpeRatio": 4.09,
+        "returnsYTD": 73.1,
+        "momentumScore": 98.0,
+        "alphaSixMonth": 96.9
+      }
+    },
+    {
+      "ticker": "$HSHP",
+      "company_name": "HIMALAYA SHIPPING LTD",
+      "sector": "Industrials",
+      "rationale_tag": "quality_leader",
+      "metrics": {
+        "sharpeRatio": 4.62,
+        "returnsYTD": 45.5,
+        "momentumScore": 85.0,
+        "alphaSixMonth": 29.1
+      }
+    },
+    {
+      "ticker": "$SUBC",
+      "company_name": "SUBSEA 7",
+      "sector": "Energy",
+      "rationale_tag": "quality_leader",
+      "metrics": {
+        "sharpeRatio": 4.56,
+        "returnsYTD": 45.7,
+        "momentumScore": 74.0,
+        "alphaSixMonth": 27.2
+      }
+    },
+    {
+      "ticker": "$SMOP",
+      "company_name": "Smartoptics",
+      "sector": "Information Technology",
+      "rationale_tag": "quality_leader",
+      "metrics": {
+        "sharpeRatio": 3.51,
+        "returnsYTD": 67.5,
+        "momentumScore": 100.0,
+        "alphaSixMonth": 106.6
+      }
+    }
+  ],
+  "risks": [
+    {
+      "ticker": "$KIT",
+      "company_name": "KITRON",
+      "sector": "Information Technology",
+      "rationale_tag": "overextended",
+      "metrics": {
+        "meanReversionPct": 173.9,
+        "volatilityPercentile": 90,
+        "momentumScore": 77.0,
+        "sharpeRatio": 3.17,
+        "maxDrawdown": -24.0
+      }
+    },
+    {
+      "ticker": "$KOG",
+      "company_name": "KONGSBERG GRUPPEN",
+      "sector": "Industrials",
+      "rationale_tag": "overextended",
+      "metrics": {
+        "meanReversionPct": 141.3,
+        "volatilityPercentile": 81,
+        "momentumScore": 53.0,
+        "sharpeRatio": 0.75,
+        "maxDrawdown": -41.9
+      }
+    },
+    {
+      "ticker": "$SUBC",
+      "company_name": "SUBSEA 7",
+      "sector": "Energy",
+      "rationale_tag": "overextended",
+      "metrics": {
+        "meanReversionPct": 114.2,
+        "volatilityPercentile": 80,
+        "momentumScore": 74.0,
+        "sharpeRatio": 4.56,
+        "maxDrawdown": -14.3
+      }
+    },
+    {
+      "ticker": "$BWE",
+      "company_name": "BW ENERGY LIMITED",
+      "sector": "Energy",
+      "rationale_tag": "overextended",
+      "metrics": {
+        "meanReversionPct": 89.3,
+        "volatilityPercentile": 83,
+        "momentumScore": 67.0,
+        "sharpeRatio": 2.86,
+        "maxDrawdown": -29.4
+      }
+    }
+  ],
+  "opportunities": [],
+  "watchlist": [
+    {
+      "ticker": "$MPCC",
+      "company_name": "MPC CONTAINER SHIPS",
+      "sector": "Industrials",
+      "missed_on": "mean_reversion",
+      "metrics": {
+        "earningsYield": 22.0,
+        "meanReversionPct": 16.0,
+        "sharpeRatio": 1.72,
+        "returnsYTD": 31.9
+      }
+    },
+    {
+      "ticker": "$SNI",
+      "company_name": "STOLT-NIELSEN",
+      "sector": "Industrials",
+      "missed_on": "mean_reversion",
+      "metrics": {
+        "earningsYield": 14.4,
+        "meanReversionPct": 11.6,
+        "sharpeRatio": 1.5,
+        "returnsYTD": -4.6
+      }
+    }
+  ],
+  "thresholds_used": {
+    "sharpe_floor_p66": 1.94,
+    "overextension_mr_p75": 56.5,
+    "gem_ey_p75": 8.68,
+    "gem_mr_p25": 2.04,
+    "gem_sharpe_p50": 1.24
+  }
+}
