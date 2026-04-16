@@ -1,0 +1,76 @@
+{
+  "as_of": "2026-04-16T19:40:59+00:00",
+  "regime": "rotation",
+  "headline": "Energy and Industrials lead as rotation compresses breadth gains",
+  "market_take": "OBX outpaces OSEBX by 3.43 points, reflecting large-cap concentration in the Energy and Industrials clusters that are driving the rotation regime. Breadth sits at 0.64, outside the 50%±20% neutral band on the upside, indicating that participation is wider than the leadership names alone suggest. Stretched mean-reversion readings across multiple names signal that recent gains are clustered in an increasingly extended subset of the index.",
+  "drivers": [
+    {
+      "ticker": "$OKEA",
+      "claim": "Top-decile momentum and alpha confirm $OKEA as clear Energy leadership.",
+      "evidence": "momentumScore 98.0"
+    },
+    {
+      "ticker": "$HSHP",
+      "claim": "$HSHP carries the highest risk-adjusted return among all drivers.",
+      "evidence": "sharpeRatio 4.62"
+    },
+    {
+      "ticker": "$SUBC",
+      "claim": "$SUBC posts strong YTD returns with quality-leader Sharpe across Energy.",
+      "evidence": "returnsYTD 45.7"
+    },
+    {
+      "ticker": "$SMOP",
+      "claim": "$SMOP shows maximum momentum with six-month alpha stretched well above peers.",
+      "evidence": "alphaSixMonth 106.6"
+    }
+  ],
+  "risks": [
+    {
+      "ticker": "$KIT",
+      "claim": "$KIT is overextended at near-double its mean-reversion threshold.",
+      "evidence": "meanReversionPct 173.9"
+    },
+    {
+      "ticker": "$KOG",
+      "claim": "$KOG carries the deepest drawdown risk among overextended names.",
+      "evidence": "maxDrawdown -41.9"
+    },
+    {
+      "ticker": "$SUBC",
+      "claim": "$SUBC sits in both driver and risk buckets; extension warrants close monitoring.",
+      "evidence": "meanReversionPct 114.2"
+    },
+    {
+      "ticker": "$BWE",
+      "claim": "$BWE volatility percentile flags crowded positioning at elevated levels.",
+      "evidence": "volatilityPercentile 83"
+    }
+  ],
+  "opportunities": [],
+  "watchlist": [
+    {
+      "ticker": "$MPCC",
+      "claim": "Near-buy for $MPCC held back by mean_reversion gate not yet cleared.",
+      "missed_on": "mean_reversion"
+    },
+    {
+      "ticker": "$SNI",
+      "claim": "$SNI near-buy candidate blocked by mean_reversion threshold remaining elevated.",
+      "missed_on": "mean_reversion"
+    }
+  ],
+  "breadth": 0.64,
+  "benchmarks": {
+    "OSEBX": 18.885654,
+    "OBX": 22.320185,
+    "OSEFX": null
+  },
+  "thresholds_used": {
+    "sharpe_floor_p66": 1.94,
+    "overextension_mr_p75": 56.5,
+    "gem_ey_p75": 8.68,
+    "gem_mr_p25": 2.04,
+    "gem_sharpe_p50": 1.24
+  }
+}
