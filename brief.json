@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-04-16T19:40:59+00:00",
+  "as_of": "2026-04-16T20:27:14+00:00",
   "data_coverage": 0.78,
   "thin_data": false,
   "regime": "rotation",
@@ -172,6 +172,11 @@
       }
     }
   ],
+  "graduation": {
+    "graduated": [],
+    "fell_to_risk": [],
+    "resolved": []
+  },
   "thresholds_used": {
     "sharpe_floor_p66": 1.94,
     "overextension_mr_p75": 56.5,

@@ -1,49 +1,49 @@
 {
-  "as_of": "2026-04-16T19:40:59+00:00",
+  "as_of": "2026-04-16T20:27:14+00:00",
   "regime": "rotation",
-  "headline": "Energy and Industrials lead as rotation compresses breadth gains",
-  "market_take": "OBX outpaces OSEBX by 3.43 points, reflecting large-cap concentration in the Energy and Industrials clusters that are driving the rotation regime. Breadth sits at 0.64, outside the 50%±20% neutral band on the upside, indicating that participation is wider than the leadership names alone suggest. Stretched mean-reversion readings across multiple names signal that recent gains are clustered in an increasingly extended subset of the index.",
+  "headline": "OBX leads by 343bp as Energy and Industrials dominate",
+  "market_take": "OBX outperforms OSEBX by 343bp, with large-cap concentration driving the spread in a rotation regime. Breadth sits at 64%, above the 70% threshold, indicating moderately broad participation rather than narrow leadership. Capital has rotated into Energy and Industrials while Health Care and Real Estate lag with negative year-to-date returns.",
   "drivers": [
     {
       "ticker": "$OKEA",
-      "claim": "Top-decile momentum and alpha confirm $OKEA as clear Energy leadership.",
+      "claim": "Top-ranked Energy name; momentum and alpha both near-perfect scores.",
       "evidence": "momentumScore 98.0"
     },
     {
       "ticker": "$HSHP",
-      "claim": "$HSHP carries the highest risk-adjusted return among all drivers.",
+      "claim": "Himalaya Shipping leads Industrials with the highest risk-adjusted return.",
       "evidence": "sharpeRatio 4.62"
     },
     {
       "ticker": "$SUBC",
-      "claim": "$SUBC posts strong YTD returns with quality-leader Sharpe across Energy.",
-      "evidence": "returnsYTD 45.7"
+      "claim": "Subsea 7 sits in leadership despite appearing simultaneously in risks.",
+      "evidence": "sharpeRatio 4.56"
     },
     {
       "ticker": "$SMOP",
-      "claim": "$SMOP shows maximum momentum with six-month alpha stretched well above peers.",
+      "claim": "Smartoptics carries the highest alpha in the brief; momentum is perfect.",
       "evidence": "alphaSixMonth 106.6"
     }
   ],
   "risks": [
     {
       "ticker": "$KIT",
-      "claim": "$KIT is overextended at near-double its mean-reversion threshold.",
+      "claim": "Kitron is stretched; mean reversion gap of 174% at 90th-percentile volatility.",
       "evidence": "meanReversionPct 173.9"
     },
     {
       "ticker": "$KOG",
-      "claim": "$KOG carries the deepest drawdown risk among overextended names.",
-      "evidence": "maxDrawdown -41.9"
+      "claim": "Kongsberg extended 141% above reversion with compressed momentum.",
+      "evidence": "meanReversionPct 141.3"
     },
     {
       "ticker": "$SUBC",
-      "claim": "$SUBC sits in both driver and risk buckets; extension warrants close monitoring.",
+      "claim": "Subsea 7's 114% overextension flag crowds its quality leadership story.",
       "evidence": "meanReversionPct 114.2"
     },
     {
       "ticker": "$BWE",
-      "claim": "$BWE volatility percentile flags crowded positioning at elevated levels.",
+      "claim": "BW Energy stretched 89% above reversion at 83rd-percentile volatility.",
       "evidence": "volatilityPercentile 83"
     }
   ],
@@ -51,15 +51,20 @@
   "watchlist": [
     {
       "ticker": "$MPCC",
-      "claim": "Near-buy for $MPCC held back by mean_reversion gate not yet cleared.",
+      "claim": "Near-buy held back by mean reversion gate; earnings yield remains attractive.",
       "missed_on": "mean_reversion"
     },
     {
       "ticker": "$SNI",
-      "claim": "$SNI near-buy candidate blocked by mean_reversion threshold remaining elevated.",
+      "claim": "Stolt-Nielsen near-buy blocked by mean reversion; return is negative YTD.",
       "missed_on": "mean_reversion"
     }
   ],
+  "graduation": {
+    "graduated": [],
+    "fell_to_risk": [],
+    "resolved": []
+  },
   "breadth": 0.64,
   "benchmarks": {
     "OSEBX": 18.885654,
