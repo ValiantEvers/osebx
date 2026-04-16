@@ -70,6 +70,7 @@ class Insights(BaseModel):
     risks: list[NarratedItem]
     opportunities: list[NarratedItem]
     watchlist: list[WatchlistNarration]
+    graduation: dict = Field(default_factory=dict)  # transitions from prior week
 
     # Pass-through fields — frontend renders these directly
     breadth: float
@@ -115,6 +116,11 @@ HARD RULES
    (e.g., "near-buy held back by extended valuation").
 7. If the brief has thin_data: true, add "data coverage thin this week"
    to market_take.
+8. If the brief's `graduation` field contains any tickers in `graduated`,
+   `fell_to_risk`, or `resolved`, append a one-sentence note to
+   market_take describing the transition. Example:
+   "Last week's watchlist resolved: $MPCC graduated to opportunities."
+   If all graduation arrays are empty, ignore this rule.
 
 OUTPUT
 Return ONLY valid JSON matching the schema below. No preamble. No
@@ -129,6 +135,7 @@ markdown fences. No explanation.
   "risks":   [ { "ticker": "...", "claim": "...", "evidence": "..." }, ... ],
   "opportunities": [ { "ticker": "...", "claim": "...", "evidence": "..." }, ... ],
   "watchlist": [ { "ticker": "...", "claim": "...", "missed_on": "..." }, ... ],
+  "graduation": <copy from brief>,
   "breadth": <copy from brief>,
   "benchmarks": <copy from brief>,
   "thresholds_used": <copy from brief>
