@@ -361,8 +361,8 @@
       if (!data) return;
 
       let visible = true;
-      if (currentMarket === 'osebx') visible = data.inOSEBX === true;
-      else if (currentMarket === 'ask') visible = data.askEligible === true;
+      if (currentMarket === 'osebx') visible = data.inOSEBX !== false; // default true if field missing
+      else if (currentMarket === 'ask') visible = data.askEligible !== false; // default true if field missing
 
       card.style.display = visible ? '' : 'none';
     });
@@ -426,25 +426,37 @@
       const data = window.__heatmapData[ticker];
       if (!data) return;
 
-      // Add ASK badge
-      if (!data.askEligible) {
+      // Add ASK badge — only if the fields actually exist in data.json
+      if (data.askEligible === false) {
         const badge = document.createElement('span');
         badge.className = 'ask-badge not-ask';
         badge.textContent = 'Not ASK';
+        badge.title = 'Not eligible for Aksjesparekonto — company is domiciled outside the EEA';
         meta.appendChild(badge);
-      } else if (!data.inOSEBX) {
+      } else if (data.inOSEBX === false && data.askEligible === true) {
         const badge = document.createElement('span');
         badge.className = 'ask-badge';
         badge.textContent = 'ASK';
+        badge.title = 'Eligible for Aksjesparekonto at Nordnet';
         meta.appendChild(badge);
       }
 
       // Add rec source tooltip next to existing rec badge
       const recBadge = meta.querySelector('.rec-badge');
       if (recBadge && !meta.querySelector('.rec-source-icon')) {
+        const recKey = (data.recommendation || '').toLowerCase().replace(/\s+/g, '_');
+        const recExplain = {
+          'strong_buy': '<strong>Strong Buy</strong> — Analysts expect the stock to significantly outperform the market. High conviction that the price will rise.',
+          'buy':        '<strong>Buy</strong> — Analysts expect the stock to outperform. A majority of covering brokers recommend purchasing.',
+          'hold':       '<strong>Hold</strong> — Analysts see the stock as fairly valued at current levels. Neither a clear buy nor sell.',
+          'underperform':'<strong>Underperform</strong> — Analysts expect the stock to lag the market. Some brokers recommend reducing exposure.',
+          'sell':       '<strong>Sell</strong> — Analysts expect the price to decline. Strong consensus to exit the position.',
+        };
+        const explanation = recExplain[recKey] || '<strong>' + recBadge.textContent.trim() + '</strong>';
+
         const icon = document.createElement('span');
         icon.className = 'rec-source-icon';
-        icon.innerHTML = `?<span class="rec-tip"><strong>Analyst consensus</strong> from Yahoo Finance. Aggregated from broker research by S&P Capital IQ. Ratings: Strong Buy, Buy, Hold, Underperform, Sell.</span>`;
+        icon.innerHTML = `?<span class="rec-tip">${explanation}<br><br><span style="color:var(--text-muted);font-size:0.6rem">Source: Yahoo Finance consensus, aggregated from broker research by S&P Capital IQ.</span></span>`;
         recBadge.insertAdjacentElement('afterend', icon);
       }
     };
