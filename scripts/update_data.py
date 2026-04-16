@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """
-OSEBX Company Heatmap — Data Pipeline
-======================================
-Fetches fundamental and historical data for all OSEBX constituents via yahooquery,
-computes analytical metrics (alpha, Sharpe, momentum, drawdown, etc.), validates
-through Pydantic, and writes data.json for the frontend dashboard.
+Oslo Børs Heatmap — Data Pipeline
+==================================
+Fetches fundamental and historical data for all Oslo Børs & Euronext Expand
+stocks (ASK-eligible and non-eligible) via yahooquery, computes analytical
+metrics (alpha, Sharpe, momentum, drawdown, etc.), validates through Pydantic,
+and writes data.json for the frontend dashboard.
 
 Intended to run weekly via GitHub Actions (see .github/workflows/update-data.yml).
 
 IMPORTANT: The constituent list below is manually maintained and should be updated
-when the OSEBX index rebalances (typically in June and December each year).
+when the OSEBX index rebalances (typically in June and December each year), or
+when new stocks list / delist on Oslo Børs or Euronext Expand.
 Last updated: April 2026.
 """
 
@@ -80,102 +82,200 @@ def norm_sector(s: str) -> str:
     return SECTOR_NORM.get(s, s)
 
 # ---------------------------------------------------------------------------
-# OSEBX Constituent List (source of truth)
+# Full Oslo Børs + Euronext Expand Stock List
 # ---------------------------------------------------------------------------
-# Each entry: (Yahoo ticker, short display name, GICS sector, approx OSEBX weight %)
-# Weights are approximate and manually maintained. They will not sum to exactly 100%.
+# Each entry: (Yahoo ticker, display name, GICS sector, OSEBX weight %, in_osebx, ask_eligible)
+#
+# in_osebx   = True if the stock is a current OSEBX constituent
+# ask_eligible = True if eligible for Nordnet Aksjesparekonto (ASK)
+#   ASK rules: must be on a regulated EU/EEA market (Oslo Børs main list or
+#   Euronext Expand) AND domiciled within the EEA. Euronext Growth is excluded.
+#   Companies registered in Bermuda, Cayman Islands, Marshall Islands,
+#   Singapore, etc. are NOT ASK-eligible even if listed on Oslo Børs.
+#
+# Weights are approximate and manually maintained. Non-OSEBX stocks have weight 0.
+# Last updated: April 2026.
 
 CONSTITUENTS = [
-    # Energy
-    ("EQNR.OL",  "Equinor",               "Energy",                  9.50),
-    ("AKRBP.OL", "Aker BP",               "Energy",                  3.20),
-    ("VAR.OL",   "Var Energi",            "Energy",                  1.60),
-    ("SUBC.OL",  "Subsea 7",              "Energy",                  1.50),
-    ("AKSO.OL",  "Aker Solutions",         "Energy",                  0.70),
-    ("BWE.OL",   "BW Energy",             "Energy",                  0.10),
-    ("BWLPG.OL", "BW LPG",               "Industrials",             0.35),
-    ("TGS.OL",   "TGS",                   "Energy",                  0.50),
-    ("BORR.OL",  "Borr Drilling",         "Energy",                  0.25),
-    ("HAUTO.OL", "Hoegh Autoliners",      "Industrials",             0.60),
+    # =========================================================================
+    # OSEBX CONSTITUENTS (~69 stocks)
+    # =========================================================================
 
-    # Financials
-    ("DNB.OL",   "DNB Bank",              "Financials",              8.50),
-    ("MORG.OL",  "SpareBank 1 SMN",       "Financials",              0.55),
-    ("SRBNK.OL", "SpareBank 1 SR-Bank",   "Financials",              0.70),
-    ("NOFI.OL",  "SpareBank 1 Ostlandet", "Financials",              0.30),
-    ("HELG.OL",  "SpareBank 1 Helgeland", "Financials",              0.10),
-    ("NONG.OL",  "SpareBank 1 Nord-Norge","Financials",              0.25),
-    ("SBANK.OL", "Sbanken (DNB subsidiary)", "Financials",           0.05),
-    ("GJF.OL",   "Gjensidige Forsikring", "Financials",              1.50),
-    ("STB.OL",   "Storebrand",            "Financials",              1.40),
-    ("PROTCT.OL","Protector Forsikring",   "Financials",             0.25),
-    ("PARB.OL",  "Pareto Bank",           "Financials",              0.10),
-    ("ABG.OL",   "ABG Sundal Collier",    "Financials",              0.10),
-    ("ADE.OL",   "Adevinta",              "Financials",              0.60),
+    # --- Energy ---
+    ("EQNR.OL",   "Equinor",               "Energy",                  9.50, True,  True),
+    ("AKRBP.OL",  "Aker BP",               "Energy",                  3.20, True,  True),
+    ("VAR.OL",    "Var Energi",             "Energy",                  1.60, True,  True),
+    ("SUBC.OL",   "Subsea 7",              "Energy",                  1.50, True,  True),   # Luxembourg (EEA)
+    ("AKSO.OL",   "Aker Solutions",         "Energy",                  0.70, True,  True),
+    ("BWE.OL",    "BW Energy",              "Energy",                  0.10, True,  False),  # Bermuda
+    ("BWLPG.OL",  "BW LPG",                "Industrials",             0.35, True,  False),  # Bermuda/Singapore
+    ("TGS.OL",    "TGS",                    "Energy",                  0.50, True,  True),
+    ("BORR.OL",   "Borr Drilling",          "Energy",                  0.25, True,  False),  # Bermuda
+    ("HAUTO.OL",  "Hoegh Autoliners",       "Industrials",             0.60, True,  True),
+    ("FRO.OL",    "Frontline",              "Energy",                  1.20, True,  False),  # Cyprus/Bermuda
+    ("GOGL.OL",   "Golden Ocean Group",     "Energy",                  0.50, True,  False),  # Bermuda
+    ("PGS.OL",    "PGS",                    "Energy",                  0.20, True,  True),
 
-    # Consumer Staples
-    ("MOWI.OL",  "Mowi",                  "Consumer Staples",        3.00),
-    ("SALM.OL",  "SalMar",                "Consumer Staples",        1.60),
-    ("LSG.OL",   "Leroy Seafood",         "Consumer Staples",        0.70),
-    ("AUSS.OL",  "Austevoll Seafood",     "Consumer Staples",        0.35),
-    ("BAKKA.OL", "Bakkafrost",            "Consumer Staples",        0.60),
-    ("ORK.OL",   "Orkla",                 "Consumer Staples",        2.10),
-    ("GSF.OL",   "Grieg Seafood",         "Consumer Staples",        0.20),
-    ("SCHB.OL",  "Schibsted A",           "Consumer Discretionary",  1.40),
-    ("EPR.OL",   "Europris",              "Consumer Staples",        0.30),
+    # --- Financials ---
+    ("DNB.OL",    "DNB Bank",               "Financials",              8.50, True,  True),
+    ("MORG.OL",   "SpareBank 1 SMN",        "Financials",              0.55, True,  True),
+    ("SRBNK.OL",  "SpareBank 1 SR-Bank",    "Financials",              0.70, True,  True),
+    ("NOFI.OL",   "SpareBank 1 Ostlandet",  "Financials",              0.30, True,  True),
+    ("HELG.OL",   "SpareBank 1 Helgeland",  "Financials",              0.10, True,  True),
+    ("NONG.OL",   "SpareBank 1 Nord-Norge", "Financials",              0.25, True,  True),
+    ("SBANK.OL",  "Sbanken (DNB subsidiary)", "Financials",            0.05, True,  True),
+    ("GJF.OL",    "Gjensidige Forsikring",  "Financials",              1.50, True,  True),
+    ("STB.OL",    "Storebrand",             "Financials",              1.40, True,  True),
+    ("PROTCT.OL", "Protector Forsikring",   "Financials",              0.25, True,  True),
+    ("PARB.OL",   "Pareto Bank",            "Financials",              0.10, True,  True),
+    ("ABG.OL",    "ABG Sundal Collier",     "Financials",              0.10, True,  True),
+    ("ADE.OL",    "Adevinta",               "Financials",              0.60, True,  True),
 
-    # Industrials
-    ("KOG.OL",   "Kongsberg Gruppen",     "Industrials",             4.50),
-    ("WILS.OL",  "Wilh. Wilhelmsen Hldg", "Industrials",             0.50),
-    ("WWI.OL",   "Wallenius Wilhelmsen",  "Industrials",             1.20),
-    ("FLNG.OL",  "Flex LNG",             "Industrials",              0.25),
-    ("COOL.OL",  "CoolCo",               "Industrials",              0.15),
-    ("TOM.OL",   "Tomra Systems",         "Industrials",             1.40),
-    ("MPCC.OL",  "MPC Container Ships",   "Industrials",             0.20),
-    ("BELCO.OL", "Bonheur",              "Industrials",              0.20),
-    ("NEL.OL",   "Industrials",           "Industrials",             0.40),
+    # --- Consumer Staples ---
+    ("MOWI.OL",   "Mowi",                   "Consumer Staples",        3.00, True,  True),
+    ("SALM.OL",   "SalMar",                 "Consumer Staples",        1.60, True,  True),
+    ("LSG.OL",    "Leroy Seafood",          "Consumer Staples",        0.70, True,  True),
+    ("AUSS.OL",   "Austevoll Seafood",      "Consumer Staples",        0.35, True,  True),
+    ("BAKKA.OL",  "Bakkafrost",             "Consumer Staples",        0.60, True,  True),   # Faroe Islands (Danish realm, EEA-ish via Denmark)
+    ("ORK.OL",    "Orkla",                  "Consumer Staples",        2.10, True,  True),
+    ("GSF.OL",    "Grieg Seafood",          "Consumer Staples",        0.20, True,  True),
+    ("SCHB.OL",   "Schibsted A",            "Consumer Discretionary",  1.40, True,  True),
+    ("EPR.OL",    "Europris",               "Consumer Staples",        0.30, True,  True),
 
-    # Information Technology
-    ("AUTO.OL",  "Autostore Holdings",    "Information Technology",   0.80),
-    ("KIT.OL",   "Kitron",               "Information Technology",   0.25),
-    ("CRAYN.OL", "Crayon Group",         "Information Technology",   0.60),
-    ("NOD.OL",   "Nordic Semiconductor", "Information Technology",   1.20),
-    ("OPER.OL",  "Opera Ltd",            "Information Technology",   0.25),
-    ("VOLUE.OL", "Volue",                "Information Technology",   0.15),
-    ("PEXIP.OL", "Pexip Holding",        "Information Technology",   0.15),
-    ("B2H.OL",   "B2Holding",            "Information Technology",   0.10),
-    ("RECSI.OL", "REC Silicon",          "Information Technology",   0.15),
-    ("KAHOT.OL", "Kahoot!",              "Information Technology",   0.25),
+    # --- Industrials ---
+    ("KOG.OL",    "Kongsberg Gruppen",      "Industrials",             4.50, True,  True),
+    ("WILS.OL",   "Wilh. Wilhelmsen Hldg",  "Industrials",             0.50, True,  True),
+    ("WWI.OL",    "Wallenius Wilhelmsen",   "Industrials",             1.20, True,  True),
+    ("FLNG.OL",   "Flex LNG",              "Industrials",              0.25, True,  False),  # Bermuda
+    ("COOL.OL",   "CoolCo",                "Industrials",              0.15, True,  False),  # Bermuda
+    ("TOM.OL",    "Tomra Systems",          "Industrials",             1.40, True,  True),
+    ("MPCC.OL",   "MPC Container Ships",    "Industrials",             0.20, True,  True),
+    ("BELCO.OL",  "Bonheur",               "Industrials",              0.20, True,  True),
+    ("NEL.OL",    "Nel",                    "Industrials",              0.40, True,  True),
+    ("AKER.OL",   "Aker",                   "Industrials",             1.00, True,  True),
+    ("AKAST.OL",  "Akastor",                "Industrials",             0.15, True,  True),
 
-    # Materials
-    ("NHY.OL",   "Norsk Hydro",          "Materials",               3.00),
-    ("YAR.OL",   "Yara International",   "Materials",               2.50),
+    # --- Information Technology ---
+    ("AUTO.OL",   "Autostore Holdings",     "Information Technology",   0.80, True,  False),  # Cayman Islands
+    ("KIT.OL",    "Kitron",                 "Information Technology",   0.25, True,  True),
+    ("CRAYN.OL",  "Crayon Group",           "Information Technology",   0.60, True,  True),
+    ("NOD.OL",    "Nordic Semiconductor",   "Information Technology",   1.20, True,  True),
+    ("OPER.OL",   "Opera Ltd",              "Information Technology",   0.25, True,  False),  # Cayman Islands
+    ("VOLUE.OL",  "Volue",                  "Information Technology",   0.15, True,  True),
+    ("PEXIP.OL",  "Pexip Holding",          "Information Technology",   0.15, True,  True),
+    ("B2H.OL",    "B2Holding",              "Information Technology",   0.10, True,  True),
+    ("RECSI.OL",  "REC Silicon",            "Information Technology",   0.15, True,  True),
+    ("KAHOT.OL",  "Kahoot!",                "Information Technology",   0.25, True,  True),
 
-    # Communication Services / Telecom
-    ("TEL.OL",   "Telenor",              "Communication Services",   4.50),
-    ("ATEA.OL",  "Atea",                 "Communication Services",   0.40),
+    # --- Materials ---
+    ("NHY.OL",    "Norsk Hydro",            "Materials",               3.00, True,  True),
+    ("YAR.OL",    "Yara International",     "Materials",               2.50, True,  True),
 
-    # Utilities
-    ("SCHA.OL",  "Scatec",               "Utilities",               0.40),
-    ("ELMRA.OL", "Elmera Group",         "Utilities",               0.50),
-    ("HEX.OL",   "Hexagon Composites",   "Consumer Discretionary",  0.20),
+    # --- Communication Services ---
+    ("TEL.OL",    "Telenor",                "Communication Services",   4.50, True,  True),
+    ("ATEA.OL",   "Atea",                   "Communication Services",   0.40, True,  True),
 
-    # Real Estate
-    ("ENTRA.OL", "Entra",                "Real Estate",             0.60),
-    ("OLT.OL",   "Olav Thon Eiendom",   "Real Estate",             0.30),
-    ("SOR.OL",   "Self Storage Group",   "Real Estate",             0.10),
+    # --- Utilities ---
+    ("SCHA.OL",   "Scatec",                 "Utilities",               0.40, True,  True),
+    ("ELMRA.OL",  "Elmera Group",           "Utilities",               0.50, True,  True),
 
-    # Health Care
-    ("PHO.OL",   "Photocure",            "Health Care",             0.10),
-    ("MEDI.OL",  "Medistim",             "Health Care",             0.10),
+    # --- Consumer Discretionary ---
+    ("HEX.OL",    "Hexagon Composites",     "Consumer Discretionary",  0.20, True,  True),
+    ("KOA.OL",    "Kongsberg Automotive",    "Consumer Discretionary",  0.10, True,  True),
 
-    # Additional constituents (may shift between sectors/rebalances)
-    ("AKER.OL",  "Aker",                 "Industrials",             1.00),
-    ("AKAST.OL", "Aker Horizons",        "Industrials",             0.15),
-    ("FRO.OL",   "Frontline",            "Energy",                  1.20),
-    ("GOGL.OL",  "Golden Ocean Group",   "Energy",                  0.50),
-    ("KOA.OL",   "Kongsberg Automotive", "Consumer Discretionary",  0.10),
-    ("PGS.OL",   "PGS",                  "Energy",                  0.20),
+    # --- Real Estate ---
+    ("ENTRA.OL",  "Entra",                  "Real Estate",             0.60, True,  True),
+    ("OLT.OL",    "Olav Thon Eiendom",      "Real Estate",             0.30, True,  True),
+    ("SOR.OL",    "Self Storage Group",      "Real Estate",             0.10, True,  True),
+
+    # --- Health Care ---
+    ("PHO.OL",    "Photocure",              "Health Care",             0.10, True,  True),
+    ("MEDI.OL",   "Medistim",               "Health Care",             0.10, True,  True),
+
+
+    # =========================================================================
+    # ADDITIONAL OSLO BØRS STOCKS (not in OSEBX — weight = 0)
+    # =========================================================================
+
+    # --- Energy (non-OSEBX) ---
+    ("DNO.OL",    "DNO",                    "Energy",                  0, False, True),
+    ("OKEA.OL",   "OKEA",                   "Energy",                  0, False, True),
+    ("BNOR.OL",   "BlueNord",               "Energy",                  0, False, True),
+    ("PEN.OL",    "Panoro Energy",           "Energy",                  0, False, True),
+    ("DOFG.OL",   "DOF Group",              "Energy",                  0, False, True),
+    ("ODL.OL",    "Odfjell Drilling",        "Energy",                  0, False, False),  # Bermuda
+    ("SOFF.OL",   "Solstad Offshore",        "Energy",                  0, False, True),
+    ("SOMA.OL",   "Solstad Maritime",        "Energy",                  0, False, True),
+    ("SEA1.OL",   "Sea1 Offshore",           "Energy",                  0, False, False),  # Bermuda
+    ("PLSV.OL",   "Paratus Energy",          "Energy",                  0, False, False),  # Bermuda
+    ("GKP.OL",    "Gulf Keystone Petroleum", "Energy",                  0, False, False),  # Bermuda
+    ("ENH.OL",    "SED Energy Holdings",     "Energy",                  0, False, False),  # Ireland (EEA) — check
+    ("COSH.OL",   "Constellation Oil Svcs",  "Energy",                  0, False, False),  # Luxembourg — actually EEA
+    ("SHLF.OL",   "Shelf Drilling",          "Energy",                  0, False, False),  # Cayman Islands
+
+    # --- Financials (non-OSEBX) ---
+    ("SB1NO.OL",  "SpareBank 1 Sor-Norge",  "Financials",              0, False, True),
+    ("SBNOR.OL",  "Sparebanken Norge",       "Financials",              0, False, True),
+    ("MORG2.OL",  "Sparebanken More",        "Financials",              0, False, True),
+    ("RING.OL",   "SB1 Ringerike Hadeland",  "Financials",              0, False, True),
+    ("SOAG.OL",   "SB1 Ostfold Akershus",    "Financials",              0, False, True),
+    ("ROGS.OL",   "Rogaland Sparebank",      "Financials",              0, False, True),
+    ("B2I.OL",    "B2 Impact",               "Financials",              0, False, True),
+
+    # --- Consumer Staples (non-OSEBX) ---
+    ("KID.OL",    "Kid",                     "Consumer Staples",        0, False, True),
+    ("AKBM.OL",   "Aker BioMarine",          "Consumer Staples",        0, False, True),
+    ("AKVA.OL",   "AKVA Group",              "Consumer Staples",        0, False, True),
+
+    # --- Industrials (non-OSEBX) ---
+    ("VEI.OL",    "Veidekke",                "Industrials",             0, False, True),
+    ("AFG.OL",    "AF Gruppen",              "Industrials",             0, False, True),
+    ("MULTI.OL",  "Multiconsult",            "Industrials",             0, False, True),
+    ("BOUV.OL",   "Bouvet",                  "Industrials",             0, False, True),
+    ("ENDUR.OL",  "Endur",                   "Industrials",             0, False, True),
+    ("NORCO.OL",  "Norconsult",              "Industrials",             0, False, True),
+    ("KCC.OL",    "Klaveness Combination",    "Industrials",             0, False, True),
+    ("ELO.OL",    "Elopak",                  "Industrials",             0, False, True),
+    ("CADLR.OL",  "Cadeler",                 "Industrials",             0, False, True),   # Denmark (EEA)
+    ("HAFNI.OL",  "Hafnia",                  "Industrials",             0, False, False),  # Bermuda/Singapore
+    ("ODF.OL",    "Odfjell SE",              "Industrials",             0, False, True),
+    ("HSHP.OL",   "Himalaya Shipping",       "Industrials",             0, False, False),  # Bermuda
+    ("BWO.OL",    "BW Offshore",             "Industrials",             0, False, False),  # Bermuda
+    ("SNI.OL",    "Stolt-Nielsen",           "Industrials",             0, False, False),  # Bermuda
+    ("SATS.OL",   "Sats",                    "Industrials",             0, False, True),
+    ("NAS.OL",    "Norwegian Air Shuttle",   "Industrials",             0, False, True),
+    ("CMBTO.OL",  "CMB.Tech",               "Industrials",             0, False, True),   # Belgium (EEA)
+    ("TIETO.OL",  "TietoEVRY",              "Information Technology",   0, False, True),   # Finland (EEA)
+
+    # --- Information Technology (non-OSEBX) ---
+    ("LINK.OL",   "LINK Mobility",           "Information Technology",   0, False, True),
+    ("SMOP.OL",   "Smartoptics",             "Information Technology",   0, False, True),
+    ("NAPA.OL",   "Napatech",               "Information Technology",   0, False, True),   # Denmark (EEA)
+    ("NORBT.OL",  "Norbit",                  "Information Technology",   0, False, True),
+    ("SNTIA.OL",  "Sentia",                  "Information Technology",   0, False, True),
+    ("SWON.OL",   "SoftwareOne",             "Information Technology",   0, False, True),   # Switzerland (EEA via EFTA)
+
+    # --- Materials (non-OSEBX) ---
+    ("ELK.OL",    "Elkem",                   "Materials",               0, False, True),
+    ("BRG.OL",    "Borregaard",              "Materials",               0, False, True),
+    ("BEWI.OL",   "BEWI",                    "Materials",               0, False, True),
+
+    # --- Real Estate (non-OSEBX) ---
+    ("PUBLI.OL",  "Public Property Invest",  "Real Estate",             0, False, True),
+    ("SBO.OL",    "Selvaag Bolig",           "Real Estate",             0, False, True),
+
+    # --- Utilities (non-OSEBX) ---
+    ("CLOUD.OL",  "Cloudberry Clean Energy", "Utilities",               0, False, True),
+    ("AFK.OL",    "Arendals Fossekompani",   "Utilities",               0, False, True),
+    ("ENVIP.OL",  "Envipco Holding",         "Utilities",               0, False, True),   # Netherlands (EEA)
+
+    # --- Consumer Discretionary (non-OSEBX) ---
+    ("VEND.OL",   "Vend Marketplaces",       "Consumer Discretionary",  0, False, True),
+    ("ANDF.OL",   "Andfjord Salmon",         "Consumer Staples",        0, False, True),
+
+    # --- Misc / Smaller Oslo Børs names ---
+    ("BRUT.OL",   "Bruton",                  "Energy",                  0, False, False),  # Check domicile
+    ("OET.OL",    "Okeanis Eco Tankers",     "Energy",                  0, False, False),  # Marshall Islands
 ]
 
 
@@ -210,6 +310,8 @@ class CompanyRecord(BaseModel):
     sector: Optional[str] = None
     industry: Optional[str] = None
     osebxWeight: Optional[float] = None
+    inOSEBX: bool = True
+    askEligible: bool = True
     marketCap: Optional[float] = None
     peRatio: Optional[float] = None
     forwardPE: Optional[float] = None
@@ -711,6 +813,8 @@ def process_company(
     display_name: str,
     sector: str,
     weight: float,
+    in_osebx: bool,
+    ask_eligible: bool,
     fundamentals: dict,
     hist: Optional[pd.DataFrame],
     osebx_hist: Optional[pd.DataFrame],
@@ -780,7 +884,9 @@ def process_company(
         companyName=company_name,
         sector=actual_sector,
         industry=f.get("industry"),
-        osebxWeight=weight,
+        osebxWeight=weight if weight > 0 else None,
+        inOSEBX=in_osebx,
+        askEligible=ask_eligible,
         marketCap=to_py(f.get("marketCap")),
         peRatio=to_py(f.get("peRatio")),
         forwardPE=to_py(f.get("forwardPE")),
@@ -844,7 +950,10 @@ def compute_sector_summary(companies: list[CompanyRecord]) -> list[SectorSummary
 
 def main():
     log.info("=" * 60)
-    log.info("OSEBX Heatmap Data Pipeline -- Starting")
+    log.info("Oslo Børs Heatmap Data Pipeline -- Starting")
+    log.info(f"  Total stocks: {len(CONSTITUENTS)}")
+    log.info(f"  OSEBX members: {sum(1 for c in CONSTITUENTS if c[4])}")
+    log.info(f"  ASK-eligible: {sum(1 for c in CONSTITUENTS if c[5])}")
     log.info("=" * 60)
 
     # Step 1: Fetch benchmarks
@@ -876,7 +985,7 @@ def main():
     all_histories: dict[str, pd.DataFrame] = {}
     company_records: list[CompanyRecord] = []
 
-    for idx, (ticker, name, sector, weight) in enumerate(CONSTITUENTS, 1):
+    for idx, (ticker, name, sector, weight, in_osebx, ask_eligible) in enumerate(CONSTITUENTS, 1):
         log.info(f"  [{idx}/{len(CONSTITUENTS)}] {ticker} -- {name}")
         try:
             hist = fetch_history(ticker, period="10y")
@@ -888,7 +997,7 @@ def main():
 
             fund = all_fundamentals.get(ticker, {})
             record = process_company(
-                ticker, name, sector, weight, fund,
+                ticker, name, sector, weight, in_osebx, ask_eligible, fund,
                 hist, osebx_hist, brent_hist,
             )
 
