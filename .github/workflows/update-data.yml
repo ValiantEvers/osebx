@@ -40,8 +40,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data.json brief.json insights.json
-          # Only commit if something actually changed
+          # Only stage files that actually exist this run
+          for f in data.json brief.json insights.json; do
+            if [ -f "$f" ]; then
+              git add "$f"
+            else
+              echo "Skipping missing file: $f"
+            fi
+          done
           if git diff --cached --quiet; then
             echo "No changes — skipping commit."
           else
