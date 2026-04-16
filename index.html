@@ -934,8 +934,10 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   font-size: 0.88rem;
   line-height: 1.65;
   color: var(--text-secondary);
-  margin: 0 0 20px;
+  margin: 0 0 24px;
   max-width: 72ch;
+  padding-bottom: 20px;                         
+  border-bottom: 1px solid var(--border);       
 }
 
 #market-snapshot .ms-bench-strip {
@@ -1954,14 +1956,17 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
           class: 'ms-regime ms-regime-' + insights.regime,
           text: regimeLabel,
         }),
-        el('span', { text: 'Breadth ' + breadthPct + '%' }),
+        el('span', {
+        text: 'Breadth ' + breadthPct + '%',
+        title: 'Breadth = share of sectors with positive YTD return. >70% = broad rally, <40% = narrow rally, between = rotation.',
+        style: 'cursor: help; border-bottom: 1px dotted var(--text-muted);',
+      }),
         el('span', { text: fmtDate(insights.as_of) }),
       ]),
     ]));
-    MOUNT.appendChild(el('h2', { class: 'ms-headline', text: insights.headline }));
-    MOUNT.appendChild(el('p', { class: 'ms-take', text: insights.market_take }));
-    MOUNT.appendChild(renderBenchStrip(insights.benchmarks || {}));
-    MOUNT.appendChild(el('div', { class: 'ms-sections' }, [
+   MOUNT.appendChild(el('h2', { class: 'ms-headline', text: insights.headline }));
+   MOUNT.appendChild(el('p', { class: 'ms-take', text: insights.market_take }));
+   MOUNT.appendChild(el('div', { class: 'ms-sections' }, [
       renderSection('Drivers', insights.drivers, 'drivers'),
       renderSection('Risks', insights.risks, 'risks'),
       (insights.opportunities && insights.opportunities.length)
