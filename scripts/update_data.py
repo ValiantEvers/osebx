@@ -296,7 +296,9 @@ class Alpha(BaseModel):
 
 class MeanReversion(BaseModel):
     fiveYearAverage: Optional[float] = None
-    distancePercentage: Optional[float] = None
+    distancePercentage: Optional[float] = None  # kept for display / backward compatibility
+    standardDeviation: Optional[float] = None   # 5Y stdev of closing price
+    zScore: Optional[float] = None              # (current - mean) / stdev
 
 class DividendConsistency(BaseModel):
     yearsWithDividend: Optional[int] = None
@@ -500,19 +502,30 @@ def compute_alpha(stock_hist: pd.DataFrame, bench_hist: pd.DataFrame, days: int)
 
 
 def compute_mean_reversion(hist: pd.DataFrame) -> Optional[MeanReversion]:
-    """Distance from 5-year SMA."""
+    """Distance from 5-year SMA, plus 5Y standard deviation and z-score.
+
+    Z-score = (current - mean) / stdev, in σ units of the 5Y close distribution.
+    This is what analyze.py uses for mean-reversion gating — more robust
+    than raw % distance because it adapts to each stock's own volatility.
+    """
     if hist is None or len(hist) < TRADING_DAYS_5Y:
         return None
     try:
-        closes = hist["close"]
-        sma = closes.iloc[-TRADING_DAYS_5Y:].mean()
-        current = closes.iloc[-1]
+        window = hist["close"].iloc[-TRADING_DAYS_5Y:]
+        sma = window.mean()
+        stdev = window.std()
+        current = hist["close"].iloc[-1]
         if pd.isna(sma) or sma == 0 or pd.isna(current):
             return None
         dist = ((current - sma) / sma) * 100
+        z = None
+        if stdev and not pd.isna(stdev) and stdev > 0:
+            z = (current - sma) / stdev
         return MeanReversion(
             fiveYearAverage=to_py(sma),
             distancePercentage=to_py(dist),
+            standardDeviation=to_py(stdev),
+            zScore=to_py(z),
         )
     except Exception:
         return None
@@ -718,10 +731,16 @@ def fetch_history(ticker_str: str, period: str = "10y") -> Optional[pd.DataFrame
 
 
 def fetch_benchmarks() -> tuple[dict[str, pd.DataFrame], list[BenchmarkData]]:
-    """Fetch history for OSEBX, OBX, OSEFX, and Brent crude."""
+    """Fetch history for OSEBX, OBX, OSEFX, and Brent crude.
+
+    OSEFX has patchy coverage on yahooquery — if `OSEFX.OL` returns nothing,
+    we retry with `^OSEFX`. If both fail, the record is kept with null
+    returns and the frontend should hide the pill (see index.html).
+    """
     histories = {}
     benchmark_records = []
 
+    # Primary fetch attempt
     for tk in BENCHMARK_TICKERS + [BRENT_TICKER]:
         log.info(f"  Fetching benchmark: {tk}")
         h = fetch_history(tk, period="10y")
@@ -730,6 +749,17 @@ def fetch_benchmarks() -> tuple[dict[str, pd.DataFrame], list[BenchmarkData]]:
             log.info(f"    Got {len(h)} data points")
         else:
             log.warning(f"    No data for {tk}")
+        time.sleep(0.3)
+
+    # OSEFX fallback — try the alternate symbol if the primary fetch came back empty
+    if histories.get("OSEFX.OL") is None:
+        log.info("  OSEFX.OL empty — retrying with ^OSEFX")
+        h_alt = fetch_history("^OSEFX", period="10y")
+        if h_alt is not None:
+            histories["OSEFX.OL"] = h_alt  # store under canonical key so downstream works
+            log.info(f"    Got {len(h_alt)} data points from ^OSEFX")
+        else:
+            log.warning("    ^OSEFX also empty — OSEFX will be null this run")
         time.sleep(0.3)
 
     name_map = {"OSEBX.OL": "OSEBX", "OBX.OL": "OBX", "OSEFX.OL": "OSEFX"}
@@ -918,14 +948,19 @@ def process_company(
 
 
 def compute_sector_summary(companies: list[CompanyRecord]) -> list[SectorSummary]:
-    """Compute aggregate stats per sector, requiring at least 2 companies with data."""
+    """Compute aggregate stats per sector, requiring at least 2 companies with data.
+
+    Sorted by totalWeight descending so the sector tabs appear heaviest-first
+    in the frontend (matching prior client-side behaviour, now that the
+    frontend no longer rebuilds this).
+    """
     sectors: dict[str, list[CompanyRecord]] = {}
     for c in companies:
         s = c.sector or "Unknown"
         sectors.setdefault(s, []).append(c)
 
     summaries = []
-    for sector_name, members in sorted(sectors.items()):
+    for sector_name, members in sectors.items():
         def avg(vals):
             clean = [v for v in vals if v is not None]
             return round(sum(clean) / len(clean), 2) if len(clean) >= 2 else (clean[0] if len(clean) == 1 else None)
@@ -941,6 +976,7 @@ def compute_sector_summary(companies: list[CompanyRecord]) -> list[SectorSummary
             avgSharpe=avg([c.sharpeRatio for c in members]),
         ))
 
+    summaries.sort(key=lambda s: s.totalWeight or 0, reverse=True)
     return summaries
 
 
