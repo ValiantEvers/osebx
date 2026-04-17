@@ -1,44 +1,44 @@
 {
-  "as_of": "2026-04-16T20:27:14+00:00",
+  "as_of": "2026-04-17T09:40:05+00:00",
   "data_coverage": 0.78,
   "thin_data": false,
-  "regime": "rotation",
-  "breadth": 0.64,
+  "regime": "broad_rally",
+  "breadth": 0.61,
   "benchmarks": {
-    "OSEBX": 18.885654,
-    "OBX": 22.320185,
+    "OSEBX": 18.635788,
+    "OBX": 21.893625,
     "OSEFX": null
   },
   "benchmark_spreads": {
-    "OBX_minus_OSEBX": 3.43,
+    "OBX_minus_OSEBX": 3.26,
     "OSEFX_minus_OSEBX": null
   },
   "sector_leaders": [
     {
       "sector": "Energy",
-      "avg_return_ytd": 29.75,
-      "avg_sharpe": 2.24,
+      "avg_return_ytd": 29.19,
+      "avg_sharpe": 2.2,
       "weight": 19.4
     },
     {
       "sector": "Industrials",
-      "avg_return_ytd": 21.12,
-      "avg_sharpe": 1.78,
+      "avg_return_ytd": 22.22,
+      "avg_sharpe": 1.77,
       "weight": 10.75
     }
   ],
   "sector_laggards": [
     {
-      "sector": "Health Care",
-      "avg_return_ytd": -6.01,
-      "avg_sharpe": 1.13,
-      "weight": 0.2
+      "sector": "Real Estate",
+      "avg_return_ytd": -5.34,
+      "avg_sharpe": 0.09,
+      "weight": 1.0
     },
     {
-      "sector": "Real Estate",
-      "avg_return_ytd": -5.25,
-      "avg_sharpe": 0.12,
-      "weight": 1.0
+      "sector": "Health Care",
+      "avg_return_ytd": -5.21,
+      "avg_sharpe": 1.21,
+      "weight": 0.2
     }
   ],
   "drivers": [
@@ -49,33 +49,9 @@
       "rationale_tag": "quality_leader",
       "metrics": {
         "sharpeRatio": 4.09,
-        "returnsYTD": 73.1,
-        "momentumScore": 98.0,
-        "alphaSixMonth": 96.9
-      }
-    },
-    {
-      "ticker": "$HSHP",
-      "company_name": "HIMALAYA SHIPPING LTD",
-      "sector": "Industrials",
-      "rationale_tag": "quality_leader",
-      "metrics": {
-        "sharpeRatio": 4.62,
-        "returnsYTD": 45.5,
-        "momentumScore": 85.0,
-        "alphaSixMonth": 29.1
-      }
-    },
-    {
-      "ticker": "$SUBC",
-      "company_name": "SUBSEA 7",
-      "sector": "Energy",
-      "rationale_tag": "quality_leader",
-      "metrics": {
-        "sharpeRatio": 4.56,
-        "returnsYTD": 45.7,
-        "momentumScore": 74.0,
-        "alphaSixMonth": 27.2
+        "returnsYTD": 73.7,
+        "momentumScore": 94.0,
+        "alphaSixMonth": 101.5
       }
     },
     {
@@ -84,51 +60,64 @@
       "sector": "Information Technology",
       "rationale_tag": "quality_leader",
       "metrics": {
-        "sharpeRatio": 3.51,
-        "returnsYTD": 67.5,
+        "sharpeRatio": 3.79,
+        "returnsYTD": 72.2,
         "momentumScore": 100.0,
-        "alphaSixMonth": 106.6
-      }
-    }
-  ],
-  "risks": [
-    {
-      "ticker": "$KIT",
-      "company_name": "KITRON",
-      "sector": "Information Technology",
-      "rationale_tag": "overextended",
-      "metrics": {
-        "meanReversionPct": 173.9,
-        "volatilityPercentile": 90,
-        "momentumScore": 77.0,
-        "sharpeRatio": 3.17,
-        "maxDrawdown": -24.0
+        "alphaSixMonth": 114.0
       }
     },
     {
-      "ticker": "$KOG",
-      "company_name": "KONGSBERG GRUPPEN",
+      "ticker": "$HSHP",
+      "company_name": "HIMALAYA SHIPPING LTD",
       "sector": "Industrials",
-      "rationale_tag": "overextended",
+      "rationale_tag": "quality_leader",
       "metrics": {
-        "meanReversionPct": 141.3,
-        "volatilityPercentile": 81,
-        "momentumScore": 53.0,
-        "sharpeRatio": 0.75,
-        "maxDrawdown": -41.9
+        "sharpeRatio": 4.68,
+        "returnsYTD": 47.1,
+        "momentumScore": 83.0,
+        "alphaSixMonth": 39.1
       }
     },
     {
       "ticker": "$SUBC",
       "company_name": "SUBSEA 7",
       "sector": "Energy",
+      "rationale_tag": "quality_leader",
+      "metrics": {
+        "sharpeRatio": 4.47,
+        "returnsYTD": 43.6,
+        "momentumScore": 69.0,
+        "alphaSixMonth": 25.1
+      }
+    }
+  ],
+  "risks": [
+    {
+      "ticker": "$AKVA",
+      "company_name": "AKVA GROUP",
+      "sector": "Industrials",
       "rationale_tag": "overextended",
       "metrics": {
-        "meanReversionPct": 114.2,
-        "volatilityPercentile": 80,
-        "momentumScore": 74.0,
-        "sharpeRatio": 4.56,
-        "maxDrawdown": -14.3
+        "zScore": 4.06,
+        "meanReversionPct": 78.9,
+        "volatilityPercentile": 86,
+        "momentumScore": 69.0,
+        "sharpeRatio": 2.96,
+        "maxDrawdown": -23.8
+      }
+    },
+    {
+      "ticker": "$NHY",
+      "company_name": "NORSK HYDRO",
+      "sector": "Materials",
+      "rationale_tag": "overextended",
+      "metrics": {
+        "zScore": 3.87,
+        "meanReversionPct": 55.2,
+        "volatilityPercentile": 92,
+        "momentumScore": 66.0,
+        "sharpeRatio": 3.68,
+        "maxDrawdown": -11.5
       }
     },
     {
@@ -137,51 +126,42 @@
       "sector": "Energy",
       "rationale_tag": "overextended",
       "metrics": {
-        "meanReversionPct": 89.3,
-        "volatilityPercentile": 83,
-        "momentumScore": 67.0,
-        "sharpeRatio": 2.86,
+        "zScore": 3.68,
+        "meanReversionPct": 89.4,
+        "volatilityPercentile": 82,
+        "momentumScore": 66.0,
+        "sharpeRatio": 2.85,
         "maxDrawdown": -29.4
+      }
+    },
+    {
+      "ticker": "$AKER",
+      "company_name": "AKER",
+      "sector": "Industrials",
+      "rationale_tag": "overextended",
+      "metrics": {
+        "zScore": 3.61,
+        "meanReversionPct": 53.4,
+        "volatilityPercentile": 88,
+        "momentumScore": 67.0,
+        "sharpeRatio": 3.57,
+        "maxDrawdown": -11.3
       }
     }
   ],
   "opportunities": [],
-  "watchlist": [
-    {
-      "ticker": "$MPCC",
-      "company_name": "MPC CONTAINER SHIPS",
-      "sector": "Industrials",
-      "missed_on": "mean_reversion",
-      "metrics": {
-        "earningsYield": 22.0,
-        "meanReversionPct": 16.0,
-        "sharpeRatio": 1.72,
-        "returnsYTD": 31.9
-      }
-    },
-    {
-      "ticker": "$SNI",
-      "company_name": "STOLT-NIELSEN",
-      "sector": "Industrials",
-      "missed_on": "mean_reversion",
-      "metrics": {
-        "earningsYield": 14.4,
-        "meanReversionPct": 11.6,
-        "sharpeRatio": 1.5,
-        "returnsYTD": -4.6
-      }
-    }
-  ],
+  "watchlist": [],
   "graduation": {
     "graduated": [],
     "fell_to_risk": [],
     "resolved": []
   },
   "thresholds_used": {
-    "sharpe_floor_p66": 1.94,
-    "overextension_mr_p75": 56.5,
-    "gem_ey_p75": 8.68,
-    "gem_mr_p25": 2.04,
-    "gem_sharpe_p50": 1.24
+    "sharpe_floor_p66": 2.01,
+    "z_overextended": 2.0,
+    "z_gem_low": -2.0,
+    "z_gem_high": -1.0,
+    "gem_ey_p75": 8.72,
+    "gem_sharpe_p50": 1.29
   }
 }

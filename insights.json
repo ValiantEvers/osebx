@@ -1,81 +1,71 @@
 {
-  "as_of": "2026-04-16T20:27:14+00:00",
-  "regime": "rotation",
-  "headline": "OBX leads by 343bp as Energy and Industrials dominate",
-  "market_take": "OBX outperforms OSEBX by 343bp, with large-cap concentration driving the spread in a rotation regime. Breadth sits at 64%, above the 70% threshold, indicating moderately broad participation rather than narrow leadership. Capital has rotated into Energy and Industrials while Health Care and Real Estate lag with negative year-to-date returns.",
+  "as_of": "2026-04-17T09:40:05+00:00",
+  "regime": "broad_rally",
+  "headline": "OBX leads OSEBX by 326bp; Energy and Industrials drive advance",
+  "market_take": "OBX outpaces OSEBX by 3.26 percentage points, confirming large-cap leadership within a broad_rally regime. Participation stands at 61% of names advancing YTD, modestly above the 50% midpoint and consistent with a genuine broad advance rather than a narrow one. The rally is concentrated in Energy and Industrials, while Real Estate and Health Care sit in negative YTD territory.",
   "drivers": [
     {
       "ticker": "$OKEA",
-      "claim": "Top-ranked Energy name; momentum and alpha both near-perfect scores.",
-      "evidence": "momentumScore 98.0"
-    },
-    {
-      "ticker": "$HSHP",
-      "claim": "Himalaya Shipping leads Industrials with the highest risk-adjusted return.",
-      "evidence": "sharpeRatio 4.62"
-    },
-    {
-      "ticker": "$SUBC",
-      "claim": "Subsea 7 sits in leadership despite appearing simultaneously in risks.",
-      "evidence": "sharpeRatio 4.56"
+      "claim": "Quality leader in Energy with exceptional risk-adjusted returns YTD.",
+      "evidence": "sharpeRatio 4.09"
     },
     {
       "ticker": "$SMOP",
-      "claim": "Smartoptics carries the highest alpha in the brief; momentum is perfect.",
-      "evidence": "alphaSixMonth 106.6"
+      "claim": "Momentum fully extended; IT sector leadership clustered in one name.",
+      "evidence": "momentumScore 100.0"
+    },
+    {
+      "ticker": "$HSHP",
+      "claim": "Highest Sharpe in the brief; Industrials leadership on compressed drawdown.",
+      "evidence": "sharpeRatio 4.68"
+    },
+    {
+      "ticker": "$SUBC",
+      "claim": "Energy leadership sustained; six-month alpha well above benchmark.",
+      "evidence": "alphaSixMonth 25.1"
     }
   ],
   "risks": [
     {
-      "ticker": "$KIT",
-      "claim": "Kitron is stretched; mean reversion gap of 174% at 90th-percentile volatility.",
-      "evidence": "meanReversionPct 173.9"
+      "ticker": "$AKVA",
+      "claim": "Stretched 4.1σ above 5Y mean; elevated volatility percentile compounds risk.",
+      "evidence": "zScore 4.06"
     },
     {
-      "ticker": "$KOG",
-      "claim": "Kongsberg extended 141% above reversion with compressed momentum.",
-      "evidence": "meanReversionPct 141.3"
-    },
-    {
-      "ticker": "$SUBC",
-      "claim": "Subsea 7's 114% overextension flag crowds its quality leadership story.",
-      "evidence": "meanReversionPct 114.2"
+      "ticker": "$NHY",
+      "claim": "Materials name 3.9σ above its 5Y mean at the 92nd volatility percentile.",
+      "evidence": "zScore 3.87"
     },
     {
       "ticker": "$BWE",
-      "claim": "BW Energy stretched 89% above reversion at 83rd-percentile volatility.",
-      "evidence": "volatilityPercentile 83"
+      "claim": "Energy name 3.7σ above 5Y mean with the deepest drawdown in risks.",
+      "evidence": "zScore 3.68"
+    },
+    {
+      "ticker": "$AKER",
+      "claim": "Industrials conglomerate 3.6σ above 5Y mean; overextended despite solid Sharpe.",
+      "evidence": "zScore 3.61"
     }
   ],
   "opportunities": [],
-  "watchlist": [
-    {
-      "ticker": "$MPCC",
-      "claim": "Near-buy held back by mean reversion gate; earnings yield remains attractive.",
-      "missed_on": "mean_reversion"
-    },
-    {
-      "ticker": "$SNI",
-      "claim": "Stolt-Nielsen near-buy blocked by mean reversion; return is negative YTD.",
-      "missed_on": "mean_reversion"
-    }
-  ],
+  "watchlist": [],
   "graduation": {
     "graduated": [],
     "fell_to_risk": [],
     "resolved": []
   },
-  "breadth": 0.64,
+  "breadth": 0.61,
   "benchmarks": {
-    "OSEBX": 18.885654,
-    "OBX": 22.320185,
+    "OSEBX": 18.635788,
+    "OBX": 21.893625,
     "OSEFX": null
   },
   "thresholds_used": {
-    "sharpe_floor_p66": 1.94,
-    "overextension_mr_p75": 56.5,
-    "gem_ey_p75": 8.68,
-    "gem_mr_p25": 2.04,
-    "gem_sharpe_p50": 1.24
+    "sharpe_floor_p66": 2.01,
+    "z_overextended": 2.0,
+    "z_gem_low": -2.0,
+    "z_gem_high": -1.0,
+    "gem_ey_p75": 8.72,
+    "gem_sharpe_p50": 1.29
   }
 }
