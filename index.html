@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OSEBX Company Heatmap</title>
+<title>Oslo Børs Heatmap</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0c10'/%3E%3Crect x='4' y='4' width='7' height='7' rx='1.5' fill='%2322c55e' opacity='.9'/%3E%3Crect x='12.5' y='4' width='7' height='7' rx='1.5' fill='%2322c55e' opacity='.5'/%3E%3Crect x='21' y='4' width='7' height='7' rx='1.5' fill='%23ef4444' opacity='.4'/%3E%3Crect x='4' y='12.5' width='7' height='7' rx='1.5' fill='%23ef4444' opacity='.6'/%3E%3Crect x='12.5' y='12.5' width='7' height='7' rx='1.5' fill='%2322c55e' opacity='.7'/%3E%3Crect x='21' y='12.5' width='7' height='7' rx='1.5' fill='%2322c55e' opacity='.35'/%3E%3Crect x='4' y='21' width='7' height='7' rx='1.5' fill='%2322c55e' opacity='.4'/%3E%3Crect x='12.5' y='21' width='7' height='7' rx='1.5' fill='%23ef4444' opacity='.5'/%3E%3Crect x='21' y='21' width='7' height='7' rx='1.5' fill='%2322c55e' opacity='.85'/%3E%3C/svg%3E">
-<meta name="description" content="Interactive heatmap of all OSEBX index constituents with real-time fundamentals, momentum, risk, and valuation metrics.">
+<meta name="description" content="Interactive heatmap of Oslo Børs and Euronext Expand stocks with fundamentals, momentum, risk, and valuation metrics. Filter by OSEBX index, ASK eligibility, or analyst rating.">
+<meta property="og:title" content="Oslo Børs Heatmap">
+<meta property="og:description" content="Interactive heatmap of Oslo Børs and Euronext Expand stocks with fundamentals, momentum, risk, and valuation metrics.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1036,8 +1039,8 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 <!-- ===== Header ===== -->
 <header class="site-header">
   <div class="container">
-    <h1>OSEBX Company Heatmap</h1>
-    <p class="subtitle">All constituents of the Oslo Børs Benchmark Index — fundamentals, momentum, risk & valuation</p>
+    <h1>Oslo Børs Heatmap</h1>
+    <p class="subtitle">Oslo Børs & Euronext Expand — fundamentals, momentum, risk & valuation</p>
     <div class="benchmark-row" id="benchmarkRow"></div>
   </div>
 </header>
@@ -1207,6 +1210,11 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   let previousSector = 'All';
   let currentSort = { key: 'returnsYTD', dir: 'desc' };
   let searchQuery = '';
+  // Market / rating filters — the UI for these lives in heatmap-upgrade.js,
+  // but the filtering logic belongs here so pagination (visibleCount) and
+  // the company-count label always agree with what's actually visible.
+  let currentMarket = 'all';  // 'all' | 'osebx' | 'ask'
+  let currentRec = 'all';     // 'all' | 'strong_buy' | 'buy' | 'hold' | 'underperform' | 'sell'
   let visibleCount = 0;
   const PAGE_SIZE = 30;
 
@@ -1260,6 +1268,37 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   function clrSharpe(v) { if (v == null) return ''; return v >= 1.0 ? 'clr-green' : v >= 0.5 ? 'clr-amber' : 'clr-red'; }
   function clrPayoutRatio(v) { if (v == null) return ''; return v < 60 ? 'clr-green' : v < 80 ? 'clr-amber' : 'clr-red'; }
 
+  // ---- Company-name formatting ----
+  // Yahoo returns some names in ALL CAPS ("HIMALAYA SHIPPING LTD", "NORSK
+  // HYDRO"). Display as Title Case while keeping short acronyms and a few
+  // specific tokens uppercase. We only reformat when the name looks all-caps,
+  // so names that already arrive mixed-case ("Equinor", "Aker BP") pass
+  // through untouched.
+  const KEEP_UPPER = new Set([
+    // Norwegian / European corporate forms
+    'AS','ASA','SE','HF','AB','NV','SA','BV','PLC','LLC','LTD','INC','NA',
+    // Branch codes & finance abbreviations
+    'SMN','SR','SB1','BP','IT','LPG','LNG','LLP','LP','II','III','IV','VI','HQ',
+  ]);
+  function titleCaseToken(tok) {
+    if (!tok) return tok;
+    const clean = tok.replace(/[^A-Za-z0-9]/g, '');
+    const upper = clean.toUpperCase();
+    if (KEEP_UPPER.has(upper)) return tok.toUpperCase();
+    // Short tokens (≤3 letters) are almost always acronyms (DNB, TGS, PGS, NHY, BW) — keep upper.
+    if (clean.length <= 3) return tok.toUpperCase();
+    return tok.charAt(0).toUpperCase() + tok.slice(1).toLowerCase();
+  }
+  function formatCompanyName(name) {
+    if (!name) return name;
+    const letters = name.replace(/[^A-Za-z]/g, '');
+    if (!letters) return name;
+    const upperRatio = letters.replace(/[a-z]/g, '').length / letters.length;
+    // Only touch names that look all-caps; leave mixed-case names alone.
+    if (upperRatio < 0.75) return name;
+    return name.split(/\s+/).map(titleCaseToken).join(' ');
+  }
+
   // ---- Heat colour for YTD ----
   function heatBg(ytd) {
     if (ytd == null) return 'var(--bg-elevated)';
@@ -1284,7 +1323,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     { key: 'meanRevDist', label: '% from 5Y', defaultDir: 'asc' },
     { key: 'alpha1Y', label: 'Alpha 1Y', defaultDir: 'desc' },
     { key: 'sharpeRatio', label: 'Sharpe', defaultDir: 'desc' },
-    { key: 'maxDrawdown', label: 'Max DD', defaultDir: 'desc' },
+    { key: 'maxDrawdown', label: 'Max DD', defaultDir: 'asc' },
     { key: 'momentumScore', label: 'Momentum', defaultDir: 'desc' },
     { key: 'evToEbitda', label: 'EV/EBITDA', defaultDir: 'asc' },
     { key: 'earningsYield', label: 'Earn Yield', defaultDir: 'desc' },
@@ -1335,6 +1374,21 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     DATA.companies = DATA.companies.filter(hasData);
   }
 
+  // ---- Public API for heatmap-upgrade.js ----
+  // Exposed so the upgrade script can register filter changes, read the
+  // already-loaded dataset, and avoid a duplicate fetch of data.json.
+  // Resolving `window.osebxReady` signals that DATA is populated and the
+  // grid has been rendered at least once.
+  let _readyResolve;
+  window.osebxReady = new Promise(r => { _readyResolve = r; });
+  window.osebxApp = {
+    get data() { return DATA; },
+    setMarket(m) { currentMarket = m; applyFiltersAndRender(); },
+    setRec(r) { currentRec = r; applyFiltersAndRender(); },
+    getMarket() { return currentMarket; },
+    getRec() { return currentRec; },
+  };
+
   // ---- Init ----
   async function init() {
     try {
@@ -1366,6 +1420,9 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#guideModal').classList.contains('open')) closeModal(); });
     $('#showMoreBtn').addEventListener('click', showMore);
     $('#aboutToggle').addEventListener('click', toggleAbout);
+
+    // Signal readiness to heatmap-upgrade.js (and any other scripts).
+    _readyResolve(window.osebxApp);
   }
 
   // ---- Benchmarks ----
@@ -1385,8 +1442,10 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     if (!DATA.lastUpdated) return;
     try {
       const d = new Date(DATA.lastUpdated);
-      const formatted = new Intl.DateTimeFormat('nb-NO', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Europe/Oslo' }).format(d);
-      $('#lastUpdated').textContent = `Sist oppdatert: ${formatted}`;
+      // English locale for date string to match the rest of the UI; still
+      // render in Europe/Oslo zone since the data is Oslo-market.
+      const formatted = new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Europe/Oslo' }).format(d);
+      $('#lastUpdated').textContent = `Last updated: ${formatted}`;
     } catch (e) {
       $('#lastUpdated').textContent = DATA.lastUpdated;
     }
@@ -1479,7 +1538,22 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
       companies = companies.filter(c => c.sector === currentSector);
     }
 
-    // Search filter
+    // Market filter (OSEBX-only / ASK-eligible / all)
+    if (currentMarket === 'osebx') {
+      companies = companies.filter(c => c.inOSEBX !== false);
+    } else if (currentMarket === 'ask') {
+      companies = companies.filter(c => c.askEligible !== false);
+    }
+
+    // Analyst recommendation filter
+    if (currentRec !== 'all') {
+      companies = companies.filter(c => {
+        const r = (c.recommendation || '').toLowerCase().replace(/\s+/g, '_');
+        return r === currentRec;
+      });
+    }
+
+    // Search filter (matches raw ticker and raw company name)
     if (searchQuery) {
       companies = companies.filter(c => {
         const name = (c.companyName || '').toLowerCase();
@@ -1528,9 +1602,17 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   }
 
   function updateCount() {
-    const total = DATA.companies.length;
     const shown = filteredCompanies.length;
-    $('#companyCount').textContent = `${shown} of ${total} companies`;
+    if (currentMarket === 'osebx') {
+      const total = (DATA.companies || []).filter(c => c.inOSEBX !== false).length;
+      $('#companyCount').textContent = `${shown} of ${total} OSEBX members`;
+    } else if (currentMarket === 'ask') {
+      const total = (DATA.companies || []).filter(c => c.askEligible !== false).length;
+      $('#companyCount').textContent = `${shown} of ${total} ASK-eligible`;
+    } else {
+      const total = DATA.companies.length;
+      $('#companyCount').textContent = `${shown} of ${total} companies`;
+    }
   }
 
   // ---- Intersection Observer for fade-in ----
@@ -1559,11 +1641,12 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     const recClass = (c.recommendation || '').replace(/\s+/g, '_').toLowerCase();
     const recLabel = (c.recommendation || '').replace(/_/g, ' ');
     const sortDisp = fmtSortDisplay(c);
+    const displayName = formatCompanyName(c.companyName || c.ticker);
 
     el.innerHTML = `
-      <div class="card-header" tabindex="0" role="button" aria-label="Expand ${c.companyName || c.ticker}">
+      <div class="card-header" tabindex="0" role="button" aria-label="Expand ${displayName}">
         <div class="card-top-row">
-          <span class="card-name">${c.companyName || c.ticker}</span>
+          <span class="card-name">${displayName}</span>
           <span class="card-ytd-main ${sortDisp.cls}">${sortDisp.text}</span>
         </div>
         <div class="card-meta">
@@ -1731,15 +1814,26 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     const dc = c.dividendConsistency;
     if (!dc) return '<div class="metric-row"><span class="metric-label">Div. Consistency</span><span class="metric-val">—</span></div>';
     const years = dc.yearsWithDividend || 0;
+
+    // No dividend history at all — don't draw empty dots with a "0/5 none →"
+    // label, which reads like a data error. Show explicit text instead.
+    if (years === 0) {
+      return `<div class="metric-row">
+        <span class="metric-label">Div. Consistency</span>
+        <span class="metric-val clr-muted" style="font-family:var(--font-body);font-size:0.72rem;font-weight:500">No dividend history</span>
+      </div>`;
+    }
+
     let dots = '';
     for (let i = 0; i < 5; i++) {
       dots += `<span class="div-dot${i < years ? ' filled' : ''}"></span>`;
     }
     const trendIcon = dc.trend === 'growing' ? '↑' : dc.trend === 'cut' ? '↓' : '→';
     const trendColor = dc.trend === 'growing' ? 'clr-green' : dc.trend === 'cut' ? 'clr-red' : 'clr-muted';
+    const trendLabel = dc.trend && dc.trend !== 'none' ? dc.trend : '';
     return `<div class="metric-row">
       <span class="metric-label">Div. Consistency</span>
-      <div class="div-dots">${dots}<span class="div-trend ${trendColor}">${years}/5 ${dc.trend || ''} ${trendIcon}</span></div>
+      <div class="div-dots">${dots}<span class="div-trend ${trendColor}">${years}/5 ${trendLabel} ${trendIcon}</span></div>
     </div>`;
   }
 
@@ -1772,6 +1866,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
   // ---- Modal ----
   let lastFocused;
+  let trapHandler = null;  // stored so closeModal can remove the listener
   function openModal() {
     lastFocused = document.activeElement;
     const modal = $('#guideModal');
@@ -1780,22 +1875,30 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     trapFocus(modal);
   }
   function closeModal() {
-    $('#guideModal').classList.remove('open');
+    const modal = $('#guideModal');
+    modal.classList.remove('open');
+    if (trapHandler) {
+      modal.removeEventListener('keydown', trapHandler);
+      trapHandler = null;
+    }
     if (lastFocused) lastFocused.focus();
   }
   function trapFocus(el) {
+    // Remove any lingering handler (defensive: shouldn't happen given
+    // closeModal cleans up, but rapid open/close could otherwise stack).
+    if (trapHandler) el.removeEventListener('keydown', trapHandler);
     const focusable = el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
-    el.addEventListener('keydown', function handler(e) {
+    trapHandler = function (e) {
       if (e.key !== 'Tab') return;
-      if (!el.classList.contains('open')) { el.removeEventListener('keydown', handler); return; }
       if (e.shiftKey) {
         if (document.activeElement === first) { e.preventDefault(); last.focus(); }
       } else {
         if (document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
-    });
+    };
+    el.addEventListener('keydown', trapHandler);
   }
 
   // ---- About toggle ----
@@ -1912,6 +2015,14 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     const regimeLabel = REGIME_LABELS[insights.regime] || insights.regime;
     const breadthPct = Math.round((insights.breadth || 0) * 100);
 
+    // Build breadth tooltip from the thresholds the pipeline used, so this
+    // text automatically stays in sync if BROAD_BREADTH / NARROW_BREADTH
+    // change in analyze.py.
+    const th = insights.thresholds_used || {};
+    const broadPct = th.breadth_broad != null ? Math.round(th.breadth_broad * 100) : 60;
+    const narrowPct = th.breadth_narrow != null ? Math.round(th.breadth_narrow * 100) : 35;
+    const breadthTip = `Breadth = share of Oslo-listed stocks with positive YTD return (also called market participation or advance share). >${broadPct}% = broad rally, <${narrowPct}% = narrow rally, between = rotation.`;
+
     MOUNT.appendChild(el('div', { class: 'ms-head' }, [
       el('p', { class: 'ms-title', text: 'Weekly Market Snapshot' }),
       el('div', { class: 'ms-meta' }, [
@@ -1921,7 +2032,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
         }),
         el('span', {
         text: 'Breadth ' + breadthPct + '%',
-        title: 'Breadth = share of Oslo-listed stocks with positive YTD return (also called market participation or advance share). >60% = broad rally, <35% = narrow rally, between = rotation.',
+        title: breadthTip,
         style: 'cursor: help; border-bottom: 1px dotted var(--text-muted);',
       }),
         el('span', { text: fmtDate(insights.as_of) }),
