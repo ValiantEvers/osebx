@@ -1,6 +1,14 @@
 /**
- * Oslo Børs Heatmap — Upgrade Script v1.1
- * Drop this <script> right BEFORE </body> in your heatmap index.html.
+ * Oslo Børs Heatmap — Upgrade Script v1.2
+ * Adds benchmark tooltips, market/rating filter rows, and card-level badges.
+ *
+ * Integrates with the main app's public API (window.osebxApp) instead of
+ * fetching data.json itself — this avoids a duplicate network request and
+ * keeps filter state in one place so pagination and the "X of Y" count
+ * always reflect what's actually visible.
+ *
+ * Drop this <script> right BEFORE </body> in index.html, AFTER the main
+ * inline script so window.osebxApp and window.osebxReady are defined.
  */
 (function () {
   'use strict';
@@ -72,9 +80,6 @@
   }
   function hideTip() { if (fTip) fTip.classList.remove('visible'); }
 
-  // === STATE ===
-  let curMarket = 'all', curRec = 'all';
-
   // === BENCHMARK TOOLTIPS ===
   function addBenchTips() {
     const row = document.getElementById('benchmarkRow');
@@ -88,12 +93,18 @@
         if (tip) { const d = document.createElement('div'); d.className = 'bench-tooltip'; d.innerHTML = tip; p.prepend(d); }
       });
     }
-    new MutationObserver(inject).observe(row, { childList: true, subtree: true });
-    setTimeout(inject, 2000);
+    inject();
+    // One short-lived observer: benchmark pills render once at init. Once
+    // they exist, disconnect so we're not holding a live observer forever.
+    const mo = new MutationObserver(() => { inject(); if (row.querySelector('.bench-tooltip')) mo.disconnect(); });
+    mo.observe(row, { childList: true, subtree: true });
+    setTimeout(() => mo.disconnect(), 5000);
   }
 
   // === FILTER ROWS ===
-  function addFilters() {
+  // Buttons trigger window.osebxApp.setMarket() / setRec(); the main script
+  // owns the filter pipeline (pagination + counts update in one pass).
+  function addFilters(app) {
     const bar = document.querySelector('.controls-bar');
     if (!bar) return;
     const before = bar.querySelector('.sector-tabs') || bar.firstChild;
@@ -104,9 +115,10 @@
     bar.insertBefore(mRow, before);
     mRow.addEventListener('click', e => {
       const b = e.target.closest('.filter-btn'); if (!b) return;
-      curMarket = b.dataset.market;
-      mRow.querySelectorAll('.filter-btn').forEach(x => x.classList.toggle('active', x.dataset.market === curMarket));
-      updSub(); applyFilters();
+      const market = b.dataset.market;
+      mRow.querySelectorAll('.filter-btn').forEach(x => x.classList.toggle('active', x.dataset.market === market));
+      updSub(market);
+      app.setMarket(market);
     });
 
     // Rec
@@ -116,98 +128,68 @@
     const rcol = { all:'active', strong_buy:'active-green', buy:'active-green', hold:'active-amber', underperform:'active-red', sell:'active-red' };
     rRow.addEventListener('click', e => {
       const b = e.target.closest('.filter-btn'); if (!b) return;
-      curRec = b.dataset.rec;
-      rRow.querySelectorAll('.filter-btn').forEach(x => { x.className = 'filter-btn' + (x.dataset.rec === curRec ? ' ' + (rcol[curRec]||'active') : ''); });
-      applyFilters();
+      const rec = b.dataset.rec;
+      rRow.querySelectorAll('.filter-btn').forEach(x => { x.className = 'filter-btn' + (x.dataset.rec === rec ? ' ' + (rcol[rec]||'active') : ''); });
+      app.setRec(rec);
     });
   }
 
-  function updSub() {
+  function updSub(market) {
     const el = document.querySelector('.site-header .subtitle'); if (!el) return;
-    const m = { all:'All stocks on Oslo Børs + Euronext Expand', ask:'ASK-eligible stocks (EEA-domiciled, regulated market)', osebx:'OSEBX index constituents' };
-    el.textContent = (m[curMarket]||m.all) + ' \u2014 fundamentals, momentum, risk & valuation';
-  }
-
-  // === APPLY FILTERS ===
-  function applyFilters() {
-    const grid = document.getElementById('cardsGrid');
-    if (!grid || !window.__heatmapData) return;
-    let vis = 0;
-    const cards = grid.querySelectorAll('.company-card');
-    cards.forEach(card => {
-      const te = card.querySelector('.ticker-tag'); if (!te) return;
-      const d = window.__heatmapData[te.textContent.trim()]; if (!d) return;
-      let ok = true;
-      if (curMarket === 'osebx') ok = d.inOSEBX !== false;
-      else if (curMarket === 'ask') ok = d.askEligible !== false;
-      if (ok && curRec !== 'all') { ok = (d.recommendation||'').toLowerCase().replace(/\s+/g,'_') === curRec; }
-      card.style.display = ok ? '' : 'none';
-      if (ok) vis++;
-    });
-    const ce = document.getElementById('companyCount');
-    if (ce) ce.textContent = curMarket==='osebx' ? vis+' OSEBX members' : curMarket==='ask' ? vis+' ASK-eligible of '+cards.length : vis+' of '+cards.length+' companies';
-  }
-
-  // === LOAD DATA + OBSERVE ===
-  function loadAndObserve() {
-    fetch('./data.json').then(r=>r.json()).then(d => {
-      window.__heatmapData = {};
-      (d.companies||[]).forEach(c => { window.__heatmapData[c.ticker.replace('.OL','')] = c; });
-      const grid = document.getElementById('cardsGrid');
-      if (grid) {
-        grid.querySelectorAll('.company-card').forEach(upgradeCard);
-        new MutationObserver(muts => {
-          muts.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType===1 && n.classList.contains('company-card')) upgradeCard(n); }));
-          applyFilters();
-        }).observe(grid, { childList: true });
-      }
-    }).catch(()=>{});
-    document.addEventListener('click', () => setTimeout(applyFilters, 80), true);
-    document.addEventListener('input', () => setTimeout(applyFilters, 80), true);
+    const m = {
+      all:   'All stocks on Oslo Børs + Euronext Expand',
+      ask:   'ASK-eligible stocks (EEA-domiciled, regulated market)',
+      osebx: 'OSEBX index constituents',
+    };
+    el.textContent = (m[market]||m.all) + ' \u2014 fundamentals, momentum, risk & valuation';
   }
 
   // === UPGRADE CARD ===
-  function upgradeCard(card) {
-    if (card.dataset.upgraded) return;
-    card.dataset.upgraded = 'true';
-    const meta = card.querySelector('.card-meta'); if (!meta) return;
-    const te = meta.querySelector('.ticker-tag'); if (!te) return;
-    const data = window.__heatmapData?.[te.textContent.trim()];
+  // Runs on each card as it's added to the grid. Reads company data from
+  // the already-loaded DATA (no second fetch needed).
+  function makeCardUpgrader(dataByTicker) {
+    return function upgradeCard(card) {
+      if (card.dataset.upgraded) return;
+      card.dataset.upgraded = 'true';
+      const meta = card.querySelector('.card-meta'); if (!meta) return;
+      const te = meta.querySelector('.ticker-tag'); if (!te) return;
+      const data = dataByTicker[te.textContent.trim()];
 
-    // Shorten sector
-    const sb = meta.querySelector('.sector-badge');
-    if (sb) { const f = sb.textContent.trim(); if (SECTOR_SHORT[f]) sb.textContent = SECTOR_SHORT[f]; }
+      // Shorten sector
+      const sb = meta.querySelector('.sector-badge');
+      if (sb) { const f = sb.textContent.trim(); if (SECTOR_SHORT[f]) sb.textContent = SECTOR_SHORT[f]; }
 
-    if (!data) return;
+      if (!data) return;
 
-    // ASK badge
-    if (data.askEligible === false) {
-      const b = document.createElement('span'); b.className='ask-badge not-ask'; b.textContent='Not ASK';
-      b.title='Not eligible for Aksjesparekonto \u2014 domiciled outside the EEA'; meta.appendChild(b);
-    } else if (data.inOSEBX === false && data.askEligible === true) {
-      const b = document.createElement('span'); b.className='ask-badge'; b.textContent='ASK';
-      b.title='Eligible for Aksjesparekonto'; meta.appendChild(b);
-    }
+      // ASK badge
+      if (data.askEligible === false) {
+        const b = document.createElement('span'); b.className='ask-badge not-ask'; b.textContent='Not ASK';
+        b.title='Not eligible for Aksjesparekonto \u2014 domiciled outside the EEA'; meta.appendChild(b);
+      } else if (data.inOSEBX === false && data.askEligible === true) {
+        const b = document.createElement('span'); b.className='ask-badge'; b.textContent='ASK';
+        b.title='Eligible for Aksjesparekonto'; meta.appendChild(b);
+      }
 
-    // Rec ? icon
-    const rb = meta.querySelector('.rec-badge');
-    if (rb && !meta.querySelector('.rec-source-icon')) {
-      const rk = (data.recommendation||'').toLowerCase().replace(/\s+/g,'_');
-      const ex = REC_EXPLAIN[rk] || '<strong>'+rb.textContent.trim()+'</strong>';
-      const html = ex + '<br><br>' + REC_SOURCE;
-      const icon = document.createElement('span'); icon.className='rec-source-icon'; icon.textContent='?'; icon.tabIndex=0;
-      icon.addEventListener('mouseenter', () => showTip(icon, html));
-      icon.addEventListener('mouseleave', hideTip);
-      icon.addEventListener('focus', () => showTip(icon, html));
-      icon.addEventListener('blur', hideTip);
-      rb.insertAdjacentElement('afterend', icon);
-    }
+      // Rec ? icon
+      const rb = meta.querySelector('.rec-badge');
+      if (rb && !meta.querySelector('.rec-source-icon')) {
+        const rk = (data.recommendation||'').toLowerCase().replace(/\s+/g,'_');
+        const ex = REC_EXPLAIN[rk] || '<strong>'+rb.textContent.trim()+'</strong>';
+        const html = ex + '<br><br>' + REC_SOURCE;
+        const icon = document.createElement('span'); icon.className='rec-source-icon'; icon.textContent='?'; icon.tabIndex=0;
+        icon.addEventListener('mouseenter', () => showTip(icon, html));
+        icon.addEventListener('mouseleave', hideTip);
+        icon.addEventListener('focus', () => showTip(icon, html));
+        icon.addEventListener('blur', hideTip);
+        rb.insertAdjacentElement('afterend', icon);
+      }
+    };
   }
 
   // === HEADER + ABOUT ===
   function updHeader() {
     const h = document.querySelector('.site-header h1'); if (h) h.textContent = 'Oslo Børs Heatmap';
-    updSub();
+    updSub('all');
   }
   function updAbout() {
     const el = document.querySelector('.about-content'); if (!el) return;
@@ -215,7 +197,41 @@
   }
 
   // === BOOT ===
-  function boot() { updHeader(); addBenchTips(); addFilters(); loadAndObserve(); updAbout(); }
+  // Wait for the main app to finish loading DATA, then wire up the UI.
+  function boot() {
+    updHeader();
+    addBenchTips();
+    updAbout();
+
+    if (!window.osebxReady) {
+      console.warn('[heatmap-upgrade] osebxReady not found — main script may have failed to load');
+      return;
+    }
+
+    window.osebxReady.then(app => {
+      addFilters(app);
+
+      // Build ticker -> company-data lookup from the already-loaded dataset.
+      const dataByTicker = {};
+      (app.data?.companies || []).forEach(c => {
+        dataByTicker[c.ticker.replace('.OL', '')] = c;
+      });
+      const upgradeCard = makeCardUpgrader(dataByTicker);
+
+      // Upgrade cards that already exist, then observe for new ones
+      // (pagination adds more cards on "Show X more" clicks).
+      const grid = document.getElementById('cardsGrid');
+      if (grid) {
+        grid.querySelectorAll('.company-card').forEach(upgradeCard);
+        new MutationObserver(muts => {
+          muts.forEach(m => m.addedNodes.forEach(n => {
+            if (n.nodeType === 1 && n.classList.contains('company-card')) upgradeCard(n);
+          }));
+        }).observe(grid, { childList: true });
+      }
+    });
+  }
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
-  else setTimeout(boot, 100);
+  else boot();
 })();
