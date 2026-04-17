@@ -58,8 +58,8 @@ SPECULATIVE_MOMENTUM = 70
 SPECULATIVE_SHARPE = 0.5
 
 # Regime thresholds
-BROAD_BREADTH = 0.70
-NARROW_BREADTH = 0.40
+BROAD_BREADTH = 0.60
+NARROW_BREADTH = 0.35
 COMPRESSED_YTD_ABS = 3.0  # |OSEBX YTD| < 3%
 ROTATION_SPREAD = 5.0     # OBX vs OSEBX/OSEFX diverge by >5pp
 
@@ -112,7 +112,7 @@ class Brief(BaseModel):
 
     regime: Literal["broad_rally", "narrow_rally", "rotation",
                     "compressed", "drawdown"]
-    breadth: float  # share of sectors with avgReturnYTD > 0
+    breadth: float  # share of companies with returnsYTD > 0
 
     benchmarks: dict[str, Optional[float]]  # OSEBX/OBX/OSEFX YTD
     benchmark_spreads: dict[str, Optional[float]]  # OBX-OSEBX, etc.
@@ -425,10 +425,10 @@ def build_brief(data: dict) -> Brief:
     thin = coverage < MIN_DATA_COVERAGE
 
     # Breadth
-    sectors_with_data = [s for s in sector_summary if s.get("avgReturnYTD") is not None]
-    sectors_pos = sum(1 for s in sectors_with_data if s["avgReturnYTD"] > 0)
-    breadth = sectors_pos / len(sectors_with_data) if sectors_with_data else 0.0
-
+    # Breadth — share of companies with positive YTD (Oslo market-wide)
+    with_ytd = [c for c in companies if c.get("returnsYTD") is not None]
+    breadth = sum(1 for c in with_ytd if c["returnsYTD"] > 0) / len(with_ytd) if with_ytd else 0.0
+    
     # Benchmark spreads
     osebx = benchmarks_raw.get("OSEBX")
     obx = benchmarks_raw.get("OBX")
