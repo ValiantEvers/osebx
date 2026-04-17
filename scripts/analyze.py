@@ -43,14 +43,12 @@ MAX_OPPORTUNITIES = 3
 # Quality floor for drivers/opportunities: top third on Sharpe within snapshot
 QUALITY_SHARPE_PERCENTILE = 0.66
 
-# Overextension: top quartile on both mean-reversion distance AND vol percentile
-OVEREXTENSION_MR_PERCENTILE = 0.75
+# Overextension: top quartile on vol percentile (paired with z-score gate below)
 OVEREXTENSION_VOL_THRESHOLD = 75  # volatilityPercentile is already 0–100
 
-# Hidden gems: top quartile earnings yield, bottom quartile MR distance,
-# above-median Sharpe
+# Hidden gems: top quartile earnings yield, above-median Sharpe.
+# (The mean-reversion gate is now a fixed z-score range, not a percentile cut.)
 GEM_EY_PERCENTILE = 0.75
-GEM_MR_PERCENTILE = 0.25
 GEM_SHARPE_PERCENTILE = 0.50
 
 # Speculative flag: high momentum + weak Sharpe
@@ -58,10 +56,20 @@ SPECULATIVE_MOMENTUM = 70
 SPECULATIVE_SHARPE = 0.5
 
 # Regime thresholds
+# Calibrated for COMPANY-level breadth (share of Oslo-listed stocks with
+# positive YTD). Company-level breadth runs tighter around 50% than
+# sector-level, so the cuts are narrower than the old 0.70/0.40.
 BROAD_BREADTH = 0.60
 NARROW_BREADTH = 0.35
 COMPRESSED_YTD_ABS = 3.0  # |OSEBX YTD| < 3%
 ROTATION_SPREAD = 5.0     # OBX vs OSEBX/OSEFX diverge by >5pp
+
+# Z-score thresholds for mean reversion (replaces percentile-based MR cuts).
+# 5Y standard-deviation units — roughly normal for diversified equity with
+# ~1260 daily observations.
+Z_OVEREXTENDED = 2.0   # risks: flag when price is >2σ above 5Y mean
+Z_GEM_HIGH = -1.0      # opportunities: cheap side of the range
+Z_GEM_LOW = -2.0       # opportunities: crisis side (below this = distressed, not a gem)
 
 # Data-quality guard
 MIN_DATA_COVERAGE = 0.70  # if <70% of companies have Sharpe, flag thin data
@@ -112,7 +120,7 @@ class Brief(BaseModel):
 
     regime: Literal["broad_rally", "narrow_rally", "rotation",
                     "compressed", "drawdown"]
-    breadth: float  # share of companies with returnsYTD > 0
+    breadth: float  # share of Oslo-listed companies with returnsYTD > 0
 
     benchmarks: dict[str, Optional[float]]  # OSEBX/OBX/OSEFX YTD
     benchmark_spreads: dict[str, Optional[float]]  # OBX-OSEBX, etc.
@@ -212,8 +220,10 @@ def classify_regime(breadth: float, bench: dict[str, Optional[float]],
 def select_drivers(companies: list[dict], sharpe_floor: float) -> list[Candidate]:
     """Top quality leaders: high Sharpe AND positive YTD return.
 
-    Ranks by (sharpeRatio * sign of returnsYTD) to penalise high-Sharpe names
-    that happen to be flat — we want LEADERSHIP, not just safety.
+    Ranks by (sharpe + 0.05 * ytd): Sharpe is the primary signal, with a
+    small YTD tilt so that among equally risk-adjusted names, the ones
+    leading by more get top placement. Each 20pp of YTD adds ~1 unit of
+    ranking weight — tuneable.
     """
     pool = []
     for c in companies:
@@ -223,7 +233,7 @@ def select_drivers(companies: list[dict], sharpe_floor: float) -> list[Candidate
             continue
         if sharpe < sharpe_floor or ytd <= 0:
             continue
-        pool.append((sharpe * (ytd ** 0.5 if ytd > 0 else 0), c))
+        pool.append((sharpe + 0.05 * ytd, c))
 
     pool.sort(key=lambda x: x[0], reverse=True)
     out = []
@@ -244,42 +254,58 @@ def select_drivers(companies: list[dict], sharpe_floor: float) -> list[Candidate
 
 
 def select_risks(companies: list[dict], mr_cut: float) -> list[Candidate]:
-    """Two risk flavours:
-    1. Overextended — top-quartile mean reversion AND high vol
+    """Two risk flavours, ranked together after within-type normalisation:
+    1. Overextended — z-score > Z_OVEREXTENDED (>2σ above 5Y mean) AND high vol
     2. Speculative — high momentum with weak Sharpe
+
+    Because overextended names produce large raw scores (σ units can be big)
+    and speculative names produce 0–100 momentum scores, mixing raw values
+    would let overextensions always dominate. We rank each sub-type internally
+    (0-1 within its pool) before combining, so both types compete fairly.
+
+    The `mr_cut` parameter is retained for interface compatibility but ignored —
+    Z_OVEREXTENDED is the new absolute gate.
     """
-    pool = []
+    overext_pool = []
+    spec_pool = []
 
     for c in companies:
-        mr_dist = safe_get(c, "meanReversion", "distancePercentage")
+        z = safe_get(c, "meanReversion", "zScore")
         vol_pct = c.get("volatilityPercentile")
         momentum = c.get("momentumScore")
         sharpe = c.get("sharpeRatio")
 
-        tag = None
-        sort_key = 0.0
-
-        if (mr_dist is not None and vol_pct is not None
-                and mr_dist > mr_cut and vol_pct > OVEREXTENSION_VOL_THRESHOLD):
-            tag = "overextended"
-            sort_key = mr_dist
+        if (z is not None and vol_pct is not None
+                and z > Z_OVEREXTENDED and vol_pct > OVEREXTENSION_VOL_THRESHOLD):
+            overext_pool.append((z, c))
         elif (momentum is not None and sharpe is not None
               and momentum > SPECULATIVE_MOMENTUM and sharpe < SPECULATIVE_SHARPE):
-            tag = "speculative"
-            sort_key = momentum
+            spec_pool.append((momentum, c))
 
-        if tag:
-            pool.append((sort_key, tag, c))
+    # Normalise each pool to rank (1-based) / n so the highest-ranked name
+    # in each sub-type gets score 1.0, regardless of absolute value scale.
+    def normalise(pool):
+        if not pool:
+            return []
+        pool.sort(key=lambda x: x[0], reverse=True)
+        n = len(pool)
+        return [((n - i) / n, raw, c) for i, (raw, c) in enumerate(pool)]
 
-    pool.sort(key=lambda x: x[0], reverse=True)
+    combined = (
+        [(norm, raw, c, "overextended") for norm, raw, c in normalise(overext_pool)]
+        + [(norm, raw, c, "speculative") for norm, raw, c in normalise(spec_pool)]
+    )
+    combined.sort(key=lambda x: x[0], reverse=True)
+
     out = []
-    for _, tag, c in pool[:MAX_RISKS]:
+    for _, _, c, tag in combined[:MAX_RISKS]:
         out.append(Candidate(
             ticker=strip_ticker(c["ticker"]),
             company_name=c.get("companyName", c["ticker"]),
             sector=c.get("sector") or "Unknown",
             rationale_tag=tag,
             metrics={
+                "zScore": round(safe_get(c, "meanReversion", "zScore") or 0, 2),
                 "meanReversionPct": round(
                     safe_get(c, "meanReversion", "distancePercentage") or 0, 1),
                 "volatilityPercentile": c.get("volatilityPercentile") or 0,
@@ -293,20 +319,34 @@ def select_risks(companies: list[dict], mr_cut: float) -> list[Candidate]:
 
 def select_opportunities(companies: list[dict], ey_cut: float,
                          mr_cut: float, sharpe_cut: float) -> list[Candidate]:
-    """Hidden gems: high earnings yield, near 5Y mean, acceptable Sharpe."""
+    """Hidden gems: high earnings yield, moderately cheap vs 5Y history,
+    acceptable Sharpe.
+
+    Mean-reversion gate uses an absolute z-score range (Z_GEM_LOW to
+    Z_GEM_HIGH) rather than a percentile cut. The range is deliberately
+    one-to-two σ below the 5Y mean: deep enough to be genuinely cheap,
+    but not so deep that it signals distress. Anything below Z_GEM_LOW
+    is treated as a crisis name, not a gem.
+
+    The `mr_cut` parameter is kept for interface compatibility but ignored.
+    """
     pool = []
     for c in companies:
         ey = c.get("earningsYield")
-        mr_dist = safe_get(c, "meanReversion", "distancePercentage")
+        z = safe_get(c, "meanReversion", "zScore")
         sharpe = c.get("sharpeRatio")
 
-        if ey is None or mr_dist is None or sharpe is None:
+        if ey is None or z is None or sharpe is None:
             continue
-        if ey < ey_cut or mr_dist > mr_cut or sharpe < sharpe_cut:
+        if ey < ey_cut or sharpe < sharpe_cut:
+            continue
+        if not (Z_GEM_LOW <= z <= Z_GEM_HIGH):
             continue
 
-        # Rank by a composite: yield weighted by quality, penalised for extension
-        score = ey * sharpe - max(0, mr_dist) * 0.1
+        # Rank by yield × quality, with a mild penalty for being closer to
+        # the crisis edge of the z-range (i.e., -1.5 is the sweet spot).
+        distance_from_centre = abs(z - (Z_GEM_LOW + Z_GEM_HIGH) / 2)
+        score = ey * sharpe * (1.0 - 0.2 * distance_from_centre)
         pool.append((score, c))
 
     pool.sort(key=lambda x: x[0], reverse=True)
@@ -319,6 +359,7 @@ def select_opportunities(companies: list[dict], ey_cut: float,
             rationale_tag="hidden_gem",
             metrics={
                 "earningsYield": round(c["earningsYield"], 1),
+                "zScore": round(safe_get(c, "meanReversion", "zScore") or 0, 2),
                 "meanReversionPct": round(
                     safe_get(c, "meanReversion", "distancePercentage") or 0, 1),
                 "sharpeRatio": round(c["sharpeRatio"], 2),
@@ -339,21 +380,26 @@ def select_watchlist(companies: list[dict], ey_cut: float,
     closest to being buys, and here's exactly what's keeping them off the
     list.' It never implies a recommendation.
 
-    A name is 'near' if it missed ONE gate, and missed it by <25% of the cut.
+    A name is 'near' if it missed ONE gate, and missed it by a small margin.
+    Mean-reversion gate is now a z-score range [Z_GEM_LOW, Z_GEM_HIGH];
+    'close' means within 0.5σ of either edge.
+
+    The `mr_cut` parameter is kept for interface compatibility but ignored.
     """
     pool = []
     for c in companies:
         ey = c.get("earningsYield")
-        mr_dist = safe_get(c, "meanReversion", "distancePercentage")
+        z = safe_get(c, "meanReversion", "zScore")
         sharpe = c.get("sharpeRatio")
 
-        if ey is None or mr_dist is None or sharpe is None:
+        if ey is None or z is None or sharpe is None:
             continue
 
-        # How many gates passed?
+        # Gate pass/fail
+        mr_pass = Z_GEM_LOW <= z <= Z_GEM_HIGH
         passes = {
             "earnings_yield": ey >= ey_cut,
-            "mean_reversion": mr_dist <= mr_cut,
+            "mean_reversion": mr_pass,
             "sharpe": sharpe >= sharpe_cut,
         }
         failed = [k for k, v in passes.items() if not v]
@@ -363,31 +409,27 @@ def select_watchlist(companies: list[dict], ey_cut: float,
             continue
 
         miss = failed[0]
-        # "Close" = within a reasonable overshoot of the threshold.
-        # Tolerances asymmetric because the metrics have different distributions:
-        # - earnings yield: allow 25% below the gate (common for quality names)
-        # - mean reversion: allow up to the MEDIAN distance, which represents
-        #   "not exceptional, but not stretched enough to be a risk either"
-        # - sharpe: allow 25% below the gate
         close = False
         if miss == "earnings_yield":
+            # 25% below gate is close enough for quality names
             close = ey >= ey_cut * 0.75
         elif miss == "mean_reversion":
-            # Using median MR as the ceiling makes this dataset-adaptive:
-            # in a rotation regime when everything is extended, we still
-            # surface the least-stretched high-quality names.
-            close = mr_dist <= max(mr_cut * 5, 25.0)
+            # Close = within 0.5σ of either edge of the gem range.
+            # This captures "nearly cheap enough" (z just above -1) and
+            # "just past distressed" (z just below -2) symmetrically.
+            close = (Z_GEM_LOW - 0.5) <= z <= (Z_GEM_HIGH + 0.5)
         elif miss == "sharpe":
             close = sharpe >= sharpe_cut * 0.75
 
         if not close:
             continue
 
-        # Rank by how close they are to qualifying — best near-miss first
-        # Composite: all three metrics normalised, weighted
-        norm_ey = ey / ey_cut
-        norm_mr = mr_cut / max(mr_dist, 0.01) if mr_dist > 0 else 2.0
-        norm_sharpe = sharpe / sharpe_cut
+        # Rank by how close they are to qualifying — best near-miss first.
+        # For MR, peak score when z sits at the centre of the gem range.
+        norm_ey = ey / ey_cut if ey_cut else 1.0
+        z_centre = (Z_GEM_LOW + Z_GEM_HIGH) / 2
+        norm_mr = 1.0 / (1.0 + abs(z - z_centre))
+        norm_sharpe = sharpe / sharpe_cut if sharpe_cut else 1.0
         score = norm_ey + norm_mr + norm_sharpe
         pool.append((score, miss, c))
 
@@ -401,6 +443,7 @@ def select_watchlist(companies: list[dict], ey_cut: float,
             missed_on=miss,
             metrics={
                 "earningsYield": round(c.get("earningsYield") or 0, 1),
+                "zScore": round(safe_get(c, "meanReversion", "zScore") or 0, 2),
                 "meanReversionPct": round(
                     safe_get(c, "meanReversion", "distancePercentage") or 0, 1),
                 "sharpeRatio": round(c.get("sharpeRatio") or 0, 2),
@@ -424,11 +467,17 @@ def build_brief(data: dict) -> Brief:
     coverage = usable / len(companies) if companies else 0.0
     thin = coverage < MIN_DATA_COVERAGE
 
-    # Breadth
-    # Breadth — share of companies with positive YTD (Oslo market-wide)
+    # Breadth — share of companies with positive YTD (Oslo market-wide).
+    # Previously sector-level, which conflated universe scope with OSEBX
+    # benchmarking. Company-level is methodologically cleaner and doesn't
+    # depend on small sector buckets.
     with_ytd = [c for c in companies if c.get("returnsYTD") is not None]
     breadth = sum(1 for c in with_ytd if c["returnsYTD"] > 0) / len(with_ytd) if with_ytd else 0.0
-    
+
+    # Sector-level summary is still used below for leader/laggard ranking —
+    # just no longer drives the breadth metric.
+    sectors_with_data = [s for s in sector_summary if s.get("avgReturnYTD") is not None]
+
     # Benchmark spreads
     osebx = benchmarks_raw.get("OSEBX")
     obx = benchmarks_raw.get("OBX")
@@ -458,32 +507,31 @@ def build_brief(data: dict) -> Brief:
         weight=s.get("totalWeight"),
     ) for s in ranked_sectors[-2:][::-1]]
 
-    # Dynamic thresholds from the current snapshot
+    # Dynamic thresholds from the current snapshot.
+    # Mean-reversion gates are now fixed z-score thresholds (see constants
+    # at top of file), so no MR percentile cuts are computed here anymore.
     sharpe_vals = [c["sharpeRatio"] for c in companies if c.get("sharpeRatio") is not None]
-    mr_vals = [safe_get(c, "meanReversion", "distancePercentage") for c in companies]
-    mr_vals = [v for v in mr_vals if v is not None]
     ey_vals = [c["earningsYield"] for c in companies if c.get("earningsYield") is not None]
 
     sharpe_floor = percentile(sharpe_vals, QUALITY_SHARPE_PERCENTILE) or 1.0
-    mr_overext_cut = percentile(mr_vals, OVEREXTENSION_MR_PERCENTILE) or 25.0
     ey_gem_cut = percentile(ey_vals, GEM_EY_PERCENTILE) or 8.0
-    mr_gem_cut = percentile(mr_vals, GEM_MR_PERCENTILE) or 10.0
     sharpe_gem_cut = percentile(sharpe_vals, GEM_SHARPE_PERCENTILE) or 0.8
 
     log.info(f"Dynamic cuts: sharpe_floor={sharpe_floor:.2f} "
-             f"mr_overext={mr_overext_cut:.1f}% "
              f"ey_gem={ey_gem_cut:.2f} "
-             f"mr_gem={mr_gem_cut:.2f}% "
-             f"sharpe_gem={sharpe_gem_cut:.2f}")
+             f"sharpe_gem={sharpe_gem_cut:.2f} "
+             f"z_overext={Z_OVEREXTENDED} "
+             f"z_gem=[{Z_GEM_LOW}, {Z_GEM_HIGH}]")
 
     drivers = select_drivers(companies, sharpe_floor)
-    risks = select_risks(companies, mr_overext_cut)
-    opps = select_opportunities(companies, ey_gem_cut, mr_gem_cut, sharpe_gem_cut)
+    # mr_cut parameter kept for signature compatibility but unused (z-score is fixed)
+    risks = select_risks(companies, 0.0)
+    opps = select_opportunities(companies, ey_gem_cut, 0.0, sharpe_gem_cut)
 
     # Fallback: surface near-misses only when the strict gates found nothing
     watchlist = []
     if not opps:
-        watchlist = select_watchlist(companies, ey_gem_cut, mr_gem_cut, sharpe_gem_cut)
+        watchlist = select_watchlist(companies, ey_gem_cut, 0.0, sharpe_gem_cut)
         log.info(f"Opportunities empty — watchlist surfaced {len(watchlist)} near-misses")
 
     # Watchlist graduation tracking — compare this week's output to last week's
@@ -515,11 +563,17 @@ def build_brief(data: dict) -> Brief:
         except Exception as e:
             log.warning(f"Could not read prior_watchlist.json: {e}")
 
-    # Write this week's watchlist for next week's comparison
-    prior_path.write_text(json.dumps({
-        "as_of": data.get("lastUpdated"),
-        "watchlist": [w.model_dump() for w in watchlist],
-    }, indent=2))
+    # Persist this week's watchlist for next week's comparison — but ONLY
+    # when it's non-empty. Otherwise we'd overwrite a valid prior watchlist
+    # with [] on weeks the strict opportunity gates fire, silently erasing
+    # the graduation tracker's memory until the next dry week.
+    if watchlist:
+        prior_path.write_text(json.dumps({
+            "as_of": data.get("lastUpdated"),
+            "watchlist": [w.model_dump() for w in watchlist],
+        }, indent=2))
+    else:
+        log.info("Watchlist empty — preserving prior_watchlist.json untouched")
 
     return Brief(
         as_of=data.get("lastUpdated", datetime.now(timezone.utc).isoformat()),
@@ -538,9 +592,10 @@ def build_brief(data: dict) -> Brief:
         graduation=graduation,
         thresholds_used={
             "sharpe_floor_p66": round(sharpe_floor, 2),
-            "overextension_mr_p75": round(mr_overext_cut, 1),
+            "z_overextended": Z_OVEREXTENDED,
+            "z_gem_low": Z_GEM_LOW,
+            "z_gem_high": Z_GEM_HIGH,
             "gem_ey_p75": round(ey_gem_cut, 2),
-            "gem_mr_p25": round(mr_gem_cut, 2),
             "gem_sharpe_p50": round(sharpe_gem_cut, 2),
         },
     )
