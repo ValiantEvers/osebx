@@ -1194,18 +1194,11 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 (function () {
   'use strict';
 
-  // ---- Sector name normalisation ----
-  // Yahoo Finance returns different GICS names than our hardcoded list.
-  // This map merges duplicates into canonical names.
-  const SECTOR_MAP = {
-    'Financial Services': 'Financials',
-    'Consumer Defensive': 'Consumer Staples',
-    'Consumer Cyclical':  'Consumer Discretionary',
-    'Basic Materials':    'Materials',
-    'Healthcare':         'Health Care',
-    'Technology':         'Information Technology',
-  };
-  function normSector(s) { return SECTOR_MAP[s] || s || 'Unknown'; }
+  // ---- Sector names come pre-normalised from the backend ----
+  // update_data.py applies the canonical GICS mapping (SECTOR_NORM) before
+  // writing data.json, so the frontend no longer needs its own normalisation
+  // map. Keeping the two in sync was a drift hazard — if a new Yahoo sector
+  // name appeared, the two could disagree and sectors would double-count.
 
   // ---- State ----
   let DATA = null;
@@ -1291,7 +1284,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
     { key: 'meanRevDist', label: '% from 5Y', defaultDir: 'asc' },
     { key: 'alpha1Y', label: 'Alpha 1Y', defaultDir: 'desc' },
     { key: 'sharpeRatio', label: 'Sharpe', defaultDir: 'desc' },
-    { key: 'maxDrawdown', label: 'Max DD', defaultDir: 'asc' },
+    { key: 'maxDrawdown', label: 'Max DD', defaultDir: 'desc' },
     { key: 'momentumScore', label: 'Momentum', defaultDir: 'desc' },
     { key: 'evToEbitda', label: 'EV/EBITDA', defaultDir: 'asc' },
     { key: 'earningsYield', label: 'Earn Yield', defaultDir: 'desc' },
@@ -1337,39 +1330,9 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
   // ---- Normalise data on load ----
   function normaliseData() {
-    // Normalise sector names on all companies
-    DATA.companies.forEach(c => { c.sector = normSector(c.sector); });
-
-    // Filter out companies with no meaningful data
+    // Filter out companies with no meaningful data. Sector names and
+    // sectorSummary both come from the backend — no client-side rebuild.
     DATA.companies = DATA.companies.filter(hasData);
-
-    // Rebuild sector summary from clean data
-    DATA.sectorSummary = buildSectorSummary(DATA.companies);
-  }
-
-  function buildSectorSummary(companies) {
-    const sectors = {};
-    companies.forEach(c => {
-      const s = c.sector || 'Unknown';
-      if (!sectors[s]) sectors[s] = [];
-      sectors[s].push(c);
-    });
-
-    function avg(vals) {
-      const clean = vals.filter(v => v != null);
-      return clean.length >= 2 ? Math.round(clean.reduce((a, b) => a + b, 0) / clean.length * 100) / 100 : (clean.length === 1 ? clean[0] : null);
-    }
-
-    return Object.entries(sectors).map(([name, members]) => ({
-      sector: name,
-      companyCount: members.length,
-      totalWeight: Math.round(members.reduce((a, c) => a + (c.osebxWeight || 0), 0) * 100) / 100,
-      avgReturnYTD: avg(members.map(c => c.returnsYTD)),
-      avgPE: avg(members.map(c => c.peRatio)),
-      avgEvToEbitda: avg(members.map(c => c.evToEbitda)),
-      avgDividendYield: avg(members.map(c => c.dividendYield)),
-      avgSharpe: avg(members.map(c => c.sharpeRatio)),
-    })).sort((a, b) => (b.totalWeight || 0) - (a.totalWeight || 0));
   }
 
   // ---- Init ----
@@ -1958,7 +1921,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
         }),
         el('span', {
         text: 'Breadth ' + breadthPct + '%',
-        title: 'Breadth = share of Oslo-listed stocks with positive YTD return. >60% = broad rally, <35% = narrow rally, between = rotation.',
+        title: 'Breadth = share of Oslo-listed stocks with positive YTD return (also called market participation or advance share). >60% = broad rally, <35% = narrow rally, between = rotation.',
         style: 'cursor: help; border-bottom: 1px dotted var(--text-muted);',
       }),
         el('span', { text: fmtDate(insights.as_of) }),
