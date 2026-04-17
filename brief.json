@@ -1,42 +1,42 @@
 {
-  "as_of": "2026-04-17T09:40:05+00:00",
+  "as_of": "2026-04-17T11:23:50+00:00",
   "data_coverage": 0.78,
   "thin_data": false,
   "regime": "broad_rally",
   "breadth": 0.61,
   "benchmarks": {
-    "OSEBX": 18.635788,
-    "OBX": 21.893625,
+    "OSEBX": 18.012319,
+    "OBX": 21.218084,
     "OSEFX": null
   },
   "benchmark_spreads": {
-    "OBX_minus_OSEBX": 3.26,
+    "OBX_minus_OSEBX": 3.21,
     "OSEFX_minus_OSEBX": null
   },
   "sector_leaders": [
     {
       "sector": "Energy",
-      "avg_return_ytd": 29.19,
-      "avg_sharpe": 2.2,
+      "avg_return_ytd": 28.16,
+      "avg_sharpe": 2.15,
       "weight": 19.4
     },
     {
       "sector": "Industrials",
-      "avg_return_ytd": 22.22,
-      "avg_sharpe": 1.77,
+      "avg_return_ytd": 21.84,
+      "avg_sharpe": 1.75,
       "weight": 10.75
     }
   ],
   "sector_laggards": [
     {
       "sector": "Real Estate",
-      "avg_return_ytd": -5.34,
-      "avg_sharpe": 0.09,
+      "avg_return_ytd": -5.71,
+      "avg_sharpe": 0.07,
       "weight": 1.0
     },
     {
       "sector": "Health Care",
-      "avg_return_ytd": -5.21,
+      "avg_return_ytd": -5.28,
       "avg_sharpe": 1.21,
       "weight": 0.2
     }
@@ -48,10 +48,10 @@
       "sector": "Energy",
       "rationale_tag": "quality_leader",
       "metrics": {
-        "sharpeRatio": 4.09,
-        "returnsYTD": 73.7,
+        "sharpeRatio": 4.03,
+        "returnsYTD": 72.2,
         "momentumScore": 94.0,
-        "alphaSixMonth": 101.5
+        "alphaSixMonth": 100.2
       }
     },
     {
@@ -60,10 +60,10 @@
       "sector": "Information Technology",
       "rationale_tag": "quality_leader",
       "metrics": {
-        "sharpeRatio": 3.79,
-        "returnsYTD": 72.2,
+        "sharpeRatio": 3.77,
+        "returnsYTD": 71.5,
         "momentumScore": 100.0,
-        "alphaSixMonth": 114.0
+        "alphaSixMonth": 113.8
       }
     },
     {
@@ -72,10 +72,10 @@
       "sector": "Industrials",
       "rationale_tag": "quality_leader",
       "metrics": {
-        "sharpeRatio": 4.68,
-        "returnsYTD": 47.1,
-        "momentumScore": 83.0,
-        "alphaSixMonth": 39.1
+        "sharpeRatio": 4.62,
+        "returnsYTD": 45.9,
+        "momentumScore": 82.0,
+        "alphaSixMonth": 38.5
       }
     },
     {
@@ -84,10 +84,10 @@
       "sector": "Energy",
       "rationale_tag": "quality_leader",
       "metrics": {
-        "sharpeRatio": 4.47,
-        "returnsYTD": 43.6,
+        "sharpeRatio": 4.39,
+        "returnsYTD": 42.4,
         "momentumScore": 69.0,
-        "alphaSixMonth": 25.1
+        "alphaSixMonth": 24.5
       }
     }
   ],
@@ -98,11 +98,11 @@
       "sector": "Industrials",
       "rationale_tag": "overextended",
       "metrics": {
-        "zScore": 4.06,
-        "meanReversionPct": 78.9,
+        "zScore": 4.03,
+        "meanReversionPct": 78.2,
         "volatilityPercentile": 86,
         "momentumScore": 69.0,
-        "sharpeRatio": 2.96,
+        "sharpeRatio": 2.94,
         "maxDrawdown": -23.8
       }
     },
@@ -112,11 +112,11 @@
       "sector": "Materials",
       "rationale_tag": "overextended",
       "metrics": {
-        "zScore": 3.87,
-        "meanReversionPct": 55.2,
-        "volatilityPercentile": 92,
+        "zScore": 3.85,
+        "meanReversionPct": 54.9,
+        "volatilityPercentile": 93,
         "momentumScore": 66.0,
-        "sharpeRatio": 3.68,
+        "sharpeRatio": 3.66,
         "maxDrawdown": -11.5
       }
     },
@@ -126,11 +126,11 @@
       "sector": "Energy",
       "rationale_tag": "overextended",
       "metrics": {
-        "zScore": 3.68,
-        "meanReversionPct": 89.4,
+        "zScore": 3.6,
+        "meanReversionPct": 87.4,
         "volatilityPercentile": 82,
         "momentumScore": 66.0,
-        "sharpeRatio": 2.85,
+        "sharpeRatio": 2.8,
         "maxDrawdown": -29.4
       }
     },
@@ -140,11 +140,11 @@
       "sector": "Industrials",
       "rationale_tag": "overextended",
       "metrics": {
-        "zScore": 3.61,
-        "meanReversionPct": 53.4,
+        "zScore": 3.53,
+        "meanReversionPct": 52.3,
         "volatilityPercentile": 88,
-        "momentumScore": 67.0,
-        "sharpeRatio": 3.57,
+        "momentumScore": 66.0,
+        "sharpeRatio": 3.51,
         "maxDrawdown": -11.3
       }
     }
@@ -157,11 +157,15 @@
     "resolved": []
   },
   "thresholds_used": {
-    "sharpe_floor_p66": 2.01,
+    "sharpe_floor_p66": 2.0,
     "z_overextended": 2.0,
     "z_gem_low": -2.0,
     "z_gem_high": -1.0,
-    "gem_ey_p75": 8.72,
-    "gem_sharpe_p50": 1.29
+    "gem_ey_p75": 8.76,
+    "gem_sharpe_p50": 1.25,
+    "breadth_broad": 0.6,
+    "breadth_narrow": 0.35,
+    "compressed_ytd_abs": 3.0,
+    "rotation_spread": 5.0
   }
 }
