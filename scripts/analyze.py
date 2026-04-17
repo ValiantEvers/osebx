@@ -457,7 +457,7 @@ def select_watchlist(companies: list[dict], ey_cut: float,
 # Main pipeline
 # ---------------------------------------------------------------------------
 
-def build_brief(data: dict) -> Brief:
+def build_brief(data: dict, prior_watchlist_tickers: Optional[set[str]] = None) -> Brief:
     companies = data.get("companies", [])
     sector_summary = data.get("sectorSummary", [])
     benchmarks_raw = {b["name"]: b.get("returnsYTD") for b in data.get("benchmarks", [])}
@@ -534,46 +534,33 @@ def build_brief(data: dict) -> Brief:
         watchlist = select_watchlist(companies, ey_gem_cut, 0.0, sharpe_gem_cut)
         log.info(f"Opportunities empty — watchlist surfaced {len(watchlist)} near-misses")
 
-    # Watchlist graduation tracking — compare this week's output to last week's
-    # prior_watchlist.json was written by the previous run. First run: file doesn't
-    # exist yet, all transitions are empty. Graduation logic:
+    # Watchlist graduation tracking — compare this week's output to last week's.
+    # Prior tickers come from reading last week's committed brief.json, which
+    # main() fetches before we overwrite it. This removes the need for a
+    # separate prior_watchlist.json file (which wasn't being committed by the
+    # workflow and therefore never persisted across runs).
+    #
+    # Graduation logic:
     #   - "graduated": was on last week's watchlist, now an opportunity
     #   - "fell_to_risk": was on watchlist, now shows up as a risk
     #   - "resolved": was on watchlist, no longer surfaces anywhere
     graduation = {"graduated": [], "fell_to_risk": [], "resolved": []}
-    prior_path = Path("prior_watchlist.json")
-    if prior_path.exists():
-        try:
-            prior = json.loads(prior_path.read_text())
-            prior_tickers = {w["ticker"] for w in prior.get("watchlist", [])}
-            this_opps = {o.ticker for o in opps}
-            this_risks = {r.ticker for r in risks}
-            this_watch = {w.ticker for w in watchlist}
+    prior_tickers = prior_watchlist_tickers or set()
 
-            for t in prior_tickers:
-                if t in this_opps:
-                    graduation["graduated"].append(t)
-                elif t in this_risks:
-                    graduation["fell_to_risk"].append(t)
-                elif t not in this_watch:
-                    graduation["resolved"].append(t)
-            log.info(f"Graduation: {len(graduation['graduated'])} graduated, "
-                     f"{len(graduation['fell_to_risk'])} fell to risk, "
-                     f"{len(graduation['resolved'])} resolved")
-        except Exception as e:
-            log.warning(f"Could not read prior_watchlist.json: {e}")
-
-    # Persist this week's watchlist for next week's comparison — but ONLY
-    # when it's non-empty. Otherwise we'd overwrite a valid prior watchlist
-    # with [] on weeks the strict opportunity gates fire, silently erasing
-    # the graduation tracker's memory until the next dry week.
-    if watchlist:
-        prior_path.write_text(json.dumps({
-            "as_of": data.get("lastUpdated"),
-            "watchlist": [w.model_dump() for w in watchlist],
-        }, indent=2))
-    else:
-        log.info("Watchlist empty — preserving prior_watchlist.json untouched")
+    if prior_tickers:
+        this_opps = {o.ticker for o in opps}
+        this_risks = {r.ticker for r in risks}
+        this_watch = {w.ticker for w in watchlist}
+        for t in prior_tickers:
+            if t in this_opps:
+                graduation["graduated"].append(t)
+            elif t in this_risks:
+                graduation["fell_to_risk"].append(t)
+            elif t not in this_watch:
+                graduation["resolved"].append(t)
+        log.info(f"Graduation: {len(graduation['graduated'])} graduated, "
+                 f"{len(graduation['fell_to_risk'])} fell to risk, "
+                 f"{len(graduation['resolved'])} resolved")
 
     return Brief(
         as_of=data.get("lastUpdated", datetime.now(timezone.utc).isoformat()),
@@ -597,8 +584,27 @@ def build_brief(data: dict) -> Brief:
             "z_gem_high": Z_GEM_HIGH,
             "gem_ey_p75": round(ey_gem_cut, 2),
             "gem_sharpe_p50": round(sharpe_gem_cut, 2),
+            # Regime thresholds — surfaced so the frontend tooltip can render
+            # these without hardcoding them. Keep naming in sync with the
+            # constants at the top of this file.
+            "breadth_broad": BROAD_BREADTH,
+            "breadth_narrow": NARROW_BREADTH,
+            "compressed_ytd_abs": COMPRESSED_YTD_ABS,
+            "rotation_spread": ROTATION_SPREAD,
         },
     )
+
+
+def _load_prior_watchlist_tickers(path: Path) -> set[str]:
+    """Read last week's brief.json (if it exists) to extract watchlist tickers."""
+    if not path.exists():
+        return set()
+    try:
+        prior = json.loads(path.read_text())
+        return {w["ticker"] for w in prior.get("watchlist", [])}
+    except Exception as e:
+        log.warning(f"Could not read prior {path}: {e}")
+        return set()
 
 
 def main(in_path: str = "data.json", out_path: str = "brief.json") -> int:
@@ -607,7 +613,12 @@ def main(in_path: str = "data.json", out_path: str = "brief.json") -> int:
     log.info("=" * 60)
 
     data = json.loads(Path(in_path).read_text())
-    brief = build_brief(data)
+
+    # Pull last week's watchlist BEFORE we overwrite brief.json. The file
+    # is committed by the workflow, so it persists across runs.
+    prior_tickers = _load_prior_watchlist_tickers(Path(out_path))
+
+    brief = build_brief(data, prior_watchlist_tickers=prior_tickers)
 
     log.info(f"Regime: {brief.regime}")
     log.info(f"Breadth: {brief.breadth:.0%}  Coverage: {brief.data_coverage:.0%}"
