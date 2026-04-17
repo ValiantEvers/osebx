@@ -170,16 +170,13 @@ def call_claude(brief: dict) -> dict:
 
     client = anthropic.Anthropic(api_key=api_key)
 
+    # No prompt caching: ephemeral cache is ~5 min TTL and this job runs
+    # weekly, so cache never warms. A persistent cache would help, but is
+    # not worth the complexity for one small call per week.
     response = client.messages.create(
         model=MODEL,
         max_tokens=MAX_TOKENS,
-        system=[
-            {
-                "type": "text",
-                "text": SYSTEM_PROMPT,
-                "cache_control": {"type": "ephemeral"},  # cache across weekly runs
-            }
-        ],
+        system=SYSTEM_PROMPT,
         messages=[
             {"role": "user", "content": build_user_message(brief)}
         ],
@@ -197,8 +194,7 @@ def call_claude(brief: dict) -> dict:
     text = text.strip()
 
     log.info(f"Input tokens: {response.usage.input_tokens}  "
-             f"Output tokens: {response.usage.output_tokens}  "
-             f"Cache read: {getattr(response.usage, 'cache_read_input_tokens', 0)}")
+             f"Output tokens: {response.usage.output_tokens}")
 
     return json.loads(text)
 
