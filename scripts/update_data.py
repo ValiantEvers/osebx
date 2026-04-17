@@ -123,7 +123,7 @@ CONSTITUENTS = [
     ("NOFI.OL",   "SpareBank 1 Ostlandet",  "Financials",              0.30, True,  True),
     ("HELG.OL",   "SpareBank 1 Helgeland",  "Financials",              0.10, True,  True),
     ("NONG.OL",   "SpareBank 1 Nord-Norge", "Financials",              0.25, True,  True),
-    ("SBANK.OL",  "Sbanken (DNB subsidiary)", "Financials",            0.05, True,  True),
+    # Sbanken (SBANK.OL) was delisted and fully merged into DNB in 2022 — removed.
     ("GJF.OL",    "Gjensidige Forsikring",  "Financials",              1.50, True,  True),
     ("STB.OL",    "Storebrand",             "Financials",              1.40, True,  True),
     ("PROTCT.OL", "Protector Forsikring",   "Financials",              0.25, True,  True),
@@ -139,8 +139,6 @@ CONSTITUENTS = [
     ("BAKKA.OL",  "Bakkafrost",             "Consumer Staples",        0.60, True,  True),   # Faroe Islands (Danish realm, EEA-ish via Denmark)
     ("ORK.OL",    "Orkla",                  "Consumer Staples",        2.10, True,  True),
     ("GSF.OL",    "Grieg Seafood",          "Consumer Staples",        0.20, True,  True),
-    ("SCHB.OL",   "Schibsted A",            "Consumer Discretionary",  1.40, True,  True),
-    ("EPR.OL",    "Europris",               "Consumer Staples",        0.30, True,  True),
 
     # --- Industrials ---
     ("KOG.OL",    "Kongsberg Gruppen",      "Industrials",             4.50, True,  True),
@@ -180,6 +178,8 @@ CONSTITUENTS = [
     ("ELMRA.OL",  "Elmera Group",           "Utilities",               0.50, True,  True),
 
     # --- Consumer Discretionary ---
+    ("SCHB.OL",   "Schibsted A",            "Consumer Discretionary",  1.40, True,  True),
+    ("EPR.OL",    "Europris",               "Consumer Discretionary",  0.30, True,  True),
     ("HEX.OL",    "Hexagon Composites",     "Consumer Discretionary",  0.20, True,  True),
     ("KOA.OL",    "Kongsberg Automotive",    "Consumer Discretionary",  0.10, True,  True),
 
@@ -659,7 +659,12 @@ def compute_seasonality(hist: pd.DataFrame) -> Optional[list[Optional[float]]]:
 def compute_dividend_consistency(ticker_obj, ticker_str: str) -> Optional[DividendConsistency]:
     """Assess dividend payment history over the last 5 calendar years."""
     try:
-        divs = ticker_obj.dividend_history(start="2021-01-01")
+        # Fetch a 5-year window anchored to the current year so it doesn't
+        # silently degrade as years pass. Previously hardcoded to 2021-01-01,
+        # which would miss the most recent payment year starting in 2027.
+        current_year = datetime.now().year
+        start = f"{current_year - 5}-01-01"
+        divs = ticker_obj.dividend_history(start=start)
         if isinstance(divs, str) or divs is None or divs.empty:
             return DividendConsistency(yearsWithDividend=0, trend="none")
 
@@ -684,7 +689,6 @@ def compute_dividend_consistency(ticker_obj, ticker_str: str) -> Optional[Divide
                 return DividendConsistency(yearsWithDividend=0, trend="none")
             div_col = numeric_cols[-1]
 
-        current_year = datetime.now().year
         target_years = list(range(current_year - 5, current_year))
         yearly_totals = divs.groupby("year")[div_col].sum()
 
@@ -905,9 +909,11 @@ def process_company(
         except Exception:
             pass
 
-    # Normalise sector: prefer Yahoo's sector (normalised), fall back to hardcoded
+    # Normalise sector: prefer Yahoo's sector, fall back to hardcoded. Apply
+    # norm_sector to BOTH so a typo in the CONSTITUENTS list also gets mapped
+    # to a canonical GICS name (previously only Yahoo's value was normalised).
     yahoo_sector = f.get("sector")
-    actual_sector = norm_sector(yahoo_sector) if yahoo_sector else sector
+    actual_sector = norm_sector(yahoo_sector or sector)
 
     record = CompanyRecord(
         ticker=ticker_str,
@@ -962,8 +968,13 @@ def compute_sector_summary(companies: list[CompanyRecord]) -> list[SectorSummary
     summaries = []
     for sector_name, members in sectors.items():
         def avg(vals):
+            # Round consistently regardless of sample size — previously the
+            # single-entry branch skipped rounding, producing JSON with mixed
+            # precision across sectors.
             clean = [v for v in vals if v is not None]
-            return round(sum(clean) / len(clean), 2) if len(clean) >= 2 else (clean[0] if len(clean) == 1 else None)
+            if not clean:
+                return None
+            return round(sum(clean) / len(clean), 2)
 
         summaries.append(SectorSummary(
             sector=sector_name,
